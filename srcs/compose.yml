@@ -4,6 +4,7 @@ services:
 
   postgres:
     image: postgres:18
+    container_name: postgres_skyjo
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
@@ -13,7 +14,15 @@ services:
     networks:
       - NW_skyjo
 
-
+  backend:
+    build: ./backend/
+    container_name: back_skyjo
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}"
+    networks:
+        - NW_skyjo
 
 volumes:
   postgres_data:
