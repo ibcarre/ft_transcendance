@@ -26,6 +26,16 @@ services:
     networks:
         - NW_skyjo
 
+  frontend:
+    build: ./frontend/
+    container_name: front_skyjo
+    ports: 
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - NW_skyjo
+
 volumes:
   postgres_data:
 
