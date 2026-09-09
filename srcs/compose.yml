@@ -17,8 +17,6 @@ services:
   backend:
     build: ./backend/
     container_name: back_skyjo
-    ports: 
-      - "3000:3000"
     depends_on:
       - postgres
     environment:
@@ -29,8 +27,6 @@ services:
   frontend:
     build: ./frontend/
     container_name: front_skyjo
-    ports: 
-      - "5173:5173"
     depends_on:
       - backend
     networks:
