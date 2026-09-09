@@ -35,6 +35,8 @@ services:
   nginx:
     build: ./infra/nginx/
     container_name: nginx_skyjo
+    depends_on:
+      - frontend
     ports:
       - "${APP_PORT}:443"
     networks:
