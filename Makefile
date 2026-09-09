@@ -34,4 +34,4 @@ fclean:
 
 re: fclean up
 
-.PHONY all up down logs dev-up dev-down dev-logs clean fclean re
+.PHONY: all up down logs dev-up dev-down dev-logs clean fclean re
