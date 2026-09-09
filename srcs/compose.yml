@@ -36,6 +36,14 @@ services:
     networks:
       - NW_skyjo
 
+  nginx:
+    build: ./infra/nginx/
+    container_name: nginx_skyjo
+    ports:
+      - "${APP_PORT}:443"
+    networks:
+      - NW_skyjo
+
 volumes:
   postgres_data:
 
