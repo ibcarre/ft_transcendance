@@ -3,7 +3,7 @@
 services:
 
   postgres:
-    image: postgres:18
+    image: docker.io/library/postgres:18
     container_name: postgres_skyjo
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
