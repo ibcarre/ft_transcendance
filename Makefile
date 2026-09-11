@@ -11,20 +11,19 @@ down:
 	${COMPOSE} down
 
 logs:
-	${COMPOSE} logs -f
+	${COMPOSE} logs
 
-dev-up:
-	${COMPOSE_DEV} up --build
-
-
-dev-up-d:
+du: dev
+dev:
 	${COMPOSE_DEV} up --build -d
 
+dd: dev-down
 dev-down:
 	${COMPOSE_DEV} down
 
+dl: dev-logs
 dev-logs:
-	${COMPOSE} logs -f
+	${COMPOSE} logs
 
 clean:
 	${COMPOSE} down --remove-orphans
