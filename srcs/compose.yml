@@ -1,0 +1,49 @@
+
+
+services:
+
+  postgres:
+    image: docker.io/library/postgres:18
+    container_name: postgres_skyjo
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    networks:
+      - NW_skyjo
+
+  backend:
+    build: ./backend/
+    container_name: back_skyjo
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}"
+    networks:
+        - NW_skyjo
+
+  frontend:
+    build: ./frontend/
+    container_name: front_skyjo
+    depends_on:
+      - backend
+    networks:
+      - NW_skyjo
+
+  nginx:
+    build: ./infra/nginx/
+    container_name: nginx_skyjo
+    depends_on:
+      - frontend
+    ports:
+      - "${APP_PORT}:443"
+    networks:
+      - NW_skyjo
+
+volumes:
+  postgres_data:
+
+networks:
+  NW_skyjo:

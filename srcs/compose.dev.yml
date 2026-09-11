@@ -1,0 +1,14 @@
+
+services:
+  postgres:
+  nginx:
+  backend:
+    volumes:
+      - ./backend/:/skyjo
+  
+  frontend:
+    build:
+      context: ./frontend/
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      - ./frontend/:/skyjo
