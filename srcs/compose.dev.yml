@@ -4,11 +4,11 @@ services:
   nginx:
   backend:
     volumes:
-      - ./backend/:/skyjo
+      - ./backend/:/app
   
   frontend:
     build:
       context: ./frontend/
       dockerfile: ./Dockerfile.dev
     volumes:
-      - ./frontend/:/skyjo
+      - ./frontend/:/app
