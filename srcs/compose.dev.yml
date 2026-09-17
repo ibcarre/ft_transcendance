@@ -9,6 +9,7 @@ services:
       dockerfile: ./Dockerfile.dev
     volumes:
       - ./backend/:/app
+      - back-node_modules:/app/node_modules
   
   frontend:
     build:
@@ -16,3 +17,8 @@ services:
       dockerfile: ./Dockerfile.dev
     volumes:
       - ./frontend/:/app
+      - front-node_modules:/app/node_modules
+
+volumes:
+  front-node_modules:
+  back-node_modules:
