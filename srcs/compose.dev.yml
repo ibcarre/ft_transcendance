@@ -1,7 +1,4 @@
 services:
-  postgres:
-
-  nginx:
 
   backend:
     build:
