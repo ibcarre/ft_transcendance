@@ -1,11 +1,9 @@
 FROM node:22-bookworm-slim
 
-WORKDIR /skyjo
+WORKDIR /app
 
-COPY ./package.json .
-COPY ./package-lock.json .
+COPY . .
 
 RUN npm ci
 
-COPY tsconfig.json server_test.ts .
-CMD ["npx", "tsx", "server_test.ts"]
+CMD ["npm", "run", "build"]

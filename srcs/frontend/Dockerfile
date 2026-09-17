@@ -1,13 +1,10 @@
 FROM node:22-bookworm-slim
 
-WORKDIR /skyjo
-
-COPY ./package.json .
-COPY ./package-lock.json .
-
-RUN npm ci
+WORKDIR /app
 
 COPY . .
+
+RUN npm ci
 
 RUN npm run build
 
