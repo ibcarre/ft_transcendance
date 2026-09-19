@@ -35,9 +35,16 @@ CREATE TABLE friends (
 	accepted	  boolean NOT NULL DEFAULT false,
 
 	CONSTRAINT	  chk_usrValue CHECK (user_id < friend_id),
-	CONSTRAINT	  chk_allone CHECK (user_id <> friend_id),
 	CONSTRAINT	  chk_reqByOne CHECK (requested_by = user_id OR requested_by = friend_id),
 	CONSTRAINT	  uq_oneTime UNIQUE (user_id, friend_id)
 );
 
-
+CREATE TABLE private_msgs (
+	id				bigserial PRIMARY KEY,
+	sender_id		uuid NOT NULL REFERENCES users(id),
+	reiceiver_id	uuid NOT NULL REFERENCES users(id),
+	CONSTRAINT		chk_notAlone CHECK (sender_id <> reiceiver_id),
+	body			text NOT NULL,
+	CONSTRAINT		chq_emptyMsg CHECK (body <> ''),
+	send_at			timestamptz NOT NULL DEFAULT now()
+);
