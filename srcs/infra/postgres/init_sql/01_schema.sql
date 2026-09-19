@@ -42,7 +42,7 @@ CREATE TABLE friends (
 CREATE TABLE private_msgs (
 	id				bigserial PRIMARY KEY,
 	sender_id		uuid NOT NULL REFERENCES users(id),
-	reiceiver_id	uuid NOT NULL REFERENCES users(id),
+	receiver_id	uuid NOT NULL REFERENCES users(id),
 	CONSTRAINT		chk_notAlone CHECK (sender_id <> reiceiver_id),
 	body			text NOT NULL,
 	CONSTRAINT		chq_emptyMsg CHECK (body <> ''),
