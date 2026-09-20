@@ -43,7 +43,7 @@ CREATE TABLE private_msgs (
 	id				bigserial PRIMARY KEY,
 	sender_id		uuid NOT NULL REFERENCES users(id),
 	receiver_id	uuid NOT NULL REFERENCES users(id),
-	CONSTRAINT		chk_notAlone CHECK (sender_id <> reiceiver_id),
+	CONSTRAINT		chk_notAlone CHECK (sender_id <> receiver_id),
 	body			text NOT NULL,
 	CONSTRAINT		chq_emptyMsg CHECK (body <> ''),
 	send_at			timestamptz NOT NULL DEFAULT now()
