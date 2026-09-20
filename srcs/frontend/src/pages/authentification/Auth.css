@@ -124,3 +124,24 @@
 .privacy:hover {
 	color: #3b82f6;
 }
+
+/* =========================================
+   RESPONSIVE DESIGN (Tablettes et Mobiles) 
+   Si l'écran fait moins de 768px de large, 
+   le code ci-dessous écrase celui du dessus.
+   ========================================= */
+@media (max-width: 768px) {
+	.auth-container {
+		flex-direction: column; /* Le logo passe au-dessus du formulaire */
+		padding: 40px 20px; /* On réduit fortement les espaces intérieurs */
+		gap: 30px; /* On réduit l'espace entre le logo et le formulaire */
+	}
+
+	.SKYJO {
+		font-size: 50px; /* Le logo prend moins de place */
+	}
+
+	.Login-form {
+		padding: 24px; /* Formulaire un peu plus compact sur mobile */
+	}
+}
