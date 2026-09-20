@@ -8,10 +8,14 @@
     "build": "tsc -b && vite",
     "lint": "eslint .",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "preview": "vite preview"
 =======
     "preview": "vite"
 >>>>>>> e2b12ef (add: Authentification route and user creation in db)
+=======
+    "preview": "vite"
+>>>>>>> e2b12ef51863654bc6f1da8f004aa5e591aaa7a9
   },
   "dependencies": {
     "react": "^19.2.8",

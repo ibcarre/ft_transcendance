@@ -6,10 +6,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
 <<<<<<< HEAD
+<<<<<<< HEAD
 	"build":"node index.js",
 =======
     "build": "node index.js",
 >>>>>>> e2b12ef (add: Authentification route and user creation in db)
+=======
+    "build": "node index.js",
+>>>>>>> e2b12ef51863654bc6f1da8f004aa5e591aaa7a9
     "dev": "npx tsx server_test.ts"
   },
   "keywords": [],
@@ -17,16 +21,22 @@
   "license": "ISC",
   "dependencies": {
 <<<<<<< HEAD
+<<<<<<< HEAD
     "express": "^5.2.1",
     "pg": "^8.23.0",
 =======
+=======
+>>>>>>> e2b12ef51863654bc6f1da8f004aa5e591aaa7a9
     "bcrypt": "^6.0.0",
     "dotenv": "^18.0.1",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.23.0",
     "pg-promise": "^12.7.1",
+<<<<<<< HEAD
 >>>>>>> e2b12ef (add: Authentification route and user creation in db)
+=======
+>>>>>>> e2b12ef51863654bc6f1da8f004aa5e591aaa7a9
     "tsx": "^4.23.13",
     "typescript": "^7.0.2"
   },
