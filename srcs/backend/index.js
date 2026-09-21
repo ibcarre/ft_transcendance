@@ -13,7 +13,7 @@ const registerProm = new clientProm.Registry();
 clientProm.collectDefaultMetrics({ register: registerProm });
 
 const httpRequests = new clientProm.Counter({
-	name: "bakend_http_requests_total",
+	name: "backend_http_requests_total",
 	help: "How many HTTP requests",
 	labelNames: ['method', 'path', 'status'],
 	registers: [registerProm],
