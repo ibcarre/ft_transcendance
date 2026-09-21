@@ -16,7 +16,7 @@ var login = async (req, res) => {
             return (res.status(401).json({message: "Wrong password"}));
         const token = jwt.sign(
         { userId: user._id, username: user.username },
-        process.env.SECRET_KEY || "1234!@#%<{*&)",
+        process.env.JWT_SECRETKEY,
         { expiresIn: "1h" });
         return res.status(200).json({message: "Login Successful", data: user, token});
     }

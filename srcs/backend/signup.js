@@ -22,7 +22,7 @@ var signup = async (req, res) => {
         });
         const token = jwt.sign(
         { userId: user._id, username: user.username },
-        process.env.SECRET_KEY || "1234!@#%<{*&)",
+        process.env.JWT_SECRETKEY,
         { expiresIn: "1h" });
         return res.status(201).json({message: "User successfully created\n", data: user, token});
     } catch (error) {
