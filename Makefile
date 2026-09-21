@@ -33,4 +33,12 @@ fclean:
 
 re: fclean up
 
+inspect:
+	@docker images
+	@echo "\n\e[44;97mVOLUMES:\e[0m"
+	@docker volume ls
+	@echo "\n\e[44;97mPROCESS:\e[0m"
+	@docker ps -a
+
+
 .PHONY: all up down logs dev-up dev-down dev-logs clean fclean re
