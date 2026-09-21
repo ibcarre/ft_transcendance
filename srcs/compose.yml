@@ -20,6 +20,7 @@ services:
       - postgres
     environment:
       DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}"
+      JWT_SECRETKEY: ${JWT_SECRETKEY}
     networks:
         - NW_skyjo
 
@@ -40,6 +41,15 @@ services:
       - "${APP_PORT}:443"
     networks:
       - NW_skyjo
+
+  prometheus:
+    container_name: prometheus_skyjo
+    image: docker.io/prom/prometheus:v3.15.0-rc.0-distroless
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - NW_skyjo
+    restart: unless-stopped
 
 volumes:
   postgres_data:
