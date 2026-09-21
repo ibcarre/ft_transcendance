@@ -51,6 +51,11 @@ services:
       - NW_skyjo
     restart: unless-stopped
 
+  grafana:
+    image: docker.io/grafana/grafana:13.0.9-distroless
+    container_name: grafana_skyjo
+
+
 volumes:
   postgres_data:
 
