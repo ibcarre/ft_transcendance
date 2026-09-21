@@ -1,13 +1,45 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
-const app = express();
 const cookieParser = require("cookie-parser");
+const clientProm = require("@prometheus-io/client");
 
 
+const app = express();
 const port = 5000;
+
+// metric need to be declared before limite to avoid 429
+
+const registerProm = new clientProm.Registry();
+clientProm.collectDefaultMetrics({ register: registerProm });
+
+const httpRequests = new clientProm.Counter({
+	name: "backend_http_requests_total",
+	help: "How many HTTP requests",
+	labelNames: ['method', 'path', 'status'],
+	registers: [registerProm],
+});
+
+app.get('/metrics', async (_req, res) => {
+	res.set('Content-Type', registerProm.contentType);
+	res.end(await registerProm.metrics());
+})
+
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+
+app.use((req, res, next) => {
+	res.on('finish', () => {
+		const path = req.route?.path ? req.baseUrl + req.route.path : req.path;
+		httpRequests.inc({
+			method: req.method,
+			path,
+			status: String(res.statusCode),
+		});
+	});
+	next();
+})
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes window 
   max: 100, // Limit each IP to 100 requests per windowMs
