@@ -29,7 +29,7 @@ clean:
 	${COMPOSE} down --remove-orphans
 
 fclean: 
-	${COMPOSE} down --rmi all --volumes --remove-orphans
+	${COMPOSE_DEV} down --rmi all --volumes --remove-orphans
 
 re: fclean up
 
