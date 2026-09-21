@@ -23,7 +23,6 @@ var signup = async (req, res) => {
             { userId: user.id, username: user.name },
             process.env.JWT_SECRETKEY,
             { expiresIn: "1h"});
-        console.log(token);
         res.cookie("access_token", token, { httpOnly: true, secure: true });
         return res.status(201).json({message: "User successfully created\n"});
     } catch (error) {

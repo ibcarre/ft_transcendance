@@ -10,7 +10,6 @@ var login = async (req, res) => {
         const user = await db.one('SELECT * FROM users WHERE email = $1', email);
         if (!user)
             return (res.status(401).json({ message: "User doesn't exist" }));
-        console.log(user);
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch)
             return (res.status(401).json({message: "Wrong password"}));
