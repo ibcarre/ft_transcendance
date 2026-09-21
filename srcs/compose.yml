@@ -41,6 +41,15 @@ services:
     networks:
       - NW_skyjo
 
+  prometheus:
+    container_name: prometheus_skyjo
+    image: docker.io/prom/prometheus:v3.15.0-rc.0-distroless
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - NW_skyjo
+    restart: unless-stopped
+
 volumes:
   postgres_data:
 
