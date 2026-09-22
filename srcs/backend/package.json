@@ -6,7 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node index.js",
-    "dev": "npx tsx server_test.ts"
+    "dev": "npx tsx server_test.ts",
+
+    "game:check": "tsc -p tsconfig.game.json",
+    "game:test": "node --import=tsx --test game/test/*.test.ts",
+    "game:test:watch": "node --import=tsx --test --watch game/test/*.test.ts",
+    "game:verify": "npm run game:check && npm run game:test"
   },
   "keywords": [],
   "author": "",
