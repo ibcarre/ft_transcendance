@@ -7,3 +7,15 @@ body {
 p {
   margin: 0;
 }
+
+.privacy {
+	margin-top: 30px;
+	font-size: 13px;
+	color: #94a3b8;
+	cursor: pointer;
+	transition: color 0.2s;
+}
+
+.privacy:hover {
+	color: #3b82f6;
+}
