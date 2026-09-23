@@ -1,6 +1,7 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const cookieParser = require("cookie-parser");
+var serveIndex = require('serve-index');
 const clientProm = require("@prometheus-io/client");
 var serveIndex = require('serve-index');
 
@@ -26,6 +27,7 @@ app.get('/metrics', async (_req, res) => {
 })
 
 app.use(cookieParser());
+app.use(express.json())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -65,10 +67,13 @@ app.use(limiter);
 // Import the router
 const Userroutes = require('./Userroutes');
 const api = require('./public_api/v1');
+const api = require('./public_api/v1');
 
+//const apirouter = require('./apirouter');
 //const apirouter = require('./apirouter');
 // Use the router for all paths starting with '/'
 app.use('/user', Userroutes);
+app.use('/v1', api);
 app.use('/v1', api);
 
 app.listen(port, () => {
