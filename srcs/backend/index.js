@@ -2,12 +2,13 @@ const express = require('express');
 const rateLimit = require('express-rate-limit');
 const app = express();
 const cookieParser = require("cookie-parser");
+var serveIndex = require('serve-index');
 
 
 const port = 5000;
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes window 
   max: 100, // Limit each IP to 100 requests per windowMs
@@ -31,12 +32,12 @@ app.use(limiter);
 
 // Import the router
 const Userroutes = require('./Userroutes');
+const api = require('./public_api/v1');
 
+//const apirouter = require('./apirouter');
 // Use the router for all paths starting with '/'
 app.use('/user', Userroutes);
-
-//app.get('/', 
-   //(req, res) => res.send('Dockerizing Node Application'));
+app.use('/v1', api);
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
