@@ -21,6 +21,7 @@
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.23.0",
     "pg-promise": "^12.7.1",
+    "serve-index": "^1.9.2",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2"
   },
