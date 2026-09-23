@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const signup = require('./user_routes/signup');
-const login = require('./user_routes/login');
-const profile = require('./user_routes/profile');
+const users = require('./users');
 
 // router.get('/', (req, res) => {
 //     db.none('INSERT INTO users VALUES(DEFAULT, $(email), $(name), $(password), $(avatar_url))', {
@@ -17,8 +15,6 @@ const profile = require('./user_routes/profile');
 //     res.send("ASDASDASDA");
 // });
 
-router.post('/signup', signup);
-router.post('/login', login);
-router.get('/profile', profile);
+router.get('/users', users);
 
 module.exports = router;
