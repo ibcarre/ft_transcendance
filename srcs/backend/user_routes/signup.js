@@ -14,21 +14,22 @@ var signup = async (req, res) => {
         if (user) return res.status(400).json({ message: "Email already exists" });
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
-        user = await db.one('INSERT INTO users VALUES(DEFAULT, $(email), $(name), $(password)) RETURNING *', {
+        user = await db.one('INSERT INTO users VALUES(DEFAULT, $(email), $(name), $(password), $(pic)) RETURNING *', {
         email: email,
         name: username,
-        password: hashedPassword
+        password: hashedPassword,
+        pic: "/imgs/default_pic.jpg"
         });
         const token = jwt.sign(
             { userId: user.id, username: user.name },
             process.env.JWT_SECRETKEY,
             { expiresIn: "1h"});
         res.cookie("access_token", token, { httpOnly: true, secure: true });
-        return res.status(201).json({message: "User successfully created\n"});
+        return res.status(201).json({message: "User successfully created"});
     } catch (error) {
         console.log(error);
         db.none('DELETE FROM users WHERE name = $1', username);
-        return (res.status(500).json({message: "Failed to create user\n"}));
+        return (res.status(500).json({message: "Failed to create user"}));
     }
 }
 
