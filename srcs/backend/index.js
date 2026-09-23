@@ -67,13 +67,11 @@ app.use(limiter);
 // Import the router
 const Userroutes = require('./Userroutes');
 const api = require('./public_api/v1');
-const api = require('./public_api/v1');
 
 //const apirouter = require('./apirouter');
 //const apirouter = require('./apirouter');
 // Use the router for all paths starting with '/'
 app.use('/user', Userroutes);
-app.use('/v1', api);
 app.use('/v1', api);
 
 app.listen(port, () => {
