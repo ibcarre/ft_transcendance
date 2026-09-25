@@ -36,3 +36,18 @@ export function createDeck(): Card[]
 	}
 	return deck;
 }
+
+/**
+ * @param random Function returning a number in [0, 1).
+ */
+export function shuffleDeck(deck: readonly Card[],
+							random: () => number = Math.random): Card[]
+{
+	const shuffled = [...deck];
+
+	for (let i = shuffled.length - 1; i > 0; i--) {
+		const j = Math.floor(random() * (i + 1));
+		[shuffled[i], shuffled[j]] = [shuffled[j]!, shuffled[i]!];
+	}
+	return shuffled;
+}
