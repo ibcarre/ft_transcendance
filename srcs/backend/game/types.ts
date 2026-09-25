@@ -85,6 +85,16 @@ export interface GameState {
 
 
 
+export interface CreateGamePlayerInput {
+    id: PlayerId;
+}
+
+export interface CreateGameInput {
+    id: GameId;
+    players: CreateGamePlayerInput[];
+}
+
+
 export interface RevealInitialCardCommand {
     type: "REVEAL_INITIAL_CARD";
     playerId: PlayerId;

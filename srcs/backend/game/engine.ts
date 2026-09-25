@@ -5,18 +5,10 @@ import {
 
 import type {
     ApplyActionResult,
+	CreateGameInput,
     GameCommand,
     GameState,
 } from "./types";
-
-
-export interface CreateGameInput {
-    id: string;
-
-    players: {
-        id: string;
-    }[];
-}
 
 
 export function createGame(
