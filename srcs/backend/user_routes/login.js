@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const db = require('../db')
+const db = require('../src/db')
 
 var login = async (req, res) => {
     try {
@@ -8,8 +8,6 @@ var login = async (req, res) => {
         if (!email || !password)
             return (res.status(400).json({ message: "Empty field(s)" }))
         const user = await db.one('SELECT * FROM users WHERE email = $1', email);
-        if (!user)
-            return (res.status(401).json({ message: "User doesn't exist" }));
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch)
             return (res.status(401).json({message: "Wrong password"}));
@@ -22,6 +20,8 @@ var login = async (req, res) => {
     }
     catch (error) {
         console.log(error);
+        if (error.received === 0)
+            return (res.status(401).json({ message: "User doesn't exist" }));
         return (res.status(500).send("Failed to log in\n"));
     }
 }

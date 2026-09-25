@@ -1,9 +1,6 @@
 const express = require('express');
-const rateLimit = require('express-rate-limit');
 const cookieParser = require("cookie-parser");
-var serveIndex = require('serve-index');
 const clientProm = require("@prometheus-io/client");
-var serveIndex = require('serve-index');
 
 
 const app = express();
@@ -28,7 +25,6 @@ app.get('/metrics', async (_req, res) => {
 
 app.use(cookieParser());
 app.use(express.json())
-app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use((req, res, next) => {
@@ -43,30 +39,9 @@ app.use((req, res, next) => {
 	next();
 })
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes window 
-  max: 100, // Limit each IP to 100 requests per windowMs
-  message: {
-    error: 'Too many requests from this IP address',
-    retryAfter: '15 minutes',
-    documentation: 'https://api.example.com/docs/rate-limits'
-  },
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  handler: (req, res) => {
-    res.status(429).json({
-      error: 'Rate limit exceeded',
-      message: 'Too many requests from this IP, please try again later',
-      retryAfter: Math.round(req.rateLimit.resetTime / 1000) //resetTime = milliseconds
-    });
-  }
-});
-// Apply rate limiting to all requests
-app.use(limiter);
-
 // Import the router
-const Userroutes = require('./Userroutes');
-const api = require('./public_api/v1');
+const Userroutes = require('./user_routes/Userrouter');
+const api = require('./public_api/v1router');
 
 //const apirouter = require('./apirouter');
 //const apirouter = require('./apirouter');
