@@ -52,12 +52,21 @@ services:
     restart: unless-stopped
 
   grafana:
-    image: docker.io/grafana/grafana:13.0.9-distroless
+    image: docker.io/grafana/grafana:13.0.9
     container_name: grafana_skyjo
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+    volumes:
+      - grafana_storage:/var/lib/grafana
+      - ./infra/grafana/provising:/etc/grafana/provisioning:ro
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - NW_skyjo
 
 
 volumes:
   postgres_data:
+  grafana_storage:
 
 networks:
   NW_skyjo:

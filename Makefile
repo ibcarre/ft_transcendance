@@ -25,11 +25,14 @@ dl: dev-logs
 dev-logs:
 	${COMPOSE} logs
 
+dev-clean:
+	${COMPOSE_DEV} down --remove-orphans --rmi -v
+
 clean:
 	${COMPOSE} down --remove-orphans
 
 fclean: 
-	${COMPOSE_DEV} down --rmi all --volumes --remove-orphans
+	${COMPOSE_DEV} down --rmi all -v --remove-orphans
 
 re: fclean up
 
