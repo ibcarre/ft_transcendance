@@ -23,11 +23,16 @@ const CARD_DISTRIBUTION:
     ];
 
 
-function createDeck(): Card[]
+export function createDeck(): Card[]
 {
+	const deck: Card[] = [];
+	let nextId = 0;
+
 	for (const [value, count] of CARD_DISTRIBUTION) {
 		for (let i = 0; i < count; i++) {
-		// add the real cards creation here`	
+			deck.push({id: nextId, value});
+			nextId++;
 		}
 	}
+	return deck;
 }
