@@ -51,3 +51,13 @@ export function shuffleDeck(deck: readonly Card[],
 	}
 	return shuffled;
 }
+
+export function takeTopCard(deck: Card[]): Card
+{
+	const card = deck.pop();
+
+	if (card === undefined) {
+		throw new Error("Cannot take the top card from an empty deck");
+	}
+	return card;
+}
