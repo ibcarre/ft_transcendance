@@ -18,10 +18,11 @@ export {
 
 
 export type {
-    GameState,
-    GameCommand,
-    PublicGameState,
-    ApplyActionResult,
-    PlayerId,
-    GameId,
+	ApplyActionResult,
+	CreateGameInput,
+	GameCommand,
+	GameId,
+	GameState,
+	PlayerId,
+	PublicGameState,
 } from "./types";
