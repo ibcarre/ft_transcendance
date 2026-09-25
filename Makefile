@@ -25,6 +25,9 @@ dl: dev-logs
 dev-logs:
 	${COMPOSE} logs
 
+game-test:
+	npm --prefix srcs/backend run game:verify
+
 clean:
 	${COMPOSE} down --remove-orphans
 
