@@ -6,8 +6,20 @@ const jwt = require("jsonwebtoken");
 exports.isLog = async (req, res, next) => {
     const token = req.cookies.access_token;
     if (!token) return res.status(401).json({message: "Unauthorized: No token"});
-    var decoded = jwt.verify(token, process.env.JWT_SECRETKEY);
-    req.user = decoded.userId;
+    try {
+        var decoded = jwt.verify(token, process.env.JWT_SECRETKEY);
+        req.user = decoded.userId;
+    }
+    catch (error) {
+        if (error.name === "TokenExpiredError") {
+            res.clearCookie('access_token');
+            return (res.status(401).json({message: "Token Expired, please log back in"}));
+        }
+        if (error.name === "JsonWebTokenError") {
+            res.clearCookie('access_token');
+            return (res.status(401).json({message: "Wrong token, if you think this is an error, please log back in"}));
+        }
+    }
     next();
 };
 
