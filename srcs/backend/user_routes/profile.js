@@ -1,12 +1,7 @@
-const jwt = require("jsonwebtoken");
-const db = require('../db')
+const db = require('../src/db');
 
 var profile = async (req, res) => {
     try {
-        const token = req.cookies.access_token;
-        if (!token) return res.status(401).json({message: "Unauthorized: No token"});
-        var decoded = jwt.verify(token, process.env.JWT_SECRETKEY);
-        req.user = decoded.userId;
         const user = await db.one('SELECT email, name, avatar_url FROM users WHERE id = $1', req.user);
         if (!user)
             return res.status(404).json({message: "User not found"})
