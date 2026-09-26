@@ -3,8 +3,6 @@ const db = require('../src/db');
 var profile = async (req, res) => {
     try {
         const user = await db.one('SELECT email, name, avatar_url FROM users WHERE id = $1', req.user);
-        if (!user)
-            return res.status(404).json({message: "User not found"})
         return (res.status(200).send(user));
     } catch (error) {
         if (error.name === "TokenExpiredError") {
@@ -15,6 +13,8 @@ var profile = async (req, res) => {
             res.clearCookie('access_token');
             return (res.status(401).json({message: "Wrong token, if you think this is an error, please log back in"}));
         }
+        if (error.received === 0)
+            return (res.status(404).json({ message: "User not found" }));
         return (res.status(500).json({message: "Server error"}));
     }
 }
