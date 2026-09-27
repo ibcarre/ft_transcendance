@@ -1,9 +1,12 @@
 const express = require('express');
 const cookieParser = require("cookie-parser");
 const clientProm = require("@prometheus-io/client");
-
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer);
 const port = 5000;
 
 // metric need to be declared before limite to avoid 429
@@ -46,9 +49,25 @@ const api = require('./public_api/v1router');
 //const apirouter = require('./apirouter');
 //const apirouter = require('./apirouter');
 // Use the router for all paths starting with '/'
+app.get('/', async (_req, res) => {
+	res.send("hello world");
+});
 app.use('/user', Userroutes);
 app.use('/v1', api);
 
-app.listen(port, () => {
+io.engine.on('connection_error', (err) => {
+    console.error('Socket.IO connection error:', err.message);
+    console.error('Details:', err);
+});
+
+io.on("connection", (socket) => {
+	console.log(socket);
+  	console.log("SOCKET connected");
+    socket.on('disconnect', (reason) => {
+        console.log('SOCKET DISCONNECTED:', socket.id, reason);
+    });
+});
+
+httpServer.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });
