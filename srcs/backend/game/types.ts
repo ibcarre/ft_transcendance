@@ -158,14 +158,17 @@ export type GameCommand =
 
 
 
-export interface PublicBoardCard {
-    status:
-        | "hidden"
-        | "revealed"
-        | "removed";
-
-    value?: CardValue;
-}
+export type PublicBoardCard =
+	| {
+		status: "hidden";
+	}
+	| {
+		status: "revealed";
+		value: CardValue;
+	}
+	| {
+		status: "removed";
+	};
 
 
 export interface PublicPlayerState {
