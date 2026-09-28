@@ -1,38 +1,21 @@
 const { Server } = require("socket.io");
-const gameRoomsinit = require('./namespaces/gamerooms/index');
-const checkAuth = require('./middlewares/checkAuth');
 
-let io;
-const initSocket = (httpServer) => {
-    io = new Server(httpServer, {
+function Socket(httpServer){
+    const io = new Server(httpServer, {
     cors: {
       origin: ["https://localhost:44443"],
       credentials: true
     }
   });
-  io.use(checkAuth);
-  io.on("new_namespace", (namespace) => {
-    namespace.use(checkAuth);
-  });
-  // io.on("disconnect", (socket) => {
-  //   console.log("socket disconnected");
-  //   socket.on("disconnect", (reason) => {
-  //     console.log(reason);
-  //     if (reason == "server namespace disconnect")
-  //       socket.emit('not_authentified')
-  //   });
-  // })
-  gameRoomsinit(io);
+
+    //io.use(socketAuthMiddleware);
+    // Full path to the current directory
+    const listeners = require('./listeners/index');
+    listeners(io);
+    const namespaces = require('./namespaces')
+    namespaces(io);
+    console.log('Socket.io initialized');
+    return io;
 };
 
-const getIo = () => {
-  if (!io) {
-    throw new Error('Socket.IO not initialized');
-  }
-  return (io);
-}
-
-module.exports = {
-    initSocket,
-    getIo
-}
+module.exports = Socket;

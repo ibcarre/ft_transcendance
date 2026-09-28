@@ -46,7 +46,7 @@ export function SignUp() {
         setIsLoading(true);
 
         try {
-            const response = await axios.post('https://localhost:44443/api/user/signup', {
+            const response = await axios.post('https://127.0.0.1:44443/api/user/signup', {
                 username,
                 email,
                 password
