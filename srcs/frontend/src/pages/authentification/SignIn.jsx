@@ -40,7 +40,7 @@ export function SignIn() {
         setIsLoading(true);
 
         try {
-            const response = await axios.post('https://localhost:44443/api/user/login', {
+            const response = await axios.post('/api/user/login', {
                 email,
                 password
             });
