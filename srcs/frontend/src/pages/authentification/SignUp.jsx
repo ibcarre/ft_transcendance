@@ -10,7 +10,7 @@ const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,64}$/;
 export function SignUp() {
     let navigate = useNavigate();
 
-    // 1. Les états des champs et du focus (plus besoin des setValidX !)
+    // 1. Les états des champs et du focus
     const [username, setUsername] = useState('');
     const [usernameFocus, setUsernameFocus] = useState(false);
 
@@ -46,7 +46,7 @@ export function SignUp() {
         setIsLoading(true);
 
         try {
-            const response = await axios.post('https://localhost:44443/api/user/signup', {
+            const response = await axios.post('/api/user/signup', {
                 username,
                 email,
                 password

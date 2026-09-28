@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { LobbyModal } from '../../components/LobbyModal';
+import { FindRoom } from '../../components/FindRoom';
 import './Lobby.css';
 
 export function Lobby() {
@@ -32,9 +33,7 @@ export function Lobby() {
 
             {modalType === 'create' && (
                 <LobbyModal title="Create a room" onClose={closeModal}>
-                    {/* Tout ce qui est ici devient le "children" */}
-                    <p>Choisis le nombre de joueurs et définis un mot de passe pour ta partie de Skyjo.</p>
-                    <button>Créer la partie</button>
+                    <FindRoom />
                 </LobbyModal>
             )}
 
