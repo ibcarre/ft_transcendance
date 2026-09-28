@@ -1,0 +1,162 @@
+opencollection: 1.0.0
+info:
+  name: Skyjo
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ''
+      port: ''
+      auth:
+        username: ''
+        password: ''
+      bypassProxy: ''
+items:
+  - info:
+      name: login
+      type: http
+      seq: 2
+    http:
+      method: POST
+      url: https://localhost:44443/api/user/login
+      body:
+        type: form-urlencoded
+        data:
+          - name: email
+            value: email
+          - name: password
+            value: password
+      auth: inherit
+    runtime:
+      scripts:
+        - type: after-response
+          code: |-
+            test("Successful POST request", function () {
+                expect(res.getStatus()).to.be.oneOf([200, 201]);
+            });
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+      forwardAuthorizationHeader: false
+    docs: |-
+      Login POST request, sending data, in body.
+
+      Responses:
+
+      400: {message: "Empty field(s)"}
+
+      401: {message: "User doesn't exist"}
+
+      401: {message: "Wrong password"}
+
+      200: {message: "Login successful"}
+
+      500: {message: "Failed to Login"}
+  - info:
+      name: profile
+      type: http
+      seq: 3
+    http:
+      method: GET
+      url: https://localhost:44443/api/user/profile
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+      forwardAuthorizationHeader: false
+    docs: |-
+      GET Profile email, username and avatar using cookie.
+
+      responses :
+
+      401: {message: "Unauthorized no token"}
+
+      403: {message: "invalid token"}
+
+      404: {message: "User not found"}
+
+      500: {message: "Server error"}
+
+      200: \[User\]
+  - info:
+      name: signup
+      type: http
+      seq: 1
+    http:
+      method: POST
+      url: https://localhost:44443/api/user/signup
+      body:
+        type: form-urlencoded
+        data:
+          - name: email
+            value: emaila
+          - name: password
+            value: password
+          - name: username
+            value: usernamea
+      auth: inherit
+    runtime:
+      scripts:
+        - type: after-response
+          code: |-
+            test("Status code is 200", function () {
+                expect(res.getStatus()).to.equal(200);
+            });
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+      forwardAuthorizationHeader: false
+    docs: |-
+      Signup POST request, sending data, in body.
+
+      Responses:
+
+      400: {message: "Please Input Username, Password and Email Adress"}
+
+      400: {message: "Username already exists"}
+
+      400: {message: "Email already exists"}
+
+      201: {message: "User successfully created"}
+
+      500: {message: "Failed to create user"}
+  - info:
+      name: users
+      type: http
+      seq: 4
+    http:
+      method: GET
+      url: https://localhost:44443/api/v1/users?api_key={{api_key}}
+      params:
+        - name: api_key
+          value: '{{api_key}}'
+          type: query
+      auth: inherit
+    settings:
+      encodeUrl: true
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+      forwardAuthorizationHeader: false
+    docs: |-
+      GET list of users
+
+      Require api key as parameter
+docs:
+  content: Les routes API du site SKYJO.
+  type: text/markdown
+bundled: true
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git
+    exportedAt: '2026-09-25T20:24:05.944Z'
+    exportedUsing: Bruno
