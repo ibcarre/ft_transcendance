@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const db = require('../src/db')
+const db = require('../../db/db')
 
 var login = async (req, res) => {
     try {
@@ -14,7 +14,7 @@ var login = async (req, res) => {
         const token = jwt.sign(
         { userId: user.id, username: user.name },
         process.env.JWT_SECRETKEY,
-        { expiresIn: "1h"});
+        { expiresIn: "1w"});
         res.cookie("access_token", token, { httpOnly: true, secure: true });
         return res.status(200).json({message: "Login Successful"});
     }

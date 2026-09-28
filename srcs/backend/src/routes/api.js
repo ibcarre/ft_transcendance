@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const users = require('./users');
+const getAllProfiles = require('../controllers/public_api/getAllProfiles');
 const rateLimit = require('express-rate-limit');
-const middlewares = require('../src/middlewares');
-const checkKey = middlewares.checkKey;
+const checkKey = require('../middleware/Auth').checkKey;
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes window 
@@ -28,6 +27,6 @@ const limiter = rateLimit({
 router.use(limiter);
 router.use(checkKey);
 
-router.get('/users', users);
+router.get('/users', getAllProfiles);
 
 module.exports = router;

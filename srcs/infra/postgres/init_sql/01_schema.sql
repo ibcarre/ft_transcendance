@@ -9,11 +9,18 @@ CREATE TABLE users (
 
 CREATE TABLE games (
 	id			uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-	status		text NOT NULL DEFAULT 'playing',
-	CONSTRAINT	chk_status CHECK (status IN ('playing', 'finished', 'cancelled')),
+	password	text,
+	name		text NOT NULL,
+	status		text NOT NULL DEFAULT 'waiting',
+	CONSTRAINT	chk_status CHECK (status IN ('playing', 'finished', 'cancelled', 'waiting')),
 	goal		int NOT NULL DEFAULT 100,
 	CONSTRAINT	chk_goalLimit CHECK (goal >= 50 AND goal <= 1000),
-	created_at	timestamptz NOT NULL DEFAULT now()
+	nb_players	int NOT NULL DEFAULT 1,
+	CONSTRAINT	nb_players CHECK (nb_players >= 1 AND nb_players <= 4),
+	max_players	int NOT NULL DEFAULT 4,
+	CONSTRAINT	max_players CHECK (max_players >= 2 AND max_players <= 4),
+	created_at	timestamptz NOT NULL DEFAULT now(),
+	created_by	uuid NOT NULL REFERENCES users(id)
 );
 
 CREATE TABLE users_in_game (

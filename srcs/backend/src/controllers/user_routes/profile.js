@@ -1,4 +1,4 @@
-const db = require('../src/db');
+const db = require('../../db/db');
 
 var profile = async (req, res) => {
     try {
@@ -10,5 +10,7 @@ var profile = async (req, res) => {
         return (res.status(500).json({message: "Server error"}));
     }
 }
+
+//profile avec id
 
 module.exports = profile;
