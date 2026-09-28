@@ -25,6 +25,9 @@ dl: dev-logs
 dev-logs:
 	${COMPOSE} logs
 
+game-test:
+	docker run --rm -v "./srcs/backend:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npm run game:verify"
+
 clean:
 	${COMPOSE} down --remove-orphans
 
