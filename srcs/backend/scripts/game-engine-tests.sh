@@ -12,7 +12,7 @@ run_test()
 	printf '  %s\n' "$name"
 	printf '============================================================\n\n'
 
-	npx tsx --test "$file"
+	tsx --test "$file"
 }
 
 run_test "createDeck() tests" \
