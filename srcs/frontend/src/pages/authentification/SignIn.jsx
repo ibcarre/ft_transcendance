@@ -124,7 +124,7 @@ export function SignIn() {
                     >
                         {isLoading ? "Signing in..." : "Sign in"}
                     </button>
-                    <p className="paragraph">Don't have an account yet? <Link to="SignUp" className="paragraph-link">Create one</Link></p>
+                    <p className="paragraph">Don't have an account yet? <Link to="signup" className="paragraph-link">Create one</Link></p>
                 </form>
 
             </div>
