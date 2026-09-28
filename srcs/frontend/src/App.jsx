@@ -14,7 +14,7 @@ export function App() {
     // 1. La vérification initiale au démarrage de l'application
     const verifyUser = async () => {
       try {
-        const response = await axios.get('https://localhost:44443/api/user/profile', {
+        const response = await axios.get('/api/user/profile', {
           withCredentials: true
         });
         if (response.status === 200) {
