@@ -1,0 +1,91 @@
+const db = require('../db/db')
+const bcrypt = require('bcrypt')
+
+exports.getRooms = async (req, res) => {
+    try {
+        const games = await db.any('SELECT name, password, created_by, nb_players, max_players FROM games WHERE status = $1', 'waiting');
+        return (res.status(200).send(games));
+    }
+    catch (error) {
+        console.log(error);
+        return (res.status(500).json({message: "Server error"}));
+    }
+};
+
+exports.createRoom = async (req, res) => {
+    const {password, name, max_players} = req.body;
+    let hashedPassword = '';
+    if (password) {
+        const saltRounds = 10;
+        hashedPassword = await bcrypt.hash(password, saltRounds);
+    }
+	try {
+        var room = await db.oneOrNone('SELECT * FROM games WHERE name = $1', name);
+        if (room) return res.status(400).json({ message: "Room already exists" });
+        room = await db.one('INSERT INTO games VALUES(DEFAULT, $(password), $(name), DEFAULT, DEFAULT, DEFAULT, $(max_players), DEFAULT, $(user)) RETURNING *', {
+			name: name,
+			password: hashedPassword,
+			max_players: max_players,
+			user: req.user.name
+		});
+        await db.none('INSERT INTO users_in_game VALUES(DEFAULT, $(user), $(roomId), $(seat), DEFAULT)', {
+            user: req.user.id,
+            roomId: room.id,
+            seat: 0
+        })
+        return (res.status(201).send(room.id).json({message: 'Room created'}));
+    }
+    catch (error) {
+        console.log(error);
+        return (res.status(500).json({message: error}));
+    }
+};
+
+exports.joinRoom = async (req, res) => {
+    const id = req.params.roomId;
+    try {
+        const room = await db.one('SELECT * FROM games WHERE id = $1', id);
+        const user = await db.oneOrNone('SELECT * FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, req.user.id]);
+        if (user) return (res.status(201).json({message: "Already in room"}));
+        if (room.nb_players >= room.max_players) {
+            return (res.status(409).json({message: "Room is full"}));
+        }
+        if (room.status !== 'waiting') {
+            return (res.status(409).json({message: "Game has started"}));
+        }
+        await db.none('UPDATE games SET nb_players = $1 WHERE id = $2', [room.nb_players + 1, room.id]);
+        await db.none('INSERT INTO users_in_game VALUES(DEFAULT, $(user), $(roomId), $(seat), DEFAULT)', {
+            user: req.user.id,
+            roomId: room.id,
+            seat: room.nb_players + 1,
+        })
+        return (res.status(201).json({message: "Room Joined"}))
+    }
+    catch (error) {
+       if (error.received === 0)
+            return (res.status(404).json({ message: "Room not found" }));
+        return (res.status(500).json({message: error}));
+    }
+};
+
+exports.leaveRoom = async (req, res) => {
+    console.log("leaving room");
+    const id = req.params.roomId;
+    const user = req.user.id;
+    try {
+        const room = await db.one('SELECT * FROM games WHERE id = $1', id);
+        await db.none('DELETE FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, user]);
+        if (room.nb_players == 1) {
+            await db.none('DELETE FROM games WHERE id = $1', id);
+        }
+        else
+            await db.none('UPDATE games set nb_players = $1 WHERE id = $2', [room.nb_players - 1, room.id]);
+        return (res.status(200).json({message: "Left room"}));
+    }
+    catch (error) {
+        console.log(error);
+        if (error.received === 0)
+            return (res.status(404).json({ message: "User not in Room or Room not found" }));
+        return (res.status(500).json({message: error}));
+    }
+}
