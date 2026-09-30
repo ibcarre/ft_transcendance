@@ -112,7 +112,7 @@ Lorsqu'un joueur prend la carte visible au sommet de la défausse :
 
 ## 8. Piocher une carte face cachée
 
-Lorsqu'un joueur prend la première carte face cachée de la pioche, il peut consulter sa valeur puis choisir entre deux actions.
+Lorsqu'un joueur prend la première carte face cachée de la pioche, la carte devient visible par tous les joueurs. Il peut consulter sa valeur puis choisir entre deux actions.
 
 ### 8.1 Conserver la carte piochée
 

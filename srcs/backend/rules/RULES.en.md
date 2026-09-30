@@ -4,7 +4,7 @@
 
 ## Quick summary
 
-- **Players:** 2-8.
+- **Players:** 2-4.
 - **Goal:** finish the game with the **lowest total score**.
 - Each player starts every round with **12 face-down cards arranged as 3 rows x 4 columns** and reveals any **2 cards**.
 - On your turn, either:
@@ -112,7 +112,7 @@ If a player takes the visible top card of the discard pile:
 
 ## 8. Drawing from the draw pile
 
-If a player draws the top face-down card of the draw pile, the player may privately inspect its value and choose between two actions.
+If a player draws the top face-down card from the draw pile, the card becomes visible to all players. The player may check its value and then choose between two actions.
 
 ### 8.1 Keep the drawn card
 
