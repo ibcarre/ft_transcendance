@@ -1,9 +1,17 @@
-const db = require('../db/db')
-const bcrypt = require('bcrypt')
+const db = require('../db/db');
+const pgp = require('pg-promise');
+const {TransactionMode, isolationLevel} = pgp.txMode;
+const bcrypt = require('bcrypt');
+
+const mode = new TransactionMode({
+    tiLevel: isolationLevel.serializable,
+    readOnly: false,
+    deferrable: false
+});
 
 exports.getRooms = async (req, res) => {
     try {
-        const games = await db.any('SELECT name, password, created_by, nb_players, max_players FROM games WHERE status = $1', 'waiting');
+        const games = await db.any('SELECT id, name, password, created_by, nb_players, max_players FROM games WHERE status = $1', 'waiting');
         return (res.status(200).send(games));
     }
     catch (error) {
@@ -13,6 +21,7 @@ exports.getRooms = async (req, res) => {
 };
 
 exports.createRoom = async (req, res) => {
+    console.log("room creation");
     const {password, name, max_players} = req.body;
     let hashedPassword = '';
     if (password) {
@@ -21,7 +30,9 @@ exports.createRoom = async (req, res) => {
     }
 	try {
         var room = await db.oneOrNone('SELECT * FROM games WHERE name = $1', name);
-        if (room) return res.status(400).json({ message: "Room already exists" });
+        if (room) {
+            return res.status(400).json({ message: "A room already has that name" });
+        }
         room = await db.one('INSERT INTO games VALUES(DEFAULT, $(password), $(name), DEFAULT, DEFAULT, DEFAULT, $(max_players), DEFAULT, $(user)) RETURNING *', {
 			name: name,
 			password: hashedPassword,
@@ -33,7 +44,7 @@ exports.createRoom = async (req, res) => {
             roomId: room.id,
             seat: 0
         })
-        return (res.status(201).send(room.id).json({message: 'Room created'}));
+        return (res.status(201).send(room.id));
     }
     catch (error) {
         console.log(error);
@@ -44,16 +55,23 @@ exports.createRoom = async (req, res) => {
 exports.joinRoom = async (req, res) => {
     const id = req.params.roomId;
     try {
-        const room = await db.one('SELECT * FROM games WHERE id = $1', id);
         const user = await db.oneOrNone('SELECT * FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, req.user.id]);
         if (user) return (res.status(201).json({message: "Already in room"}));
-        if (room.nb_players >= room.max_players) {
-            return (res.status(409).json({message: "Room is full"}));
-        }
-        if (room.status !== 'waiting') {
-            return (res.status(409).json({message: "Game has started"}));
-        }
-        await db.none('UPDATE games SET nb_players = $1 WHERE id = $2', [room.nb_players + 1, room.id]);
+        // BEGIN
+        var room;
+        await db.tx(async t => {
+            room = await t.one('SELECT * FROM games WHERE id = $1', id);
+            if (room.nb_players >= room.max_players) { 
+                throw(Error("Full room"));
+            }
+            if (room.status !== 'waiting') {
+                throw(Error("Game started"))
+            }
+            await t.none('UPDATE games SET nb_players = $1 WHERE id = $2', [room.nb_players + 1, room.id]);
+        })
+        .catch(error => {
+            throw(error);
+        });
         await db.none('INSERT INTO users_in_game VALUES(DEFAULT, $(user), $(roomId), $(seat), DEFAULT)', {
             user: req.user.id,
             roomId: room.id,
@@ -62,8 +80,13 @@ exports.joinRoom = async (req, res) => {
         return (res.status(201).json({message: "Room Joined"}))
     }
     catch (error) {
-       if (error.received === 0)
+        if (error.message === "Full room")
+            return (res.status(409).json({message: "Room is full"}));
+        else if (error.message === "Game started")
+            return (res.status(409).json({message: "Game has started"}));
+        else if (error.received === 0)
             return (res.status(404).json({ message: "Room not found" }));
+        console.log(error)
         return (res.status(500).json({message: error}));
     }
 };
