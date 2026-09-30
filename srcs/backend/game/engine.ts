@@ -112,14 +112,7 @@ export function applyAction(oldState: GameState, command: GameCommand):
             break;
 
         default:
-            return {
-                ok: false,
-
-                error: {
-                    code:
-                        ERROR_CODE.UNKNOWN_ACTION,
-                },
-            };
+            return { ok: false, error: { code: ERROR_CODE.UNKNOWN_ACTION } };
     }
     throw new Error("Action not implemented");
 }
