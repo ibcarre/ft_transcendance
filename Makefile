@@ -4,6 +4,10 @@ COMPOSE_DEV = docker compose -f srcs/compose.yml -f srcs/compose.dev.yml
 
 all: up
 
+#
+# Prod
+#
+
 up:
 	${COMPOSE} up --build -d
 
@@ -13,35 +17,120 @@ down:
 logs:
 	${COMPOSE} logs
 
-du: dev
+wlogs:
+	watch n -5 ${COMPOSE} logs
+
+#
+# Dev
+#
+
 dev:
 	${COMPOSE_DEV} up --build -d
 
-dd: dev-down
 dev-down:
 	${COMPOSE_DEV} down
 
-dl: dev-logs
 dev-logs:
-	${COMPOSE} logs
+	${COMPOSE_DEV} logs
+
+dev-wlogs:
+	watch -n 1 ${COMPOSE_DEV} logs
+
+#
+# Services
+#
 
 game-test:
 	docker run --rm -v "./srcs/backend:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npm run game:verify"
 
+#
+# Clean
+#
+
 clean:
 	${COMPOSE} down --remove-orphans
 
+clean-volumes:
+	$(COMPOSE) down --remove-orphans -v
+	$(COMPOSE_DEV) down --remove-orphans -v
+
+clean-images:
+	$(COMPOSE) down --remove-orphans --rmi local
+	$(COMPOSE_DEV) down --remove-orphans --rmi local
+
+dev-clean:
+	${COMPOSE_DEV} down --remove-orphans --rmi local -v
+
 fclean: 
+	${COMPOSE} down --rmi all --volumes --remove-orphans
 	${COMPOSE_DEV} down --rmi all --volumes --remove-orphans
+	-docker volume prune -f
+	-docker image prune -af
 
 re: fclean up
+
+rd: fclean dev-up
+
+#
+# Inspect
+#
 
 inspect:
 	@docker images
 	@echo "\n\e[44;97mVOLUMES:\e[0m"
 	@docker volume ls
 	@echo "\n\e[44;97mPROCESS:\e[0m"
+	@docker ps
+
+dev-inspect:
+	@echo "\n\e[44;97mVOLUMES:\e[0m"
+	@docker volume ls
+	@echo "\n\e[44;97mPROCESS:\e[0m"
 	@docker ps -a
 
+ps:
+	$(COMPOSE) ps
 
-.PHONY: all up down logs dev-up dev-down dev-logs clean fclean re
+dev-ps:
+	$(COMPOSE_DEV) ps -a
+
+help:
+	@echo "\n  \033[1m--- prod\033[0m\n"
+	@echo "    make up          	build + start\n"
+	@echo "    make down        	stop\n"
+	@echo "    make logs 		follow logs\n"
+	@echo "    make wlogs 	  	follow logs watcher 5s\n"
+	@echo "\n  \033[1m--- dev\033[0m\n"
+	@echo "    make dev        build + start (compose.dev)\n"
+	@echo "    make dev-down   stop\n"
+	@echo "    make dev-logs   		follow logs\n"
+	@echo "    make dev-wlogs   	follow logs watcher 1s\n"
+	@echo "\n  \033[1m--- clean\033[0m\n"
+	@echo "    make clean       	only containers\n"
+	@echo "    make clean-volumes   clean + volumes\n"
+	@echo "    make clean-images   	clean + images\n"
+	@echo "    make dev-clean   	containers + volumes + local images\n"
+	@echo "    make fclean   		everything (rmi all + prune)\n"
+	@echo "    make re   			fclean + up\n"
+	@echo "    make rd   			fclean + dev-up\n"
+	@echo "\n  \033[1m--- info\033[0m\n"
+	@echo "    make inspect   		images + volumes + ps\n"
+	@echo "    make dev-inspect   	volumes + ps -a\n"
+	@echo "    make ps   			[prod] ps\n"
+	@echo "    make dev-ps   		[dev] ps -a\n"
+	@echo "\n  \033[1m--- services\033[0m\n"
+	@echo "    make game-test  		tmp container run GE tests\n"
+
+
+
+
+
+
+
+
+.PHONY: all \
+	up down logs wlogs \
+	dev-up dev-down dev-logs dev-wlogs \
+	clean clean-volumes clean-images dev-clean fclean re rd \
+	inspect dev-inspect ps dev-ps \
+	game-test
