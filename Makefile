@@ -120,7 +120,7 @@ help:
 
 
 
-.PHONY: all \
+.PHONY: all help \
 	up down logs \
 	dev-up dev-down dev-logs \
 	clean clean-volumes clean-images dev-clean fclean re rd \
