@@ -64,10 +64,28 @@ services:
       - NW_skyjo
 
 
+  loki-init:
+    image: docker.io/library/busybox:1.37
+    user: "0"
+    command: ["sh", "-c", "mkdir -p /tmp/loki && chown -R 10001:10001 /tmp/loki"]
+    volumes:
+      - loki_storage:/tmp/loki
+
+  loki:
+    container_name: loki_skyjo
+    image: docker.io/grafana/loki:3.7.8
+    volumes:
+      - loki_storage:/tmp/loki
+      - ./infra/loki/loki.yaml:/etc/loki/local-config.yaml:ro
+    networks:
+        - NW_skyjo
+
+
 
 volumes:
   postgres_data:
   grafana_storage:
+  loki_storage:
 
 networks:
   NW_skyjo:
