@@ -159,75 +159,46 @@ export type GameCommand =
 
 
 export type PublicBoardCard =
-	| {
-		status: "hidden";
-	}
-	| {
-		status: "revealed";
-		value: CardValue;
-	}
-	| {
-		status: "removed";
-	};
-
+	| { status: "hidden"; }
+	| {	status: "revealed"; value: CardValue; }
+	| { status: "removed"; };
 
 export interface PublicPlayerState {
     id: PlayerId;
-
     board: PublicBoardCard[];
-
     totalScore: number;
 }
 
+export interface PublicPendingCard {
+	source: CardSource;
+	value: CardValue;
+}
 
 export interface PublicGameState {
     id: GameId;
-
     players: PublicPlayerState[];
-
     phase: Phase;
     turnStage: TurnStage | null;
-
     currentPlayerId: PlayerId | null;
-
     roundNumber: number;
-
     deckCount: number;
     discardTop: CardValue | null;
-
+	pendingCard: PublicPendingCard | null;
     version: number;
 }
 
-
-export interface DirectReply {
-    playerId: PlayerId;
-
-    type: "DRAWN_CARD";
-
-    value: CardValue;
-}
-
-
 export interface GameError {code: ErrorCode;}
-
 
 export interface EngineSuccess {
     ok: true;
-
     state: GameState;
-
     publicState: PublicGameState;
-
-    reply: DirectReply | null;
 }
-
 
 export interface EngineFailure {
     ok: false;
-
     error: GameError;
 }
-
 
 export type ApplyActionResult =
     | EngineSuccess

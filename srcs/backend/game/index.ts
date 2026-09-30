@@ -4,10 +4,10 @@ export {
 } from "./engine";
 
 
-// export {
-//     buildPublicState,
-// } from "./publicState";
-//
+export {
+    buildPublicState,
+} from "./publicState";
+
 
 export {
     ACTION,

@@ -27,6 +27,9 @@ run_test "takeTopCard() tests" \
 run_test "createGame() tests" \
 	"game/test/createGame.test.ts"
 
+run_test "buildPublicState() tests" \
+	"game/test/publicState.test.ts"
+
 printf '\n'
 printf '============================================================\n'
 printf '  All Game Engine tests passed\n'
