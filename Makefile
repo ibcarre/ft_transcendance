@@ -17,9 +17,6 @@ down:
 logs:
 	${COMPOSE} logs
 
-wlogs:
-	watch n -5 ${COMPOSE} logs
-
 #
 # Dev
 #
@@ -32,9 +29,6 @@ dev-down:
 
 dev-logs:
 	${COMPOSE_DEV} logs
-
-dev-wlogs:
-	watch -n 1 ${COMPOSE_DEV} logs
 
 #
 # Services
@@ -69,7 +63,7 @@ fclean:
 
 re: fclean up
 
-rd: fclean dev-up
+rd: fclean dev
 
 #
 # Inspect
@@ -99,12 +93,10 @@ help:
 	@echo "    make up          	build + start\n"
 	@echo "    make down        	stop\n"
 	@echo "    make logs 		follow logs\n"
-	@echo "    make wlogs 	  	follow logs watcher 5s\n"
 	@echo "\n  \033[1m--- dev\033[0m\n"
 	@echo "    make dev        	build + start (compose.dev)\n"
 	@echo "    make dev-down   	stop\n"
 	@echo "    make dev-logs   	follow logs\n"
-	@echo "    make dev-wlogs   	follow logs watcher 1s\n"
 	@echo "\n  \033[1m--- clean\033[0m\n"
 	@echo "    make clean       	only containers\n"
 	@echo "    make clean-volumes  clean + volumes\n"
@@ -129,8 +121,8 @@ help:
 
 
 .PHONY: all \
-	up down logs wlogs \
-	dev-up dev-down dev-logs dev-wlogs \
+	up down logs \
+	dev-up dev-down dev-logs \
 	clean clean-volumes clean-images dev-clean fclean re rd \
 	inspect dev-inspect ps dev-ps \
 	game-test
