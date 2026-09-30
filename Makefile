@@ -88,15 +88,21 @@ ps:
 dev-ps:
 	$(COMPOSE_DEV) ps -a
 
-help:
+help: help-prod help-dev help-clean help-info help-services
+
+help-prod:
 	@echo "\n  \033[1m--- prod\033[0m\n"
 	@echo "    make up          	build + start\n"
 	@echo "    make down        	stop\n"
 	@echo "    make logs 		follow logs\n"
+
+help-dev:
 	@echo "\n  \033[1m--- dev\033[0m\n"
 	@echo "    make dev        	build + start (compose.dev)\n"
 	@echo "    make dev-down   	stop\n"
 	@echo "    make dev-logs   	follow logs\n"
+
+help-clean:
 	@echo "\n  \033[1m--- clean\033[0m\n"
 	@echo "    make clean       	only containers\n"
 	@echo "    make clean-volumes  clean + volumes\n"
@@ -105,19 +111,17 @@ help:
 	@echo "    make fclean   	everything (rmi all + prune)\n"
 	@echo "    make re   		fclean + up\n"
 	@echo "    make rd   		fclean + dev-up\n"
+
+help-info:
 	@echo "\n  \033[1m--- info\033[0m\n"
 	@echo "    make inspect   	images + volumes + ps\n"
 	@echo "    make dev-inspect 	volumes + ps -a\n"
 	@echo "    make ps   		[prod] ps\n"
 	@echo "    make dev-ps   	[dev] ps -a\n"
+
+help-services:
 	@echo "\n  \033[1m--- services\033[0m\n"
 	@echo "    make game-test  	tmp container run GE tests\n"
-
-
-
-
-
-
 
 
 .PHONY: all \
@@ -125,4 +129,5 @@ help:
 	dev-up dev-down dev-logs \
 	clean clean-volumes clean-images dev-clean fclean re rd \
 	inspect dev-inspect ps dev-ps \
-	game-test
+	game-test \
+	help help-prod help-dev help-clean help-info help-services
