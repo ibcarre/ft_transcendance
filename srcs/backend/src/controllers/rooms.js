@@ -2,6 +2,7 @@ const db = require('../db/db');
 const pgp = require('pg-promise');
 const {TransactionMode, isolationLevel} = pgp.txMode;
 const bcrypt = require('bcrypt');
+const {Roomcreated} = require('../socket/namespaces/gamerooms/index');
 
 const mode = new TransactionMode({
     tiLevel: isolationLevel.serializable,
@@ -11,7 +12,7 @@ const mode = new TransactionMode({
 
 exports.getRooms = async (req, res) => {
     try {
-        const games = await db.any('SELECT id, name, password, created_by, nb_players, max_players FROM games WHERE status = $1', 'waiting');
+        const games = await db.any('SELECT id, name, password, created_by, nb_players, max_players, status FROM games');
         return (res.status(200).send(games));
     }
     catch (error) {
@@ -44,6 +45,8 @@ exports.createRoom = async (req, res) => {
             roomId: room.id,
             seat: 0
         })
+        //const createRoomSock = Roomsocket(io);
+        Roomcreated(room.id)
         return (res.status(201).send(room.id));
     }
     catch (error) {
@@ -59,7 +62,7 @@ exports.joinRoom = async (req, res) => {
         if (user) return (res.status(201).json({message: "Already in room"}));
         // BEGIN
         var room;
-        await db.tx(async t => {
+        await db.tx({mode}, async t => {
             room = await t.one('SELECT * FROM games WHERE id = $1', id);
             if (room.nb_players >= room.max_players) { 
                 throw(Error("Full room"));
@@ -96,9 +99,12 @@ exports.leaveRoom = async (req, res) => {
     const id = req.params.roomId;
     const user = req.user.id;
     try {
+        const check = await db.oneOrNone('SELECT * FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, user]);
+        if (!check)
+            return (res.status(409).json({message: "You weren't in the room anyway"}));
         const room = await db.one('SELECT * FROM games WHERE id = $1', id);
         await db.none('DELETE FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, user]);
-        if (room.nb_players == 1) {
+        if (room.nb_players <= 1) {
             await db.none('DELETE FROM games WHERE id = $1', id);
         }
         else
@@ -111,4 +117,10 @@ exports.leaveRoom = async (req, res) => {
             return (res.status(404).json({ message: "User not in Room or Room not found" }));
         return (res.status(500).json({message: error}));
     }
+}
+
+exports.roomId = async (req, res) => {
+    //return joueurs dans la room
+    //nom de la game
+    //son statut
 }
