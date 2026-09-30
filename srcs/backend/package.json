@@ -37,6 +37,7 @@
     "@types/node": "^26.5.0",
     "@types/pg": "^8.23.1",
     "tsx": "^4.23.15",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "dpdm": "^4.3.0"
   }
 }
