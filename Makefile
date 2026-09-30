@@ -130,7 +130,7 @@ help-services:
 
 .PHONY: all \
 	up down logs \
-	dev-up dev-down dev-logs \
+	dev dev-down dev-logs \
 	clean clean-volumes clean-images dev-clean fclean re rd \
 	inspect dev-inspect ps dev-ps \
 	game-test \
