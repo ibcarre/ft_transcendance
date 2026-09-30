@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { LobbyModal } from '../../components/LobbyModal';
+import { RoomList } from '../../components/RoomList'
 import './Lobby.css';
 
 export function Lobby() {
@@ -42,8 +43,7 @@ export function Lobby() {
                 <LobbyModal title="Find a room" onClose={closeModal}>
                     <p>Recherche des parties de Skyjo en cours...</p>
                     <ul>
-                        <li>Partie de Toto (3/4 joueurs)</li>
-                        <li>Partie de Tata (1/4 joueurs)</li>
+                        <RoomList></RoomList>
                     </ul>
                 </LobbyModal>
             )}

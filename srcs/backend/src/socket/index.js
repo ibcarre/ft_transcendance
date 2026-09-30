@@ -1,21 +1,26 @@
 const { Server } = require("socket.io");
 
-function Socket(httpServer){
-    const io = new Server(httpServer, {
+let io;
+const initSocket = (httpServer) => {
+    io = new Server(httpServer, {
     cors: {
       origin: ["https://localhost:44443"],
       credentials: true
     }
   });
-
-    //io.use(socketAuthMiddleware);
-    // Full path to the current directory
-    const listeners = require('./listeners/index');
-    listeners(io);
-    const namespaces = require('./namespaces')
-    namespaces(io);
-    console.log('Socket.io initialized');
-    return io;
+  io.of('/Rooms').on('connection', function () {
+    console.log("user connected");
+  })
 };
 
-module.exports = Socket;
+const getIo = () => {
+  if (!io) {
+    throw new Error('Socket.IO not initialized');
+  }
+  return (io);
+}
+
+module.exports = {
+    initSocket,
+    getIo
+}

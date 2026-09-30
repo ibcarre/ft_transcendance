@@ -2,15 +2,12 @@ const express = require('express');
 const cookieParser = require("cookie-parser");
 const clientProm = require("@prometheus-io/client");
 const Userroutes = require('./routes/User');
+const rooms = require('./routes/rooms');
 const api = require('./routes/api');
 const cors = require("cors");
 
 const app = express();
-
-app.use(cors({
-    origin:"*",
-    methods:['GET']
-}));
+app.use(cors());
 
 // metric need to be declared before limite to avoid 429
 
@@ -33,6 +30,7 @@ app.use(cookieParser());
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+
 app.use((req, res, next) => {
     res.on('finish', () => {
         const path = req.route?.path ? req.baseUrl + req.route.path : req.path;
@@ -48,5 +46,6 @@ app.use((req, res, next) => {
 //Routes
 app.use('/user', Userroutes);
 app.use('/v1', api);
+app.use('/rooms', rooms);
 
 module.exports = app;

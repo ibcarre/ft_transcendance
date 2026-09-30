@@ -10,7 +10,7 @@ CREATE TABLE users (
 CREATE TABLE games (
 	id			uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	password	text,
-	name		text NOT NULL,
+	name		text NOT NULL UNIQUE,
 	status		text NOT NULL DEFAULT 'waiting',
 	CONSTRAINT	chk_status CHECK (status IN ('playing', 'finished', 'cancelled', 'waiting')),
 	goal		int NOT NULL DEFAULT 100,
@@ -20,7 +20,7 @@ CREATE TABLE games (
 	max_players	int NOT NULL DEFAULT 4,
 	CONSTRAINT	max_players CHECK (max_players >= 2 AND max_players <= 4),
 	created_at	timestamptz NOT NULL DEFAULT now(),
-	created_by	uuid NOT NULL REFERENCES users(id)
+	created_by	text NOT NULL REFERENCES users(name)
 );
 
 CREATE TABLE users_in_game (
