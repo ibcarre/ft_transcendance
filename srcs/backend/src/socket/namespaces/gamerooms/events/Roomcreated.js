@@ -1,5 +1,9 @@
-const {getIo} = require('../../../../socket/index');
 
-exports.Roomcreated = (Room) => {
-    getIo().of('/Rooms').emit("createRoom", Room);
+// module.exports = function(io) {
+//     io.of('/Rooms')
+// }
+//const socket =
+
+module.exports = function(socket) {
+    console.log("Socket");
 }

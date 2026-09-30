@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { LobbyModal } from '../../components/LobbyModal';
-import { FindRoom } from '../../components/FindRoom';
+import { RoomList } from '../../components/RoomList'
 import './Lobby.css';
 
 export function Lobby() {

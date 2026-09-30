@@ -1,78 +1,36 @@
 import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
-import { Room } from "./Room";
 
 export function RoomList() {
     const [rooms, setRooms] = useState([]);
-    const [isAuth, setAuth] = useState(true);
-    const navigate = useNavigate();
 
+    // fetch initial state
     useEffect(() => {
         const socket = io("/Rooms", {
-            autoConnect: false,
+            autoConnect: false
         });
 
         socket.on("createRoom", (arg) => {
-            setRooms((prevRooms) => [arg, ...prevRooms]);
-        });
-
-        socket.on("connect_error", (error) => {
-            console.log("Socket CONNECT ERROR:", error);
-            setAuth(false);
+            setRooms(arg);
         });
 
         async function fetchData() {
-            try {
-                const res = await fetch("/api/rooms/getRooms");
+            const res = await fetch("/api/rooms/getRooms");
+            const data = await res.json();
 
-                if (!res.ok) {
-                    setAuth(false);
-                    return;
-                }
-
-                const data = await res.json();
-                setRooms(data);
-
-                socket.connect();
-            } catch (error) {
-                console.error("Erreur lors de la récupération des rooms:", error);
-                setAuth(false);
-            }
+            setRooms("data");
+            socket.connect();
         }
 
         fetchData();
 
         return () => {
             socket.off("createRoom");
-            socket.off("connect_error");
             socket.disconnect();
         };
     }, []);
-
-    useEffect(() => {
-        if (!isAuth) {
-            navigate("/signup");
-        }
-    }, [isAuth, navigate]);
-
-    if (!isAuth) {
-        return null;
-    }
-
+    //pour chaque getRooms tu crees les rooms avec comme arg (id, GameroomName, password, created by, nb_players, max_players
     return (
-        <li>
-            {rooms.map((room) => (
-                <Room
-                    key={room.id}
-                    id={room.id}
-                    name={room.name}
-                    isPassProt={room.ispass}
-                    created_by={room.created_by}
-                    nb_players={room.nb_players}
-                    max_players={room.max_players}
-                />
-            ))}
-        </li>
+        <li>{rooms}</li>
     );
 }
