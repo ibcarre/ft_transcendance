@@ -80,7 +80,7 @@ Add the values of each player's two initially revealed cards. The player with th
 
 Example: a player revealing `12` and `-2` has a starting sum of `10`; a player revealing `4` and `2` has a starting sum of `6`. The first player starts because `10 > 6`.
 
-For this project, a tie for the highest initial sum is resolved by the server-controlled **rock-paper-scissors tie-break procedure** defined for the game.
+If several players are tied for the highest initial sum, the server randomly selects **exactly one player from those tied players**. Players with a lower initial sum are not included in that random selection. The selected player starts the first round.
 
 ### Later rounds
 
@@ -227,9 +227,13 @@ If the draw pile is empty when a draw is required:
 
 The visible top discard card is never included in that reshuffle.
 
-### 14.2 Initial reveal timeout
+### 14.2 Tie when choosing the first player
 
-If a player does not choose their two initial cards before the initial-reveal timer expires, the server randomly selects and reveals **two valid face-down cards** from that player's tableau.
+Once every player has revealed exactly two cards at the beginning of the first round, the two values revealed by each player are added together.
+
+If one player has the unique highest sum, that player starts the round.
+
+If several players share the highest sum, the server randomly selects **exactly one player from those tied players**. Players with a lower sum are excluded from that random selection.
 
 ### 14.3 Turn timeout
 
@@ -269,10 +273,13 @@ The following properties should remain true throughout the game engine:
 - A face-down tableau card is never inspected before the player commits to replacing it.
 - Every card discarded or removed from a tableau is face up on the discard pile.
 - A completed identical column is resolved before the active turn or scoring resolution is considered complete.
-- Once the final-turn phase begins, each remaining active player receives at most one final turn.
+- Once the final-turn phase begins, each remaining active player receives one final turn.
 - All remaining face-down cards are revealed before the round is scored.
 - All complete identical columns discovered during the final reveal are removed before scores are summed.
 - Only the finisher can receive the round-score doubling penalty.
 - The finisher penalty never doubles a zero or negative score.
 - Cumulative scores change only when a round is scored.
 - The normal 100-point game-end condition is evaluated only after round scores have been added.
+- During the initial reveal, every player reveals exactly two tableau cards and cannot reveal a third one.
+- The game remains in the initial-reveal phase until every player has revealed exactly two cards.
+- Once all players have revealed two cards, the player with the highest initial sum starts the first round; if several players share that highest sum, exactly one of those tied players is selected randomly.

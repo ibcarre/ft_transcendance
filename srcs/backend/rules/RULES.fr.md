@@ -80,7 +80,7 @@ Additionner les valeurs des deux cartes initialement révélées par chaque joue
 
 Exemple : un joueur révélant `12` et `-2` obtient une somme de `10`; un joueur révélant `4` et `2` obtient `6`. Le premier commence car `10 > 6`.
 
-Pour notre projet, une égalité sur la plus grande somme initiale est résolue par la procédure serveur de départage **pierre-feuille-ciseaux** définie pour la partie.
+Si plusieurs joueurs sont à égalité pour la plus grande somme initiale, le serveur sélectionne aléatoirement **un seul joueur parmi ces joueurs ex aequo**. Les joueurs dont la somme initiale est inférieure ne participent pas à ce tirage. Le joueur sélectionné commence la première manche.
 
 ### Manches suivantes
 
@@ -225,9 +225,13 @@ Si la pioche est vide alors qu'une carte doit être piochée :
 
 La carte visible située au sommet de la défausse n'est jamais incluse dans ce remélange.
 
-### 14.2 Expiration du délai de révélation initiale
+### 14.2 Égalité lors de la détermination du premier joueur
 
-Si un joueur n'a pas choisi ses deux cartes initiales avant l'expiration du délai prévu, le serveur sélectionne aléatoirement et révèle **deux cartes face cachée valides** de son tableau.
+Une fois que tous les joueurs ont révélé exactement deux cartes au début de la première manche, leurs deux valeurs sont additionnées.
+
+Si une seule somme est la plus élevée, le joueur correspondant commence la manche.
+
+Si plusieurs joueurs partagent la plus grande somme, le serveur choisit aléatoirement **un seul joueur parmi ces seuls joueurs ex æquo**. Les joueurs ayant une somme inférieure sont exclus de ce tirage.
 
 ### 14.3 Déconnexion définitive et abandon
 
@@ -245,10 +249,13 @@ Les propriétés suivantes doivent rester vraies dans le moteur de jeu :
 - Une carte face cachée du tableau n'est jamais consultée avant que le joueur se soit engagé à la remplacer.
 - Toute carte défaussée ou retirée d'un tableau est placée face visible sur la défausse.
 - Une colonne identique complète est résolue avant que le tour actif ou le décompte ne soit considéré comme terminé.
-- Une fois la phase des derniers tours commencée, chaque autre joueur reçoit au maximum un dernier tour.
+- Une fois la phase des derniers tours commencée, chaque autre joueur reçoit un dernier tour.
 - Toutes les cartes encore cachées sont révélées avant le décompte de la manche.
 - Toutes les colonnes identiques complètes découvertes lors de cette révélation finale sont retirées avant le calcul des scores.
 - Seul le finisseur peut recevoir la pénalité de doublement du score de manche.
 - Cette pénalité ne double jamais un score nul.
 - Les scores cumulés ne changent qu'au moment du décompte d'une manche.
 - La condition normale de fin de partie à 100 points est évaluée uniquement après l'ajout des scores de manche.
+- Pendant la révélation initiale, chaque joueur révèle exactement deux cartes de son tableau et ne peut pas en révéler une troisième.
+- La partie reste dans la phase de révélation initiale tant que tous les joueurs n'ont pas encore révélé leurs deux cartes.
+- Lorsque tous les joueurs ont révélé deux cartes, le joueur ayant la plus grande somme initiale commence la première manche ; en cas d'égalité sur cette somme maximale, un seul joueur est choisi aléatoirement parmi les joueurs ex aequo.
