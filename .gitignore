@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 .last_user_id
 .env
+=======
+*/.env
+>>>>>>> dev
 node_modules/
 tmp.*
 to-do*

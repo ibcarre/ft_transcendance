@@ -4,9 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run game:verify",
     "build": "node index.js",
-    "dev": "npx tsx server_test.ts"
+    "dev": "tsx server_test.ts",
+    "game:check": "tsc -p tsconfig.game.json",
+    "game:test": "./scripts/game-engine-tests.sh",
+    "game:test:watch": "tsx --test --watch game/test/*.test.ts",
+    "game:verify": "npm run game:check && npm run game:test"
   },
   "keywords": [],
   "author": "",
@@ -21,11 +25,14 @@
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.23.0",
     "pg-promise": "^12.7.1",
+    "serve-index": "^1.9.2",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2"
   },
   "devDependencies": {
     "@types/node": "^26.5.0",
-    "@types/pg": "^8.23.1"
+    "@types/pg": "^8.23.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
   }
 }
