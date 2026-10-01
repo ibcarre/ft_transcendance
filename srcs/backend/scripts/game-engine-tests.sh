@@ -30,6 +30,9 @@ run_test "createGame() tests" \
 run_test "buildPublicState() tests" \
 	"game/test/publicState.test.ts"
 
+run_test "REVEAL_INITIAL_CARD tests" \
+	"game/test/revealInitialCard.test.ts"
+
 printf '\n'
 printf '============================================================\n'
 printf '  All Game Engine tests passed\n'
