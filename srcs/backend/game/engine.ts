@@ -1,26 +1,31 @@
 import {
 	ACTION,
 	BOARD_SIZE,
+	CARD_SOURCE,
 	ERROR_CODE,
 	MAX_PLAYERS,
 	MIN_PLAYERS,
 	PHASE,
-	TURN_STAGE
+	TURN_STAGE,
 } from "./constants";
 
 import type {
 	ApplyActionResult,
 	BoardSlot,
 	CreateGameInput,
+	DrawDeckCommand,
+	DrawDiscardCommand,
+	EngineSuccess,
 	EngineFailure,
 	GameCommand,
 	GameState,
 	PlayerId,
 	PlayerState,
-	RevealInitialCardCommand
+	RevealInitialCardCommand,
 } from "./types";
 
 import type {
+	ActionType,
 	ErrorCode,
 } from "./constants";
 
@@ -34,12 +39,49 @@ import {
 	takeTopCard,
 } from "./deck";
 
+import {
+	getAllowedActionTypes,
+} from "./stateMachine";
+
 
 
 
 
 function fail(code: ErrorCode): EngineFailure {
 	return { ok: false, error: { code } };
+}
+
+function succeed(state: GameState): EngineSuccess {
+	return { ok: true, state, publicState: buildPublicState(state) };
+}
+
+function validateCurrentPlayerAction(state: GameState,
+									 playerId: PlayerId,
+									 actionType: ActionType):
+									EngineFailure | null {
+	if (state.phase === PHASE.GAME_OVER) {
+		return fail(ERROR_CODE.GAME_OVER);
+	}
+	if (!getAllowedActionTypes(state).includes(actionType)) {
+		return fail(ERROR_CODE.ACTION_NOT_ALLOWED);
+	}
+	const playerExists = state.players.some((player) => player.id === playerId);
+	if (!playerExists) {
+		return fail(ERROR_CODE.PLAYER_NOT_FOUND);
+	}
+	if (state.currentPlayerId === null) {
+		throw new Error("Invalid GameState: PLAYING requires a current player");
+	}
+	const currentPlayerExists =
+		state.players.some((player) => player.id === state.currentPlayerId);
+	if (!currentPlayerExists) {
+		throw new Error("Invalid GameState: currentPlayerId doesn't reference \
+a player");
+	}
+	if (state.currentPlayerId !== playerId) {
+		return fail(ERROR_CODE.NOT_YOUR_TURN);
+	}
+	return null;
 }
 
 function countRevealedCards(player: PlayerState): number {
@@ -154,6 +196,7 @@ reveal");
 		state.phase = PHASE.PLAYING;
 		state.turnStage = TURN_STAGE.WAITING_FOR_DRAW;
 	}
+	return succeed(state);
 	return { ok: true, state, publicState: buildPublicState(state) };
 }
 
