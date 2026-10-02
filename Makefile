@@ -89,8 +89,11 @@ dev-inspect:
 ps:
 	$(COMPOSE) ps
 
+color-ps:
+	./tools/dps.sh
+
 watch-psa:
-	watch -n 1 $(COMPOSE_DEV) ps -a
+	watch -c -n 1 ./tools/dps.sh
 
 dev-ps:
 	$(COMPOSE_DEV) ps -a
