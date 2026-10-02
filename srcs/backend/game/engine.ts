@@ -74,7 +74,7 @@ function getInitialRevealSum(player: PlayerState): number {
 	}
 	if (revealCount !== 2) {
 		throw new Error("Invalid GameState: initial reveal sum requires \
-exactly ywo revealed cards");
+exactly two revealed cards");
 	}
 	return sum;
 }
