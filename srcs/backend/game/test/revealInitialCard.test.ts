@@ -214,7 +214,7 @@ card", () => {
 	assert.equal(state.version, 2);
 });
 
-test("REVEAL_INITIAL_CARD is rejected after INITIAL_REVEALhas finished", () => {
+test("REVEAL_INITIAL_CARD is rejected after INITIAL_REVEAL has finished", () => {
 	let state = createTestGame();
 	state = revealSuccessfully(state, "user-1", 0);
 	state = revealSuccessfully(state, "user-1", 1);
