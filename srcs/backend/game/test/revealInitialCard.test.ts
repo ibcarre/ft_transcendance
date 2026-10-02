@@ -277,7 +277,7 @@ test("the highest initial sum is selected correctly when all sums are negative",
 	let state = createTestGame();
 	setBoardCardValue(state, "user-1", 0, -2);
 	setBoardCardValue(state, "user-1", 1, -2);
-	setBoardCardValue(state, "user-2", 1, -2);
+	setBoardCardValue(state, "user-2", 0, -2);
 	setBoardCardValue(state, "user-2", 1, -1);
 	state = revealSuccessfully(state, "user-1", 0);
 	state = revealSuccessfully(state, "user-1", 1);
