@@ -84,6 +84,26 @@ a player");
 	return null;
 }
 
+function assertNoPendingCard(state: GameState): void {
+	if (state.pendingCard !== null || state.pendingCardSource !== null) {
+		throw new Error("Invalid GameState: WAITING_FOR_DRAW requires no \
+pending card");
+	}
+}
+
+function refillDrawPileIfNeeded(state: GameState, random: () => number): void {
+	if (state.deck.length > 0) {
+		return;
+	}
+	if (state.discardPile.length < 2) {
+		throw new Error("Invalid GameState: can't refill the draw pile from a \
+too small discard pile");
+	}
+	const topDiscard = takeTopCard(state.discardPile);
+	state.deck = shuffleDeck(state.discardPile, random);
+	state.discardPile = [topDiscard];
+}
+
 function countRevealedCards(player: PlayerState): number {
 	let count = 0;
 
@@ -197,7 +217,42 @@ reveal");
 		state.turnStage = TURN_STAGE.WAITING_FOR_DRAW;
 	}
 	return succeed(state);
-	return { ok: true, state, publicState: buildPublicState(state) };
+}
+
+function applyDrawDeck(state: GameState,
+					   command: DrawDeckCommand,
+					   random: () => number): ApplyActionResult {
+	const failure =
+		validateCurrentPlayerAction(state, command.playerId, ACTION.DRAW_DECK);
+	if (failure !== null) {
+		return failure;
+	}
+	assertNoPendingCard(state);
+	refillDrawPileIfNeeded(state, random);
+	state.pendingCard = takeTopCard(state.deck);
+	state.pendingCardSource = CARD_SOURCE.DECK;
+	state.turnStage = TURN_STAGE.DRAWN_FROM_DECK;
+	state.version++;
+	return succeed(state);
+}
+
+function applyDrawDiscard(state: GameState, command: DrawDiscardCommand):
+	ApplyActionResult {
+	const failure = validateCurrentPlayerAction(state, command.playerId,
+												ACTION.DRAW_DISCARD);
+	if (failure !== null) {
+		return failure;
+	}
+	assertNoPendingCard(state);
+	if (state.discardPile.length === 0) {
+		throw new Error("Invalid GameState: can't draw from an empty discard \
+pile");
+	}
+	state.pendingCard = takeTopCard(state.discardPile);
+	state.pendingCardSource = CARD_SOURCE.DISCARD;
+	state.turnStage = TURN_STAGE.MUST_SWAP_DISCARD;
+	state.version++;
+	return succeed(state);
 }
 
 export function createGame(input: CreateGameInput,
@@ -270,7 +325,9 @@ export function applyAction(oldState: GameState,
 		case ACTION.REVEAL_INITIAL_CARD:
 			return applyRevealInitialCard(state, command, random);
 		case ACTION.DRAW_DECK:
+			return applyDrawDeck(state, command, random);
 		case ACTION.DRAW_DISCARD:
+			return applyDrawDiscard(state, command);
 		case ACTION.SWAP_CARD:
 		case ACTION.DISCARD_DRAWN_CARD:
 		case ACTION.REVEAL_CARD:
