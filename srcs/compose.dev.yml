@@ -27,10 +27,6 @@ services:
       - ./infra/grafana/provisioning:/etc/grafana/provisioning
       - ./infra/grafana/dashboards:/var/lib/grafana/dashboards
 
-  loki:
-    ports:
-      - "3100:3100"
-  
   alloy:
     ports:
       - "12345:12345"
