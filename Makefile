@@ -61,6 +61,10 @@ fclean:
 	-docker volume prune -f
 	-docker image prune -af
 
+rl: clean up
+
+dev-rl: dev-clean dev
+
 re: fclean up
 
 rd: fclean dev
@@ -84,6 +88,9 @@ dev-inspect:
 
 ps:
 	$(COMPOSE) ps
+
+watch-psa:
+	watch -n 1 $(COMPOSE_DEV) ps -a
 
 dev-ps:
 	$(COMPOSE_DEV) ps -a
@@ -114,13 +121,15 @@ help-clean:
 	@echo "    make dev-clean   	containers + volumes + local images\n"
 	@echo "    make fclean   	everything (rmi all + prune)\n"
 	@echo "    make re   		fclean + up\n"
-	@echo "    make rd   		fclean + dev-up\n"
+	@echo "    make rl   		clean + up\n"
+	@echo "    make drl		   	clean + dev-up\n"
 
 help-info:
 	@echo "\n  \033[1m--- info\033[0m\n"
 	@echo "    make inspect   	images + volumes + ps\n"
 	@echo "    make dev-inspect 	volumes + ps -a\n"
 	@echo "    make ps   		[prod] ps\n"
+	@echo "    make watch-psa   [dev] watch -n 1 ps -a\n"
 	@echo "    make dev-ps   	[dev] ps -a\n"
 
 help-services:
