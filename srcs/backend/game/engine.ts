@@ -43,6 +43,9 @@ import {
 	getAllowedActionTypes,
 } from "./stateMachine";
 
+import {
+	isValidBoardPosition,
+} from "./board";
 
 
 
@@ -189,9 +192,7 @@ function applyRevealInitialCard(state: GameState,
 	if (player === undefined) {
 		return fail(ERROR_CODE.PLAYER_NOT_FOUND);
 	}
-	if (!Number.isInteger(command.position)
-		|| command.position < 0
-		|| command.position >= BOARD_SIZE) {
+	if (!isValidBoardPosition(command.position)) {
 		return fail(ERROR_CODE.INVALID_POSITION);
 	}
 	if (countRevealedCards(player) >= 2) {

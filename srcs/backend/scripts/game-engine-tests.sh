@@ -24,6 +24,9 @@ run_test "shuffleDeck() tests" \
 run_test "takeTopCard() tests" \
 	"game/test/takeTopCard.test.ts"
 
+run_test "board / column resolution tests" \
+	"game/test/board.test.ts"
+
 run_test "createGame() tests" \
 	"game/test/createGame.test.ts"
 
