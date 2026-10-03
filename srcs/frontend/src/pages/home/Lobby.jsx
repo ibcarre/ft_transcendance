@@ -33,17 +33,14 @@ export function Lobby() {
 
             {modalType === 'create' && (
                 <LobbyModal title="Create a room" onClose={closeModal}>
-                    <FindRoom />
+                    <p> Choisis le nombre de joueurs et définis un mot de passe pour ta partie de Skyjo.</p>
+                    <button>Créer la partie</button>
                 </LobbyModal>
             )}
 
             {modalType === 'find' && (
                 <LobbyModal title="Find a room" onClose={closeModal}>
-                    <p>Recherche des parties de Skyjo en cours...</p>
-                    <ul>
-                        <li>Partie de Toto (3/4 joueurs)</li>
-                        <li>Partie de Tata (1/4 joueurs)</li>
-                    </ul>
+                    <FindRoom />
                 </LobbyModal>
             )}
 
