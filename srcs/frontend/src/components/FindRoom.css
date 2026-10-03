@@ -1,0 +1,95 @@
+.find-content {
+    display: flex;
+    flex-direction: row;
+    width: 750px;
+    height: 500px;
+    gap: 25px;
+    /**/
+}
+
+.rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    flex: 1;
+    /* Prend tout l'espace restant à gauche */
+    overflow-x: auto;
+    /* Permet de scroller s'il y a plus de 4 parties */
+    padding-right: 10px;
+    padding-left: 10px;
+    /**/
+}
+
+.room-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    max-height: 200px;
+}
+
+.room-card:hover {
+    border-color: #94a3b8;
+    background-color: #f1f5f9;
+}
+
+.room-card.selected {
+    border-color: #3b82f6;
+    background-color: #e0f2fe;
+}
+
+.room-card p {
+    margin: 4px 0;
+    font-weight: 700;
+    color: #1e293b;
+    text-align: center;
+}
+
+.password-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.password-section label {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 18px;
+}
+
+.password-section input {
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    font-size: 15px;
+    transition: border-color 0.2s;
+}
+
+.password-section input:focus {
+    border-color: #3b82f6;
+}
+
+.join-button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 360px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.join-button:hover {
+    background-color: #2563eb;
+    transform: translateY(-2px);
+}
