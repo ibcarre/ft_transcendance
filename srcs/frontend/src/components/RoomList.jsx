@@ -1,44 +1,78 @@
 import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router';
-
+import { useNavigate } from "react-router";
+import { Room } from "./Room";
 
 export function RoomList() {
-    const navigate = useNavigate();
     const [rooms, setRooms] = useState([]);
-    
-    // fetch initial state
+    const [isAuth, setAuth] = useState(true);
+    const navigate = useNavigate();
+
     useEffect(() => {
         const socket = io("/Rooms", {
-            autoConnect: false
+            autoConnect: false,
         });
 
         socket.on("createRoom", (arg) => {
-            setRooms(arg);
+            setRooms((prevRooms) => [arg, ...prevRooms]);
         });
 
-        socket.on('disconnect', function(){
-            setRooms("disconnect")
-            navigate('/');
+        socket.on("connect_error", (error) => {
+            console.log("Socket CONNECT ERROR:", error);
+            setAuth(false);
         });
 
         async function fetchData() {
-            const res = await fetch("/api/rooms/getRooms");
-            const data = await res.json();
+            try {
+                const res = await fetch("/api/rooms/getRooms");
 
-            setRooms("data");
-            socket.connect();
+                if (!res.ok) {
+                    setAuth(false);
+                    return;
+                }
+
+                const data = await res.json();
+                setRooms(data);
+
+                socket.connect();
+            } catch (error) {
+                console.error("Erreur lors de la récupération des rooms:", error);
+                setAuth(false);
+            }
         }
 
         fetchData();
 
         return () => {
             socket.off("createRoom");
+            socket.off("connect_error");
             socket.disconnect();
         };
     }, []);
-    //pour chaque getRooms tu crees les rooms avec comme arg (id, GameroomName, password, created by, nb_players, max_players
+
+    useEffect(() => {
+        if (!isAuth) {
+            navigate("/signup");
+        }
+    }, [isAuth, navigate]);
+
+    if (!isAuth) {
+        return null;
+    }
+
     return (
-        <li>{rooms}</li>
+        <li>
+            {rooms.map((room) => (
+                <Room
+                    key={room.id}
+                    id={room.id}
+                    name={room.name}
+                    isPassProt={room.ispass}
+                    created_by={room.created_by}
+                    nb_players={room.nb_players}
+                    max_players={room.max_players}
+                />
+            ))}
+        </li>
     );
 }

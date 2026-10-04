@@ -10,9 +10,10 @@ CREATE TABLE users (
 CREATE TABLE games (
 	id			uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	password	text,
+	ispass		int,
 	name		text NOT NULL UNIQUE,
-	status		text NOT NULL DEFAULT 'waiting',
-	CONSTRAINT	chk_status CHECK (status IN ('playing', 'finished', 'cancelled', 'waiting')),
+	status		text NOT NULL DEFAULT 'pending',
+	CONSTRAINT	chk_status CHECK (status IN ('playing', 'finished', 'cancelled', 'pending')),
 	goal		int NOT NULL DEFAULT 100,
 	CONSTRAINT	chk_goalLimit CHECK (goal >= 50 AND goal <= 1000),
 	nb_players	int NOT NULL DEFAULT 1,

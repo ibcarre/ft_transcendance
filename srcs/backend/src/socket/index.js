@@ -14,6 +14,14 @@ const initSocket = (httpServer) => {
   io.on("new_namespace", (namespace) => {
     namespace.use(checkAuth);
   });
+  // io.on("disconnect", (socket) => {
+  //   console.log("socket disconnected");
+  //   socket.on("disconnect", (reason) => {
+  //     console.log(reason);
+  //     if (reason == "server namespace disconnect")
+  //       socket.emit('not_authentified')
+  //   });
+  // })
   gameRoomsinit(io);
 };
 
