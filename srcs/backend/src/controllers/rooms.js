@@ -3,6 +3,8 @@ const pgp = require('pg-promise');
 const {TransactionMode, isolationLevel} = pgp.txMode;
 const bcrypt = require('bcrypt');
 const {Roomcreated} = require('../socket/namespaces/gamerooms/events/Roomcreated');
+const {playerJoined} = require('../socket/namespaces/gamerooms/events/playerJoined');
+
 
 const mode = new TransactionMode({
     tiLevel: isolationLevel.serializable,
@@ -73,7 +75,7 @@ exports.joinRoom = async (req, res) => {
             if (room.nb_players >= room.max_players) { 
                 throw(Error("Full room"));
             }
-            if (room.status !== 'waiting') {
+            if (room.status !== 'pending') {
                 throw(Error("Game started"))
             }
             await t.none('UPDATE games SET nb_players = $1 WHERE id = $2', [room.nb_players + 1, room.id]);
@@ -84,8 +86,9 @@ exports.joinRoom = async (req, res) => {
         await db.none('INSERT INTO users_in_game VALUES(DEFAULT, $(user), $(roomId), $(seat), DEFAULT)', {
             user: req.user.id,
             roomId: room.id,
-            seat: room.nb_players + 1,
+            seat: room.nb_players, //seat indexe a 0 alors que nb_players indexe a 1
         })
+        playerJoined(room.nb_players + 1)
         return (res.status(201).json({message: "Room Joined"}))
     }
     catch (error) {
