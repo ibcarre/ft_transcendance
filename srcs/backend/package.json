@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run game:verify",
-    "build": "node ./src/index.js",
+    "build": "node ./src/./src/index.js",
     "dev": "tsx server_test.ts",
     "game:check": "tsc -p tsconfig.game.json",
     "game:test": "./scripts/game-engine-tests.sh",
@@ -38,6 +38,7 @@
     "@types/pg": "^8.23.1",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
+    "dpdm": "^4.3.0",
     "dpdm": "^4.3.0"
   }
 }
