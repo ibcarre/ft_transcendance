@@ -16,7 +16,7 @@
 
 .modal-content {
   position: absolute;
-  top: 40%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   line-height: 1.4;
@@ -25,6 +25,12 @@
   border-radius: 3px;
   width: fit-content;
   height: fit-content;
-  max-width: 600px;
   min-width: 300px;
+}
+
+.modal-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }

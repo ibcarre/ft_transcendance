@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { LobbyModal } from '../../components/LobbyModal';
 import { FindRoom } from '../../components/FindRoom';
+import { CreateRoom } from '../../components/CreateRoom';
 import './Lobby.css';
 
 export function Lobby() {
@@ -13,7 +14,7 @@ export function Lobby() {
 
             <header className="lobby-header">
                 <h1>SKYJO</h1>
-                <h2>Profil</h2>
+                <h2>Menu</h2>
             </header>
 
             <div className="lobby-wrapper">
@@ -33,7 +34,7 @@ export function Lobby() {
 
             {modalType === 'create' && (
                 <LobbyModal title="Create a room" onClose={closeModal}>
-                    <FindRoom />
+                    <CreateRoom />
                 </LobbyModal>
             )}
 
@@ -48,8 +49,7 @@ export function Lobby() {
 
             {modalType === 'offline' && (
                 <LobbyModal title="Play offline" onClose={closeModal}>
-                    <p>Combien de bots veux-tu affronter ?</p>
-                    <input type="number" min="1" max="7" />
+                    <p>COMING SOON</p>
                 </LobbyModal>
             )}
 
