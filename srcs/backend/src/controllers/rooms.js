@@ -2,7 +2,7 @@ const db = require('../db/db');
 const pgp = require('pg-promise');
 const {TransactionMode, isolationLevel} = pgp.txMode;
 const bcrypt = require('bcrypt');
-const {Roomcreated} = require('../socket/namespaces/gamerooms/index');
+const {Roomcreated} = require('../socket/namespaces/gamerooms/events/Roomcreated');
 
 const mode = new TransactionMode({
     tiLevel: isolationLevel.serializable,
