@@ -89,7 +89,7 @@ services:
 
   alloy:
     container_name: alloy_skyjo
-    image: docker.io/grafana/alloy:v1.20.1 #-distroless
+    image: docker.io/grafana/alloy:v1.20.1-distroless
     volumes:
       - ./infra/alloy:/etc/alloy:ro
       - ${SOCKET}:/var/run/docker.sock:ro
