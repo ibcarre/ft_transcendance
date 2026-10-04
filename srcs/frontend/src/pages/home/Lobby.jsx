@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LobbyModal } from '../../components/LobbyModal';
+import { Modal } from '../../components/Modal';
 import { FindRoom } from '../../components/FindRoom';
 import { CreateRoom } from '../../components/CreateRoom';
 import './Lobby.css';
@@ -33,21 +33,21 @@ export function Lobby() {
             </div>
 
             {modalType === 'create' && (
-                <LobbyModal title="Create a room" onClose={closeModal}>
+                <Modal title="Create a room" onClose={closeModal}>
                     <CreateRoom />
-                </LobbyModal>
+                </Modal>
             )}
 
             {modalType === 'find' && (
-                <LobbyModal title="Find a room" onClose={closeModal}>
+                <Modal title="Find a room" onClose={closeModal}>
                     <FindRoom />
-                </LobbyModal>
+                </Modal>
             )}
 
             {modalType === 'offline' && (
-                <LobbyModal title="Play offline" onClose={closeModal}>
+                <Modal title="Play offline" onClose={closeModal}>
                     <p>COMING SOON</p>
-                </LobbyModal>
+                </Modal>
             )}
 
         </div>

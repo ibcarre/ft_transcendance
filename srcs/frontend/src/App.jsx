@@ -64,7 +64,7 @@ export function App() {
         <Route index element={isAuth ? <Navigate replace to="/lobby" /> : <SignIn />} />
         <Route path="signup" element={isAuth ? <Navigate replace to="/lobby" /> : <SignUp />} />
         <Route path="lobby" element={isAuth ? <Lobby /> : <Navigate replace to="/" />} />
-        <Route path="profile" element={<Profile />} />
+        <Route path="profile" element={<Profile />} ></Route>
       </Routes>
     </div>
   );
