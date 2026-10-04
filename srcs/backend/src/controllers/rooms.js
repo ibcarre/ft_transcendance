@@ -12,7 +12,7 @@ const mode = new TransactionMode({
 
 exports.getRooms = async (req, res) => {
     try {
-        const games = await db.any('SELECT id, name, password, created_by, nb_players, max_players, status FROM games');
+        const games = await db.any('SELECT id, name, ispass, created_by, nb_players, max_players FROM games WHERE status = $1', 'pending');
         return (res.status(200).send(games));
     }
     catch (error) {
@@ -23,9 +23,11 @@ exports.getRooms = async (req, res) => {
 
 exports.createRoom = async (req, res) => {
     console.log("room creation");
+    let ispass = 0;
     const {password, name, max_players} = req.body;
     let hashedPassword = '';
     if (password) {
+        ispass = 1;
         const saltRounds = 10;
         hashedPassword = await bcrypt.hash(password, saltRounds);
     }
@@ -34,9 +36,10 @@ exports.createRoom = async (req, res) => {
         if (room) {
             return res.status(400).json({ message: "A room already has that name" });
         }
-        room = await db.one('INSERT INTO games VALUES(DEFAULT, $(password), $(name), DEFAULT, DEFAULT, DEFAULT, $(max_players), DEFAULT, $(user)) RETURNING *', {
+        room = await db.one('INSERT INTO games VALUES(DEFAULT, $(password), $(ispass), $(name), DEFAULT, DEFAULT, DEFAULT, $(max_players), DEFAULT, $(user)) RETURNING *', {
 			name: name,
 			password: hashedPassword,
+            ispass: ispass,
 			max_players: max_players,
 			user: req.user.name
 		});
@@ -45,8 +48,11 @@ exports.createRoom = async (req, res) => {
             roomId: room.id,
             seat: 0
         })
-        //const createRoomSock = Roomsocket(io);
-        Roomcreated(room.id)
+        delete room.password;
+        delete room.status;
+        delete room.goal;
+        delete room.created_at;
+        Roomcreated(room)
         return (res.status(201).send(room.id));
     }
     catch (error) {
