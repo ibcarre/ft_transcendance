@@ -1,12 +1,12 @@
-
-if [ -x $(podman -v)  ] ; then
+#/bin/bash
+if [[ -x $(podman -v) ]]; then
 	printf "\033[0;32mDocker will be used\033[0m\n" >&2
 	socket=/var/run/docker.sock
 	container="docker"
 else
 	type=$(file ${XDG_RUNTIME_DIR}/podman/podman.sock | awk '{print $2}')
 
-if [ ${type} == "cannot" || ${type} -ne "socket" ] ; then
+if [[ ${type} == "cannot" || ${type} != "socket" ]]; then
 	if [ ${type} -ne "socket" ] ; then
 		rmdir ${XDG_RUNTIME_DIR}/podman/podman.sock
 	fi
