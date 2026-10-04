@@ -92,7 +92,7 @@ services:
     image: docker.io/grafana/alloy:v1.20.1 #-distroless
     volumes:
       - ./infra/alloy:/etc/alloy:ro
-      - /var/run/docker.sock:/var/run/docker.sock
+      - ${SOCKET}:/var/run/docker.sock:ro
     depends_on:
       - loki
     command:
