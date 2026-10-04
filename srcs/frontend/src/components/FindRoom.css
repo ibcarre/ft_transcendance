@@ -4,7 +4,6 @@
     width: 750px;
     height: 500px;
     gap: 25px;
-    /**/
 }
 
 .rooms-grid {
@@ -12,12 +11,9 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
     flex: 1;
-    /* Prend tout l'espace restant à gauche */
-    overflow-x: auto;
-    /* Permet de scroller s'il y a plus de 4 parties */
+    overflow-y: auto;
     padding-right: 10px;
     padding-left: 10px;
-    /**/
 }
 
 .room-card {
