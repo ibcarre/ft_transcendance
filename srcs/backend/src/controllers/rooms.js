@@ -67,7 +67,7 @@ exports.joinRoom = async (req, res) => {
     const id = req.params.roomId;
     try {
         const user = await db.oneOrNone('SELECT * FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, req.user.id]);
-        if (user) return (res.status(201).json({message: "Already in room"}));
+        if (user) return (res.status(204).json({message: "Already in room"}));
         // BEGIN
         var room;
         await db.tx({mode}, async t => {
@@ -115,6 +115,9 @@ exports.leaveRoom = async (req, res) => {
         await db.none('DELETE FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, user]);
         if (room.nb_players <= 1) {
             await db.none('DELETE FROM games WHERE id = $1', id);
+
+
+            //socket deleteRoom(room id)
         }
         else
             await db.none('UPDATE games set nb_players = $1 WHERE id = $2', [room.nb_players - 1, room.id]);

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { LobbyModal } from '../../components/LobbyModal';
-import { FindRoom } from '../../components/FindRoom';
+import { RoomList } from '../../components/RoomList';
 import { CreateRoom } from '../../components/CreateRoom';
 import './Lobby.css';
 
