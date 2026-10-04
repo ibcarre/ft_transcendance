@@ -32,7 +32,11 @@ export function App() {
     // 2. L'intercepteur global pour surveiller l'expiration du token
     const interceptor = axios.interceptors.response.use(
       (response) => {
-        // Si la requête réussit, on laisse passer la réponse normalement
+        if (response.status == 401) {
+          setIsAuth(false); // On met à jour l'état de connexion
+          navigate('/'); // On redirige vers SignIn
+          return Promise.reject(response);
+        }
         return response;
       },
       (error) => {

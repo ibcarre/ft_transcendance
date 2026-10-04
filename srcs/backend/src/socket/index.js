@@ -1,4 +1,6 @@
 const { Server } = require("socket.io");
+const gameRoomsinit = require('./namespaces/gamerooms/index');
+const checkAuth = require('./middlewares/checkAuth');
 
 let io;
 const initSocket = (httpServer) => {
@@ -8,9 +10,11 @@ const initSocket = (httpServer) => {
       credentials: true
     }
   });
-  io.of('/Rooms').on('connection', function () {
-    console.log("user connected");
-  })
+  io.use(checkAuth);
+  io.on("new_namespace", (namespace) => {
+    namespace.use(checkAuth);
+  });
+  gameRoomsinit(io);
 };
 
 const getIo = () => {
