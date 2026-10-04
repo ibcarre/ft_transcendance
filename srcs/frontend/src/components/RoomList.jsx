@@ -1,7 +1,10 @@
 import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router';
+
 
 export function RoomList() {
+    const navigate = useNavigate();
     const [rooms, setRooms] = useState([]);
     
     // fetch initial state
@@ -12,6 +15,11 @@ export function RoomList() {
 
         socket.on("createRoom", (arg) => {
             setRooms(arg);
+        });
+
+        socket.on('disconnect', function(){
+            setRooms("disconnect")
+            navigate('/');
         });
 
         async function fetchData() {
