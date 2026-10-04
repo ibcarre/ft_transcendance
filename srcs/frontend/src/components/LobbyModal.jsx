@@ -12,7 +12,7 @@ export function LobbyModal({ title, onClose, children }) {
                 </div>
 
                 {children}
-
+                
             </div>
         </div>
     );
