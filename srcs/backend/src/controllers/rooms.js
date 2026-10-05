@@ -67,7 +67,7 @@ exports.joinRoom = async (req, res) => {
     const id = req.params.roomId;
     try {
         const user = await db.oneOrNone('SELECT * FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, req.user.id]);
-        if (user) return (res.status(204).json({message: "Already in room"}));
+        if (user) return (res.status(409).json({message: "Already in room"}));
         // BEGIN
         var room;
         await db.tx({mode}, async t => {
@@ -88,7 +88,7 @@ exports.joinRoom = async (req, res) => {
             roomId: room.id,
             seat: room.nb_players, //seat indexe a 0 alors que nb_players indexe a 1
         })
-        playerJoined(room.nb_players + 1)
+        playerJoined(room.nb_players + 1, room.id)
         return (res.status(201).json({message: "Room Joined"}))
     }
     catch (error) {

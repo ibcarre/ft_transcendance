@@ -22,6 +22,11 @@ export function RoomList() {
             setAuth(false);
         });
 
+        socket.on("playerJoined", ({ roomId, nbPlayers }) => {
+            setRooms(prev =>
+                prev.map(room =>
+                    room.id === roomId ? { ...room, nb_players: nbPlayers } : room ));});
+
         async function fetchData() {
             try {
                 const res = await fetch("/api/rooms/getRooms");
