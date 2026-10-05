@@ -3,7 +3,7 @@
    ========================================= */
 .lobby-container {
 	display: flex;
-	flex-direction: column; /* Empile l'en-tête puis le reste de la page */
+	flex-direction: column;
 	min-height: 100vh;
 	background-color: #f8fafc;
 }

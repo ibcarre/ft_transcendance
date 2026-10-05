@@ -13,6 +13,7 @@ const mockRooms = [
     { id: 8, name: "Jessie's room", isLocked: true, players: "2/4" },
     { id: 9, name: "Jessie's room", isLocked: true, players: "2/4" },
     { id: 10, name: "Jessie's room", isLocked: true, players: "2/4" },
+    { id: 11, name: "Jessie's room", isLocked: true, players: "2/4" },
 ];
 
 export function FindRoom() {
