@@ -1,4 +1,6 @@
-*/.env
+.last_user_id
+.env
 node_modules/
 tmp.*
 to-do*
+changelog*.txt

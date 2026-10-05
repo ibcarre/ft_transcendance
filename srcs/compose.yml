@@ -23,7 +23,7 @@ services:
       JWT_SECRETKEY: ${JWT_SECRETKEY}
       API_KEY: ${API_KEY}
     networks:
-        - NW_skyjo
+      - NW_skyjo
 
   frontend:
     build: ./frontend/
@@ -52,8 +52,61 @@ services:
       - NW_skyjo
     restart: unless-stopped
 
+  grafana:
+    image: docker.io/grafana/grafana:13.0.9
+    container_name: grafana_skyjo
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+      GF_SERVER_HTTP_ADDR: 0.0.0.0
+      GF_SERVER_PROTOCOL: http
+      GF_SERVER_HTTP_PORT: 3000
+      GF_SERVER_DOMAIN: localhost
+      GF_SERVER_ROOT_URL: https://localhost:${APP_PORT}/grafana/
+      GF_SERVER_SERVE_FROM_SUB_PATH: true
+    volumes:
+      - grafana_storage:/var/lib/grafana
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - NW_skyjo
+
+
+  loki-init:
+    image: docker.io/library/busybox:1.37
+    user: "0"
+    command: ["sh", "-c", "mkdir -p /tmp/loki && chown -R 10001:10001 /tmp/loki"]
+    volumes:
+      - loki_storage:/tmp/loki
+
+  loki:
+    container_name: loki_skyjo
+    image: docker.io/grafana/loki:3.7.8
+    volumes:
+      - loki_storage:/tmp/loki
+      - ./infra/loki/loki.yaml:/etc/loki/local-config.yaml:ro
+    networks:
+      - NW_skyjo
+
+  alloy:
+    container_name: alloy_skyjo
+    image: docker.io/grafana/alloy:v1.20.1-distroless
+    volumes:
+      - ./infra/alloy:/etc/alloy:ro
+      - ${SOCKET}:/var/run/docker.sock:ro
+    depends_on:
+      - loki
+    command:
+      - run
+      - /etc/alloy/config.alloy
+      - --storage.path=/var/lib/alloy/data
+      - --server.http.listen-addr=0.0.0.0:12345
+    networks:
+      - NW_skyjo
+
 volumes:
   postgres_data:
+  grafana_storage:
+  loki_storage:
 
 networks:
   NW_skyjo:
