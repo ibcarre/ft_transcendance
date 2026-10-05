@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Header } from '../../components/Header';
 import { Modal } from '../../components/Modal';
-import { FindRoom } from '../../components/FindRoom';
-import { CreateRoom } from '../../components/CreateRoom';
+import { FindRoom } from './FindRoom';
+import { CreateRoom } from './CreateRoom';
 import './Lobby.css';
 
 export function Lobby() {

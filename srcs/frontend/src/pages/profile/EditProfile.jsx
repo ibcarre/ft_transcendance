@@ -1,4 +1,4 @@
-import defaultPic from '../../imgs/default_pic.jpg';
+import defaultPic from '../../../imgs/default_pic.jpg';
 
 export function EditProfile() {
     return (
