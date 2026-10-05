@@ -26,6 +26,8 @@ export function Profile() {
                 </ul>
             </div>
 
+            <p>Privacy Terms & Conditions</p>
+
             {editModal && (
                 <Modal title="Edit profile" onClose={closeModal}>
                     <EditProfile />

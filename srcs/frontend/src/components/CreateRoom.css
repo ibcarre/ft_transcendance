@@ -1,0 +1,50 @@
+.create-content {
+    display: flex;
+    flex-direction: column;
+    width: 350px;
+    gap: 20px;
+}
+
+.create-content .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.create-content label {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 15px;
+}
+
+.create-content input {
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    font-size: 15px;
+    transition: border-color 0.2s;
+}
+
+.create-content input:focus {
+    border-color: #3b82f6;
+}
+
+.create-content .action-button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 10px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.create-content .action-button:hover {
+    background-color: #2563eb;
+    transform: translateY(-2px);
+}
