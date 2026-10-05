@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Modal } from '../../components/Modal';
-import { EditProfile } from '../../components/EditProfile';
+import { EditProfile } from './EditProfile';
 import defaultPic from '../../../imgs/default_pic.jpg';
 import { Header } from '../../components/Header';
 

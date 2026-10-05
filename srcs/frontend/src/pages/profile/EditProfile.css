@@ -1,0 +1,78 @@
+.profile-content {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    gap: 24px;
+}
+
+/* Zone de la photo de profil */
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 70%;
+    object-fit: cover;
+    border: 3px solid #3b82f6;
+}
+
+/* Zone des formulaires de mise à jour */
+.profile-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.profile-section label {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 14px;
+}
+
+.mt-2 {
+    margin-top: 8px;
+    /* Ajoute un petit espace au-dessus du label "Confirm" */
+}
+
+/* Aligne l'input et le bouton "Update" sur la même ligne */
+.input-row {
+    display: flex;
+    margin-bottom: 3px;
+    gap: 12px;
+}
+
+.profile-section input {
+    flex: 1;
+    padding: 10px 17px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    font-size: 15px;
+}
+
+.profile-section input:focus {
+    border-color: #3b82f6;
+}
+
+.validate-button {
+    padding: 10px 16px;
+    background-color: #3b82f6;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.validate-button:hover {
+    background-color: #2563eb;
+    transform: translateY(-2px);
+}
