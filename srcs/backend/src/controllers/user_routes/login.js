@@ -21,7 +21,7 @@ var login = async (req, res) => {
     catch (error) {
         console.log(error);
         if (error.received === 0)
-            return (res.status(401).json({ message: "User doesn't exist or not logged" }));
+            return (res.status(401).json({ message: "User doesn't exist" }));
         return (res.status(500).send("Failed to log in\n"));
     }
 }
