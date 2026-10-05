@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Header } from '../../components/Header';
 import { Modal } from '../../components/Modal';
 import { FindRoom } from '../../components/FindRoom';
 import { CreateRoom } from '../../components/CreateRoom';
@@ -12,10 +13,7 @@ export function Lobby() {
     return (
         <div className="lobby-container">
 
-            <header className="lobby-header">
-                <h1>SKYJO</h1>
-                <h2>Menu</h2>
-            </header>
+            <Header />
 
             <div className="lobby-wrapper">
                 <div className="button-container">

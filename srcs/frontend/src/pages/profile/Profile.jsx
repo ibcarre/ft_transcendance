@@ -1,8 +1,35 @@
-export function Profile () {
+import { useState } from 'react';
+import { Modal } from '../../components/Modal';
+import { EditProfile } from '../../components/EditProfile';
+import defaultPic from '../../../imgs/default_pic.jpg';
+import { Header } from '../../components/Header';
+
+export function Profile() {
+    const [editModal, setEditModal] = useState(false);
+
+    const closeModal = () => setEditModal(false);
     return (
         <>
-        <p>Profile</p>
-        <button>Edit</button>
+            <Header />
+
+            <div>
+                <img src={defaultPic} />
+                <p>Username</p>
+                <button onClick={() => setEditModal(true)}>Edit</button>
+            </div>
+
+            <div>
+                <p>Nb  games played : 2; 50%</p>
+                <ul>
+                    <li>W</li>
+                    <li>L</li>
+                </ul>
+            </div>
+
+            {editModal && (
+                <Modal title="Edit profile" onClose={closeModal}>
+                    <EditProfile />
+                </Modal>)}
         </>
     );
 }
