@@ -1,11 +1,8 @@
 import defaultPic from '../../imgs/default_pic.jpg';
-import { Header } from './Header';
 
 export function EditProfile() {
     return (
         <>
-            <Header />
-
             <img src={defaultPic} />
 
             <p>New Username</p>
