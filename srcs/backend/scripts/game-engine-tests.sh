@@ -27,6 +27,9 @@ run_test "takeTopCard() tests" \
 run_test "board / column resolution tests" \
 	"game/test/board.test.ts"
 
+run_test "turn order / round-finisher helpers tests" \
+	"game/test/turn.test.ts"
+
 run_test "createGame() tests" \
 	"game/test/createGame.test.ts"
 
