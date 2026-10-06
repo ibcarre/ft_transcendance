@@ -8,5 +8,5 @@ COPY ./package-lock.json .
 RUN npm ci
 
 
-CMD ["node", "--watch", "index.js"]
+CMD ["node", "--watch", "./src/index.js"]
 

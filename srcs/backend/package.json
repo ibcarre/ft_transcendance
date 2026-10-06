@@ -4,9 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node index.js",
-    "dev": "npx tsx server_test.ts"
+    "test": "npm run game:verify",
+    "build": "node ./src/index.js",
+    "dev": "tsx server_test.ts",
+    "game:check": "tsc -p tsconfig.game.json",
+    "game:test": "./scripts/game-engine-tests.sh",
+    "game:test:watch": "tsx --test --watch game/test/*.test.ts",
+    "game:verify": "npm run game:check && npm run game:test"
   },
   "keywords": [],
   "author": "",
@@ -15,18 +19,25 @@
     "@prometheus-io/client": "^0.16.1",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
     "dotenv": "^18.0.1",
     "express": "^5.2.1",
     "express-rate-limit": "^8.7.0",
+    "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.3",
+    "path": "^0.12.7",
     "pg": "^8.23.0",
     "pg-promise": "^12.7.1",
     "serve-index": "^1.9.2",
+    "socket.io": "^4.8.4",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2"
   },
   "devDependencies": {
     "@types/node": "^26.5.0",
-    "@types/pg": "^8.23.1"
+    "@types/pg": "^8.23.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "dpdm": "^4.3.0"
   }
 }

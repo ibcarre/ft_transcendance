@@ -4,7 +4,6 @@ import { Routes, Route, Navigate, useNavigate } from 'react-router';
 import { SignIn } from './pages/authentification/SignIn';
 import { SignUp } from './pages/authentification/SignUp';
 import { Lobby } from './pages/home/Lobby';
-import { Profile } from './pages/profile/Profile';
 import './App.css';
 
 export function App() {
@@ -33,7 +32,11 @@ export function App() {
     // 2. L'intercepteur global pour surveiller l'expiration du token
     const interceptor = axios.interceptors.response.use(
       (response) => {
-        // Si la requête réussit, on laisse passer la réponse normalement
+        if (response.status == 401) {
+          setIsAuth(false); // On met à jour l'état de connexion
+          navigate('/'); // On redirige vers SignIn
+          return Promise.reject(response);
+        }
         return response;
       },
       (error) => {
