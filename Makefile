@@ -21,6 +21,18 @@ down:
 logs:
 	${COMPOSE} logs
 
+#
+# Dev
+#
+
+dev:
+	${COMPOSE_DEV} up --build -d
+
+dev-down:
+	${COMPOSE_DEV} down
+
+dev-logs:
+	${COMPOSE_DEV} logs
 
 #
 # Services
