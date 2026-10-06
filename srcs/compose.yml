@@ -24,6 +24,8 @@ services:
     build: ./backend/
     container_name: back_skyjo
     restart: unless-stopped
+    # healthcheck:
+    #   test: ["CMD-SHELL", "sh -c curl"]
     depends_on:
       postgres:
         condition: service_healthy
@@ -91,6 +93,12 @@ services:
   loki:
     container_name: loki_skyjo
     image: docker.io/grafana/loki:3.7.8
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/bin/loki -health"]
+    depends_on:
+      alloy:
+        condition: service_healthy
+        restart: true
     volumes:
       - loki_storage:/tmp/loki
       - ./infra/loki/loki.yaml:/etc/loki/local-config.yaml:ro
@@ -100,6 +108,10 @@ services:
   alloy:
     container_name: alloy_skyjo
     image: docker.io/grafana/alloy:v1.20.1-distroless
+    depends_on:
+      grafana:
+        condition: service_healthy
+        restart: true
     volumes:
       - ./infra/alloy:/etc/alloy:ro
       - ${SOCKET}:/var/run/docker.sock:ro
