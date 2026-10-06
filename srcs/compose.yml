@@ -3,6 +3,13 @@ services:
   postgres:
     image: docker.io/library/postgres:18
     container_name: postgres_skyjo
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
@@ -16,8 +23,11 @@ services:
   backend:
     build: ./backend/
     container_name: back_skyjo
+    restart: unless-stopped
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+        restart: true
     environment:
       DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}"
       JWT_SECRETKEY: ${JWT_SECRETKEY}
