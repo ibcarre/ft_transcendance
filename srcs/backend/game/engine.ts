@@ -22,6 +22,7 @@ import type {
 	PlayerId,
 	PlayerState,
 	RevealInitialCardCommand,
+	SwapCardCommand,
 } from "./types";
 
 import type {
@@ -45,7 +46,14 @@ import {
 
 import {
 	isValidBoardPosition,
+	removeCompletedColumnAtPosition,
 } from "./board";
+
+import {
+	buildFinalTurnQueue,
+	getNextPlayerId,
+	hasHiddenCards,
+} from "./turn";
 
 
 
@@ -330,10 +338,84 @@ export function applyAction(oldState: GameState,
 		case ACTION.DRAW_DISCARD:
 			return applyDrawDiscard(state, command);
 		case ACTION.SWAP_CARD:
+			return applySwapCard(state, command);
 		case ACTION.DISCARD_DRAWN_CARD:
 		case ACTION.REVEAL_CARD:
 			throw new Error("Action not implemented");
 		default:
 			return fail(ERROR_CODE.UNKNOWN_ACTION);
 	}
+}
+
+function completeRegularTurn(state: GameState, player: PlayerState): void {
+	if (state.roundFinisherId !== null || state.finalTurnQueue.length !== 0) {
+		throw new Error("Invalid GameState: regular turn completion called \
+during final turn");
+	}
+	if (!hasHiddenCards(player)) {
+		state.roundFinisherId = player.id;
+		state.finalTurnQueue = buildFinalTurnQueue(state.players, player.id);
+		const nextPlayerId = state.finalTurnQueue[0];
+		if (nextPlayerId === undefined) {
+			throw new Error("Invalid GameState: final turn queue is empty \
+after a finisher");
+		}
+		state.currentPlayerId = nextPlayerId;
+	}
+	else {
+		state.currentPlayerId = getNextPlayerId(state.players, player.id);
+	}
+	state.turnStage = TURN_STAGE.WAITING_FOR_DRAW;
+}
+
+function applySwapCard(state: GameState, command: SwapCardCommand):
+	ApplyActionResult {
+	const failure = validateCurrentPlayerAction(state,
+												command.playerId,
+												ACTION.SWAP_CARD);
+	if (failure !== null) {
+		return failure;
+	}
+	if (state.pendingCard === null || state.pendingCardSource === null) {
+		throw new Error("Invalid GameState: SWAP_CARD requires a pending card");
+	}
+	if (state.turnStage === TURN_STAGE.DRAWN_FROM_DECK
+		&& state.pendingCardSource !== CARD_SOURCE.DECK) {
+			throw new Error("Invalid GameState: DRAWN_FROM_DECK requires a \
+pending deck card");
+	}
+	if (state.turnStage === TURN_STAGE.MUST_SWAP_DISCARD
+		&& state.pendingCardSource !== CARD_SOURCE.DISCARD) {
+			throw new Error("Invalid GameState: MUST_SWAP_DISCARD requires a \
+pending discard card");
+	}
+	if (!isValidBoardPosition(command.position)) {
+		return fail(ERROR_CODE.INVALID_POSITION);
+	}
+	const player = state.players.find(
+		(candidate) => candidate.id === command.playerId);
+	if (player === undefined) {
+		throw new Error("Invalid GameState: validated current player can't be \
+found");
+	}
+	const targetSlot = player.board[command.position];
+	if (targetSlot === undefined) {
+		throw new Error("Invalid GameState: player board is missing an \
+expected position");
+	}
+	if (targetSlot === null) {
+		return fail(ERROR_CODE.INVALID_POSITION);
+	}
+	const pendingCard = state.pendingCard;
+	const replacedCard = targetSlot.card;
+	state.discardPile.push(replacedCard);
+	player.board[command.position] = { card: pendingCard, revealed: true };
+	state.pendingCard = null;
+	state.pendingCardSource = null;
+	removeCompletedColumnAtPosition(player,
+									command.position,
+									state.discardPile);
+	completeRegularTurn(state, player);
+	state.version++;
+	return succeed(state);
 }
