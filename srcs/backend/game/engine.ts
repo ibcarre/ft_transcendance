@@ -13,6 +13,7 @@ import type {
 	ApplyActionResult,
 	BoardSlot,
 	CreateGameInput,
+	DiscardDrawnCardCommand,
 	DrawDeckCommand,
 	DrawDiscardCommand,
 	EngineSuccess,
@@ -21,6 +22,7 @@ import type {
 	GameState,
 	PlayerId,
 	PlayerState,
+	RevealCardCommand,
 	RevealInitialCardCommand,
 	SwapCardCommand,
 } from "./types";
@@ -340,8 +342,9 @@ export function applyAction(oldState: GameState,
 		case ACTION.SWAP_CARD:
 			return applySwapCard(state, command);
 		case ACTION.DISCARD_DRAWN_CARD:
+			return applyDiscardDrawnCard(state, command);
 		case ACTION.REVEAL_CARD:
-			throw new Error("Action not implemented");
+			return applyRevealCard(state,command);
 		default:
 			return fail(ERROR_CODE.UNKNOWN_ACTION);
 	}
@@ -412,6 +415,81 @@ expected position");
 	player.board[command.position] = { card: pendingCard, revealed: true };
 	state.pendingCard = null;
 	state.pendingCardSource = null;
+	removeCompletedColumnAtPosition(player,
+									command.position,
+									state.discardPile);
+	completeRegularTurn(state, player);
+	state.version++;
+	return succeed(state);
+}
+
+function applyDiscardDrawnCard(state: GameState,
+							   command: DiscardDrawnCardCommand):
+															ApplyActionResult {
+	const failure = validateCurrentPlayerAction(state,
+												command.playerId,
+												ACTION.DISCARD_DRAWN_CARD);
+	if (failure !== null) {
+		return failure;
+	}
+	if (state.pendingCard === null || state.pendingCardSource === null) {
+		throw new Error("Invalid GameState: DISCARD_DRAWN_CARD requires a \
+pending card");
+	}
+	if (state.pendingCardSource !== CARD_SOURCE.DECK) {
+		throw new Error("Invalid GameState: DISCARD_DRAWN_CARD requires a \
+pending deck card");
+	}
+	const player =
+		state.players.find((candidate) => candidate.id === command.playerId);
+	if (player === undefined) {
+		throw new Error("Invalid GameState: validate current player can't be \
+found");
+	}
+	if (!hasHiddenCards(player)) {
+		throw new Error("Invalid GameState: DISCARD_DRAWN_CARD requires a \
+hidden card to reveal");
+	}
+	state.discardPile.push(state.pendingCard);
+	state.pendingCard = null;
+	state.pendingCardSource = null;
+	state.turnStage = TURN_STAGE.MUST_REVEAL_CARD;
+	state.version++;
+	return succeed(state);
+}
+
+function applyRevealCard(state: GameState, command: RevealCardCommand):
+	ApplyActionResult {
+	const failure = validateCurrentPlayerAction(state,
+												command.playerId,
+												ACTION.REVEAL_CARD);
+	if (failure !== null) {
+		return failure;
+	}
+	if (state.pendingCard !== null || state.pendingCardSource !== null) {
+		throw new Error("Invalid GameState: MUST_REVEAL_CARD requires no \
+pending card");
+	}
+	if (!isValidBoardPosition(command.position)) {
+		return fail(ERROR_CODE.INVALID_POSITION);
+	}
+	const player =
+		state.players.find((candidate) => candidate.id === command.playerId);
+	if (player === undefined) {
+		throw new Error("Invalid GameState: validate current player can't be \
+found");
+	}
+	const slot = player.board[command.position];
+	if (slot === undefined) {
+		throw new Error("Invalid GameState: player board is missing an \
+expected position");}
+	if (slot === null) {
+		return fail(ERROR_CODE.INVALID_POSITION);
+	}
+	if (slot.revealed) {
+		return fail(ERROR_CODE.CARD_NOT_HIDDEN);
+	}
+	slot.revealed = true;
 	removeCompletedColumnAtPosition(player,
 									command.position,
 									state.discardPile);

@@ -45,6 +45,12 @@ run_test "DRAW_DECK and DRAW_DISCARD tests" \
 run_test "SWAP_CARD tests" \
 	"game/test/swapCard.test.ts"
 
+run_test "DISCARD_DRAWN_CARD tests" \
+	"game/test/discardDrawnCard.test.ts"
+
+run_test "REVEAL_CARD tests" \
+	"game/test/revealCard.test.ts"
+
 printf '\n'
 printf '============================================================\n'
 printf '  All Game Engine tests passed\n'
