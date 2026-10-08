@@ -4,6 +4,7 @@ import { Routes, Route, Navigate, useNavigate } from 'react-router';
 import { SignIn } from './pages/authentification/SignIn';
 import { SignUp } from './pages/authentification/SignUp';
 import { Lobby } from './pages/home/Lobby';
+import { Profile } from './pages/profile/Profile';
 import './App.css';
 
 export function App() {

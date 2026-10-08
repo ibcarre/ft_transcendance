@@ -10,7 +10,7 @@ const mockRooms = [
     { id: 5, name: "David's room", isLocked: false, players: "1/4" },
     { id: 6, name: "Eve's room", isLocked: true, players: "3/4" },
     { id: 7, name: "Jessie's room", isLocked: true, players: "2/4" },
-    { id: 8, name: "Jessie's room", isLocked: true, players: "2/4" },
+    { id: 8, name: "Jessieeeeeeeeeeee's room", isLocked: true, players: "2/4" },
     { id: 9, name: "Jessie's room", isLocked: true, players: "2/4" },
     { id: 10, name: "Jessie's room", isLocked: true, players: "2/4" },
     { id: 11, name: "Jessie's room", isLocked: true, players: "2/4" },
