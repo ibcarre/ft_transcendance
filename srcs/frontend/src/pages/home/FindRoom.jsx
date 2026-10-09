@@ -72,6 +72,7 @@ export function FindRoom() {
                 });
                 setRooms(response.data);
                 console.log(response.data);
+		        socket.connect();
             } catch (err) {
                 console.log(err);
             }
@@ -97,7 +98,7 @@ export function FindRoom() {
                         onClick={() => setSelectedRoomId(room.id)}
                     >
                         <p>{room.name}</p>
-                        {room.ispass && <p>cadena</p>}
+                        {room.ispass && <p>cadenas</p>}
                         <p>{room.nb_players} / {room.max_players}</p>
                     </div>
                 ))}
