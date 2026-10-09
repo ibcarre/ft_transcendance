@@ -1,37 +1,104 @@
-import { useState } from 'react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+// import { socket } from '../../main';
+import { io } from "socket.io-client";
 import './FindRoom.css'
 
-// Une fausse base de données de parties pour tester l'affichage
-const mockRooms = [
-    { id: 1, name: "houssen's room", isLocked: true, players: "3/4" },
-    { id: 2, name: "Alice's room", isLocked: false, players: "2/4" },
-    { id: 3, name: "Bob's room", isLocked: true, players: "1/4" },
-    { id: 4, name: "Charlie's room", isLocked: false, players: "4/4" },
-    { id: 5, name: "David's room", isLocked: false, players: "1/4" },
-    { id: 6, name: "Eve's room", isLocked: true, players: "3/4" },
-    { id: 7, name: "Jessie's room", isLocked: true, players: "2/4" },
-    { id: 8, name: "Jessieeeeeeeeeeee's room", isLocked: true, players: "2/4" },
-    { id: 9, name: "Jessie's room", isLocked: true, players: "2/4" },
-    { id: 10, name: "Jessie's room", isLocked: true, players: "2/4" },
-    { id: 11, name: "Jessie's room", isLocked: true, players: "2/4" },
-];
-
 export function FindRoom() {
+    const [rooms, setRooms] = useState([]);
     const [selectedRoomId, setSelectedRoomId] = useState(false);
+
+    // const [error, setError] = useState(null);
+
+    // useEffect(() => {
+    //     socket.on("/rooms/createRoom", (arg) => {
+    //         setRooms(rooms => [arg, ...rooms]);
+    //     });
+
+    //     socket.on("connect", () => {
+    //         console.log("🟢 WebSocket Connecté ! ID:", socket.id);
+    //     });
+
+    //     socket.on("connect_error", (err) => {
+    //         console.error("🔴 Erreur de connexion WebSocket:", err.message);
+    //     });
+
+    //     const fetchRooms = async () => {
+    //         // setError(null);
+    //         try {
+    //             const response = await axios.get('/api/rooms/getRooms', {
+    //                 withCredentials: true
+    //             });
+    //             setRooms(response.data);
+    //             console.log(response.data);
+    //         } catch (err) {
+    //             console.log(err);
+    //         }
+    //     }
+
+    //     fetchRooms();
+
+    //     return () => {
+    //         socket.off("connect");
+    //         socket.off("connect_error");
+    //         socket.off("rooms/createRoom");
+    //     };
+    // }, []);
+
+    useEffect(() => {
+        const socket = io("/Rooms", {
+            autoConnect: false,
+        });
+
+        socket.on("createRoom", (arg) => {
+            setRooms((prevRooms) => [arg, ...prevRooms]);
+        });
+
+        socket.on("connect_error", (error) => {
+            console.log("Socket CONNECT ERROR:", error);
+
+        });
+
+        socket.on("playerJoined", ({ roomId, nbPlayers }) => {
+            setRooms(prev =>
+                prev.map(room =>
+                    room.id === roomId ? { ...room, nb_players: nbPlayers } : room ));});
+
+        const fetchRooms = async () => {
+            // setError(null);
+            try {
+                const response = await axios.get('/api/rooms/getRooms', {
+                    withCredentials: true
+                });
+                setRooms(response.data);
+                console.log(response.data);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
+        fetchRooms();
+
+        return () => {
+            socket.off("createRoom");
+            socket.off("connect_error");
+            socket.disconnect();
+        };
+    }, []);
 
     return (
         <div className="find-content">
 
             <div className="rooms-grid">
-                {mockRooms.map((room) => (
+                {rooms.map((room) => (
                     <div
                         key={room.id}
                         className={`room-card ${selectedRoomId === room.id ? 'selected' : ''}`}
                         onClick={() => setSelectedRoomId(room.id)}
                     >
                         <p>{room.name}</p>
-                        {room.isLocked && <p>cadena</p>}
-                        <p>{room.players}</p>
+                        {room.ispass && <p>cadena</p>}
+                        <p>{room.nb_players} / {room.max_players}</p>
                     </div>
                 ))}
             </div>
