@@ -1,10 +1,19 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require('../../db/db')
+const { validationResult } = require("express-validator");
 
 var signup = async (req, res) => {
     const {username, email, password} = req.body;
-    try { 
+    try {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(400).json({
+				success: false,
+				errors: errors.array()
+      		});
+    	}
+
         if (!username || !password || !email) {
             return res.status(400).json({ message: "Please Input Username, Password and Email Adress" });
         }
