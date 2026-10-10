@@ -41,7 +41,9 @@ services:
     build: ./frontend/
     container_name: front_skyjo
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+        restart: true
     networks:
       - NW_skyjo
 
@@ -49,7 +51,9 @@ services:
     build: ./infra/nginx/
     container_name: nginx_skyjo
     depends_on:
-      - frontend
+      frontend:
+        condition: service_healthy
+        restart: true
     ports:
       - "${APP_PORT}:443"
     networks:
@@ -85,8 +89,10 @@ services:
     depends_on:
       loki:
         condition: service_healthy
-    #   prometheus:
-    #     condition: service_healthy
+        restart: true
+      prometheus:
+        condition: service_healthy
+        restart: true
     environment:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
       GF_SERVER_HTTP_ADDR: 0.0.0.0
