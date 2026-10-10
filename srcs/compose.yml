@@ -107,6 +107,13 @@ services:
       GF_SERVER_DOMAIN: localhost
       GF_SERVER_ROOT_URL: https://localhost:${APP_PORT}/grafana/
       GF_SERVER_SERVE_FROM_SUB_PATH: true
+      GF_SMTP_ENABLED: true
+      GF_SMTP_HOST: smtp.protonmail.ch:587
+      GF_SMTP_USER: 
+      GF_SMTP_PASSWORD: 
+      GF_SMTP_FROM_ADDRESS: 
+      GF_SMTP_FROM_NAME: Grafana Alerts
+      GF_SMTP_STARTTLS_POLICY: MandatoryStartTLS
     volumes:
       - grafana_storage:/var/lib/grafana
       - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
