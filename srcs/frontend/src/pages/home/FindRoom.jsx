@@ -47,11 +47,10 @@ export function FindRoom() {
 
     useEffect(() => {
         const socket = io("/Rooms", {
-            autoConnect: false,
         });
 
         socket.on("createRoom", (arg) => {
-            setRooms((prevRooms) => [arg, ...prevRooms]);
+            setRooms(rooms => [arg, ...rooms]);
         });
 
         socket.on("connect_error", (error) => {
@@ -72,7 +71,6 @@ export function FindRoom() {
                 });
                 setRooms(response.data);
                 console.log(response.data);
-		        socket.connect();
             } catch (err) {
                 console.log(err);
             }
