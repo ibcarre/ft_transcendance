@@ -25,7 +25,7 @@ services:
     container_name: back_skyjo
     restart: unless-stopped
     # healthcheck:
-    #   test: ["CMD-SHELL", "sh -c curl"]
+    #   test: ["CMD-SHELL", "sh -c curl http://localhost/health"]
     depends_on:
       postgres:
         condition: service_healthy
@@ -40,9 +40,10 @@ services:
   frontend:
     build: ./frontend/
     container_name: front_skyjo
+    restart: unless-stopped
     depends_on:
       backend:
-        condition: service_healthy
+        # condition: service_healthy
         restart: true
     networks:
       - NW_skyjo
@@ -50,9 +51,9 @@ services:
   nginx:
     build: ./infra/nginx/
     container_name: nginx_skyjo
+    restart: unless-stopped
     depends_on:
       frontend:
-        condition: service_healthy
         restart: true
     ports:
       - "${APP_PORT}:443"
@@ -62,6 +63,7 @@ services:
   prometheus:
     container_name: prometheus_skyjo
     image: docker.io/prom/prometheus:v3.15.0-rc.0-distroless
+    restart: unless-stopped
     volumes:
       - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
@@ -69,8 +71,10 @@ services:
     restart: unless-stopped
 
   prometheus-health:
-    container_name: prom_health
+    container_name: prom_health_skyjo
     image: docker.io/library/busybox:1.37
+    stop_signal: SIGKILL
+    restart: unless-stopped
     command: ["sleep", "infinity"]
     network_mode: "service:prometheus"
     healthcheck:
@@ -78,19 +82,22 @@ services:
       interval: 10s
       timeout: 3s
       retries: 3
-      start_period: 15s
+      start_period: 5s
     depends_on:
-      - alloy
+      prometheus:
+        condition: service_started
+        restart: true
 
 
   grafana:
     image: docker.io/grafana/grafana:13.0.9
     container_name: grafana_skyjo
+    restart: unless-stopped
     depends_on:
       loki:
         condition: service_healthy
         restart: true
-      prometheus:
+      prometheus-health:
         condition: service_healthy
         restart: true
     environment:
@@ -110,7 +117,7 @@ services:
 
 
   loki-init:
-    container_name: loki_init
+    container_name: loki_init_skyjo
     image: docker.io/library/busybox:1.37
     user: "0"
     command: ["sh", "-c", "mkdir -p /tmp/loki && chown -R 10001:10001 /tmp/loki"]
@@ -153,10 +160,11 @@ services:
       - --server.http.listen-addr=0.0.0.0:12345
 
   alloy-health:
-    container_name: alloy_health
+    container_name: alloy_health_skyjo
     image: docker.io/library/busybox:1.37
     command: ["sleep", "infinity"]
     network_mode: "service:alloy"
+    stop_signal: SIGKILL
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:12345/-/healthy"]
       interval: 10s
@@ -164,7 +172,9 @@ services:
       retries: 3
       start_period: 15s
     depends_on:
-      - alloy
+      alloy:
+        condition: service_started
+        restart: true
 
 volumes:
   postgres_data:
