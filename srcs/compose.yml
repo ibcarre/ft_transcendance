@@ -105,10 +105,6 @@ services:
       timeout: 3s
       retries: 3
       start_period: 10s
-    # depends_on:
-    #   alloy:
-    #     condition: service_healthy
-    #     restart: true
     volumes:
       - loki_storage:/tmp/loki
       - ./infra/loki/loki.yaml:/etc/loki/local-config.yaml:ro
@@ -133,6 +129,20 @@ services:
       - /etc/alloy/config.alloy
       - --storage.path=/var/lib/alloy/data
       - --server.http.listen-addr=0.0.0.0:12345
+
+  alloy-health:
+    container_name: alloy_health
+    image: docker.io/library/busybox:1.37
+    command: ["sleep", "infinity"]
+    network_mode: "service:alloy"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:12345/-/healthy"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    depends_on:
+      - alloy
 
 volumes:
   postgres_data:
