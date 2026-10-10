@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-# Liste colorisée des conteneurs. Compatible watch :
-#   ./dps.sh
-#   ./dps.sh -a
-#   watch -c -n 2 ./dps.sh
 
 set -euo pipefail
 

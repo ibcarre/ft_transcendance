@@ -64,6 +64,21 @@ services:
       - NW_skyjo
     restart: unless-stopped
 
+  prometheus-health:
+    container_name: prom_health
+    image: docker.io/library/busybox:1.37
+    command: ["sleep", "infinity"]
+    network_mode: "service:prometheus"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    depends_on:
+      - alloy
+
+
   grafana:
     image: docker.io/grafana/grafana:13.0.9
     container_name: grafana_skyjo
@@ -89,6 +104,7 @@ services:
 
 
   loki-init:
+    container_name: loki_init
     image: docker.io/library/busybox:1.37
     user: "0"
     command: ["sh", "-c", "mkdir -p /tmp/loki && chown -R 10001:10001 /tmp/loki"]
