@@ -3,6 +3,7 @@ const { body } = require("express-validator");
 const userDataValidate = [
   body("username")
     .exists()
+	.escape()
     .withMessage("User name is required")
     .isString()
     .withMessage("User name should be string")
@@ -23,12 +24,13 @@ const userDataValidate = [
 ];
 
 const emailValidate = [
-  body("email").exists().isEmail().withMessage("Provide valid email"),
+  body("email").exists().escape().isEmail().withMessage("Provide valid email"),
 ];
 
 const usernameValidate = [
   body("username")
     .exists()
+	.escape()
     .withMessage("User name is required")
     .isString()
     .withMessage("User name should be string")
@@ -41,6 +43,7 @@ const usernameValidate = [
 const passwordValidate = [
   body("password")
     .exists()
+	.escape()
     .withMessage("Password is required")
     .isString()
     .withMessage("Password should be string")
