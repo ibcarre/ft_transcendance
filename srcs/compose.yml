@@ -1,3 +1,15 @@
+secrets:
+  api_key:
+    file: ../secrets/API_KEY.txt
+  grafana_smtp_pswd:
+    file: ../secrets/GF_SMTP_PASSWORD.txt
+  grafana_admin_pswd:
+    file: ../secrets/GRAFANA_ADMIN_PASSWORD.txt
+  jwt_secret_key:
+    file: ../secrets/JWT_SECRETKEY.txt
+  postgres_password:
+    file: ../secrets/POSTGRES_PASSWORD.txt
+
 services:
 
   postgres:
@@ -10,9 +22,11 @@ services:
       timeout: 3s
       retries: 3
       start_period: 5s
+    secrets:
+      - postgres_password
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_PASSWORD_FILE: "/run/secrets/postgres_password"
       POSTGRES_DB: "${POSTGRES_DB}"
     volumes:
       - postgres_data:/var/lib/postgresql
@@ -99,8 +113,11 @@ services:
       prometheus-health:
         condition: service_healthy
         restart: true
+    secrets:
+      - grafana_admin_pswd
+      - grafana_smtp_pswd
     environment:
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+      GF_SECURITY_ADMIN_PASSWORD__FILE: "/run/secrets/grafana_admin_pswd"
       GF_SERVER_HTTP_ADDR: 0.0.0.0
       GF_SERVER_PROTOCOL: http
       GF_SERVER_HTTP_PORT: 3000
@@ -109,9 +126,9 @@ services:
       GF_SERVER_SERVE_FROM_SUB_PATH: true
       GF_SMTP_ENABLED: true
       GF_SMTP_HOST: smtp.protonmail.ch:587
-      GF_SMTP_USER: 
-      GF_SMTP_PASSWORD: 
-      GF_SMTP_FROM_ADDRESS: 
+      GF_SMTP_USER: "${GF_SMTP_USER}"
+      GF_SMTP_PASSWORD__FILE: "/run/secrets/grafana_smtp_pswd"
+      GF_SMTP_FROM_ADDRESS: "${GF_SMTP_USER}"
       GF_SMTP_FROM_NAME: Grafana Alerts
       GF_SMTP_STARTTLS_POLICY: MandatoryStartTLS
     volumes:
