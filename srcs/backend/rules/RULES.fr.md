@@ -70,6 +70,7 @@ Chaque colonne verticale contient donc exactement trois emplacements.
 Une carte supplémentaire est placée face visible pour constituer le début de la **défausse**. Toutes les autres cartes forment la **pioche**, face cachée.
 
 Chaque joueur choisit ensuite **deux cartes de son propre tableau** et les révèle. Aucune autre carte face cachée de son tableau ne peut être consultée pendant ce choix initial.
+Lors de la première manche chaque joueur choisit deux cartes de son tableau et les révèle. Lors des manches suivantes, toutes les cartes sont initialement cachées et le finisseur de la manche précédente commence directement.
 
 ## 5. Détermination du premier joueur
 
@@ -202,10 +203,7 @@ Une fois le décompte terminé, le score de manche obtenu par chaque joueur est 
 
 ## 13. Fin de la partie et manche suivante
 
-Après l'ajout des scores de manche aux scores cumulés :
-
-- si **aucun joueur n'a atteint 100 points**, une nouvelle manche peut commencer ;
-- si **au moins un joueur a atteint 100 points ou plus**, la partie se termine.
+La partie se termine lorsqu'au moins un joueur atteint ou dépasse, après le décompte d'une manche, le seuil de points défini à la création de la partie (100 points par défaut).
 
 À la fin de la partie, le ou les joueurs ayant le **plus petit score cumulé** remportent la partie. Si plusieurs joueurs sont à égalité pour ce plus petit score, ils sont **co-vainqueurs** : aucun départage supplémentaire n'est effectué.
 
