@@ -38,6 +38,11 @@ exports.createRoom = async (req, res) => {
         if (room) {
             return res.status(400).json({ message: "A room already has that name" });
         }
+		if (name.length < 1 || name.length > 24)
+			return (res.status(400).json({ message: "Room's name must be between 1 and 24 characters" }))
+		var users = await db.oneOrNone('SELECT * FROM users_in_game WHERE user_id = $1', req.user.id);
+		if (users)
+			return (res.status(409).json({message: "You can only be in one room"}))
         room = await db.one('INSERT INTO games VALUES(DEFAULT, $(password), $(ispass), $(name), DEFAULT, DEFAULT, DEFAULT, $(max_players), DEFAULT, $(user)) RETURNING *', {
 			name: name,
 			password: hashedPassword,
@@ -58,6 +63,8 @@ exports.createRoom = async (req, res) => {
         return (res.status(201).send(room.id));
     }
     catch (error) {
+		if(error?.constraint === "max_players")
+			return (res.status(400).json({message: "Wrong input for max players"}))
         console.log(error);
         return (res.status(500).json({message: error}));
     }
@@ -66,9 +73,12 @@ exports.createRoom = async (req, res) => {
 exports.joinRoom = async (req, res) => {
     const id = req.params.roomId;
     try {
-        const user = await db.oneOrNone('SELECT * FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, req.user.id]);
-        if (user) return (res.status(409).json({message: "Already in room"}));
+        //const user = await db.oneOrNone('SELECT * FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, req.user.id]);
+        //if (user) return (res.status(409).json({message: "Already in room"}));
         // BEGIN
+		var users = await db.oneOrNone('SELECT * FROM users_in_game WHERE user_id = $1', req.user.id);
+		if (users)
+			return (res.status(409).json({message: "You can only be in one room"}))
         var room;
         await db.tx({mode}, async t => {
             room = await t.one('SELECT * FROM games WHERE id = $1', id);
