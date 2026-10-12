@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY . .
 
+RUN chmod +x ./scripts/secrets.sh
+
 RUN npm ci
 
-CMD ["npm", "run", "build"]
+ENTRYPOINT ["/bin/sh", "./scripts/secrets.sh", "build"]

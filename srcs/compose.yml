@@ -13,6 +13,8 @@ secrets:
 services:
 
   postgres:
+    secrets:
+      - postgres_password
     image: docker.io/library/postgres:18
     container_name: postgres_skyjo
     restart: unless-stopped
@@ -22,8 +24,6 @@ services:
       timeout: 3s
       retries: 3
       start_period: 5s
-    secrets:
-      - postgres_password
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD_FILE: "/run/secrets/postgres_password"
@@ -35,6 +35,10 @@ services:
       - NW_skyjo
 
   backend:
+    secrets:
+      - api_key
+      - jwt_secret_key
+      - postgres_password
     build: ./backend/
     container_name: back_skyjo
     restart: unless-stopped
@@ -45,9 +49,8 @@ services:
         condition: service_healthy
         restart: true
     environment:
-      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}"
-      JWT_SECRETKEY: ${JWT_SECRETKEY}
-      API_KEY: ${API_KEY}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
     networks:
       - NW_skyjo
 
@@ -103,6 +106,9 @@ services:
 
 
   grafana:
+    secrets:
+      - grafana_admin_pswd
+      - grafana_smtp_pswd
     image: docker.io/grafana/grafana:13.0.9
     container_name: grafana_skyjo
     restart: unless-stopped
@@ -113,9 +119,6 @@ services:
       prometheus-health:
         condition: service_healthy
         restart: true
-    secrets:
-      - grafana_admin_pswd
-      - grafana_smtp_pswd
     environment:
       GF_SECURITY_ADMIN_PASSWORD__FILE: "/run/secrets/grafana_admin_pswd"
       GF_SERVER_HTTP_ADDR: 0.0.0.0

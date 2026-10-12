@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npm run game:verify",
     "build": "node index.js",
-    "dev": "tsx server_test.ts",
+    "dev": "node --watch index.js",
     "game:check": "tsc -p tsconfig.game.json",
     "game:test": "./scripts/game-engine-tests.sh",
     "game:test:watch": "tsx --test --watch game/test/*.test.ts",
