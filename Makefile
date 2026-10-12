@@ -1,4 +1,5 @@
 
+$(shell ./tools/secrets.sh > /dev/null)
 $(shell ./tools/podman-sock.sh > /dev/null)
 
 include srcs/.env
