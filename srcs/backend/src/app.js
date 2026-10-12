@@ -5,6 +5,7 @@ const Userroutes = require('./routes/User');
 const health = require('./controllers/health');
 const rooms = require('./routes/rooms');
 const api = require('./routes/api');
+const fileUpload = require('express-fileupload');
 const cors = require("cors");
 
 const app = express();
@@ -28,8 +29,9 @@ app.get('/metrics', async (_req, res) => {
 })
 
 app.use(cookieParser());
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(express.json());
+app.use(fileUpload());
+app.use(express.urlencoded({ extended: true }));
 
 
 app.use((req, res, next) => {
