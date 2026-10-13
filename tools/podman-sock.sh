@@ -36,10 +36,14 @@ else
 	printf "\nSOCKET=${socket}\n" >> ${PWD}/srcs/.env
 fi
 
-sed -i "s#CONTAINER=.*#CONTAINER=${container}#w changelog0.txt" ${PWD}/srcs/.env
-if [[ -s changelog0.txt ]]; then
+rm -rf changelog.txt
+
+sed -i "s#CONTAINER=.*#CONTAINER=${container}#w changelog.txt" ${PWD}/srcs/.env
+if [[ -s changelog.txt ]]; then
 	printf "\033[0;32m.env CONTAINER changed : ${container}\033[0m\n"
 else
 	printf "\033[0;36m.env CONTAINER create  : ${container} \033[0m\n"
 	printf "CONTAINER=${container}\n" >> ${PWD}/srcs/.env
 fi
+
+rm -rf changelog.txt
