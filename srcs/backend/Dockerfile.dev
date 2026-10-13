@@ -10,4 +10,4 @@ RUN chmod +x ./scripts/secrets.sh
 
 RUN npm ci
 
-ENTRYPOINT ["/bin/sh", "./scripts/secrets.sh"]
+ENTRYPOINT ["/bin/sh", "./scripts/secrets.sh", "dev"]

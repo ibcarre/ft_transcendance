@@ -1,5 +1,5 @@
-#!/bin/bash
-set -eu
+#!/bin/sh
+set -e
 
 if [ ! -f /run/secrets/postgres_password ]; then
   echo "secret postgres_password not found" >&2
@@ -21,14 +21,11 @@ postgres_pswd=$(cat /run/secrets/postgres_password)
 
 
 export DATABASE_URL="posgressql://${POSTGRES_USER}:${postgres_pswd}@postgres:5432/${POSTGRES_DB}"
-export JWT_SECRET_KEY=$(cat /run/secrets/jwt_secret_key)
+export JWT_SECRETKEY=$(cat /run/secrets/jwt_secret_key)
 export API_KEY=$(cat /run/secrets/api_key)
 
-$(/bin/sh)
-
-# enpm ci
-if [ $1 == "build" ] ; then
-	exec npm run build
-else
+if [ $1 != "build" ] ; then
 	exec npm run dev
+else
+	exec npm run build
 fi
