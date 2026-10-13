@@ -6,7 +6,7 @@ var health = async (req, res) => {
 		return (res.status(200).send());
 	}
 	catch (error) {
-		console.log(error);
+		console.log("app=node INFO: ", error);
 		return (res.status(503).send());
 	}
 }

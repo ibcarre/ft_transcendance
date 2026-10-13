@@ -4,14 +4,15 @@ const db = require('../../db/db')
 
 var login = async (req, res) => {
     try {
+		const to = req.cookies.access_token;
         const {email, password} = req.body;
+		if (to)
+			res.clearCookie('access_token');
         if (!email || !password)
             return (res.status(400).json({ message: "Empty field(s)" }))
         const user = await db.oneOrNone('SELECT * FROM users WHERE email = $1', email);
 		if (!user)
 			return (res.status(401).json({ message: "User doesn't exist" }));
-		if (user?.status === 'online')
-			return (res.status(200).json({ message: "Already logged" }));
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch)
             return (res.status(401).json({message: "Wrong password"}));
@@ -24,7 +25,7 @@ var login = async (req, res) => {
         return res.status(200).json({message: "Login Successful"});
     }
     catch (error) {
-        console.log(error);
+        console.log("app=node ERROR: ", error);
         if (error.received === 0)
             return (res.status(401).json({ message: "User doesn't exist" }));
         return (res.status(500).send("Failed to log in"));

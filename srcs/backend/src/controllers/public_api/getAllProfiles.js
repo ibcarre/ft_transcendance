@@ -5,7 +5,7 @@ var getAllProfiles = async (req, res) => {
         const users = await db.any('SELECT email, name, avatar_url, status FROM users');
         return (res.status(200).send(users));
     } catch (error) {
-        console.log(error);
+        console.log("app=node ERROR: ", error);
         return (res.status(500).json({message: "Server error"}));
     }
 }

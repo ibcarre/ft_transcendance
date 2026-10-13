@@ -10,6 +10,7 @@ const fileUpload = require('express-fileupload');
 const cors = require("cors");
 
 const app = express();
+app.set('trust proxy', 1)
 app.use(cors());
 
 // metric need to be declared before limite to avoid 429

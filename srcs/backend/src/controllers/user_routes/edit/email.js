@@ -19,7 +19,7 @@ var edit_email = async (req, res) => {
 		return (res.status(200).json({message: "Email Updated"}).redirect(req.originalUrl))
 	}
 	catch (error) {
-		console.log(error)
+		console.log("app=node ERROR: ", error)
 		if (error.message === 'duplicate key value violates unique constraint "users_email_key"')
 			return (res.status(409).json({ message: "Email already exists" }));
 		if (error.routine === "ReportNotNullViolationError" || error.message === "ReportNotNullViolationError")
