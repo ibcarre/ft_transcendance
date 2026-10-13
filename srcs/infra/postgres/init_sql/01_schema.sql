@@ -4,7 +4,9 @@ CREATE TABLE users (
 	email		text NOT NULL UNIQUE,
 	name		text NOT NULL UNIQUE,
 	password	text NOT NULL,
-	avatar_url	text UNIQUE
+	avatar_url	text,
+	status		text NOT NULL DEFAULT 'online',
+	CONSTRAINT	chk_status CHECK (status IN ('online', 'offline'))
 );
 
 CREATE TABLE games (
