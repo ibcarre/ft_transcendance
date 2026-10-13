@@ -3,6 +3,13 @@ services:
   postgres:
     image: docker.io/library/postgres:18
     container_name: postgres_skyjo
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
@@ -16,8 +23,13 @@ services:
   backend:
     build: ./backend/
     container_name: back_skyjo
+    restart: unless-stopped
+    # healthcheck:
+    #   test: ["CMD-SHELL", "sh -c curl http://localhost/health"]
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+        restart: true
     environment:
       DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}"
       JWT_SECRETKEY: ${JWT_SECRETKEY}
@@ -28,16 +40,21 @@ services:
   frontend:
     build: ./frontend/
     container_name: front_skyjo
+    restart: unless-stopped
     depends_on:
-      - backend
+      backend:
+        # condition: service_healthy
+        restart: true
     networks:
       - NW_skyjo
 
   nginx:
     build: ./infra/nginx/
     container_name: nginx_skyjo
+    restart: unless-stopped
     depends_on:
-      - frontend
+      frontend:
+        restart: true
     ports:
       - "${APP_PORT}:443"
     networks:
@@ -46,15 +63,42 @@ services:
   prometheus:
     container_name: prometheus_skyjo
     image: docker.io/prom/prometheus:v3.15.0-rc.0-distroless
+    restart: unless-stopped
     volumes:
       - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - NW_skyjo
     restart: unless-stopped
 
+  prometheus-health:
+    container_name: prom_health_skyjo
+    image: docker.io/library/busybox:1.37
+    stop_signal: SIGKILL
+    restart: unless-stopped
+    command: ["sleep", "infinity"]
+    network_mode: "service:prometheus"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    depends_on:
+      prometheus:
+        restart: true
+
+
   grafana:
     image: docker.io/grafana/grafana:13.0.9
     container_name: grafana_skyjo
+    restart: unless-stopped
+    depends_on:
+      loki:
+        condition: service_healthy
+        restart: true
+      prometheus-health:
+        condition: service_healthy
+        restart: true
     environment:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
       GF_SERVER_HTTP_ADDR: 0.0.0.0
@@ -72,6 +116,7 @@ services:
 
 
   loki-init:
+    container_name: loki_init_skyjo
     image: docker.io/library/busybox:1.37
     user: "0"
     command: ["sh", "-c", "mkdir -p /tmp/loki && chown -R 10001:10001 /tmp/loki"]
@@ -81,6 +126,13 @@ services:
   loki:
     container_name: loki_skyjo
     image: docker.io/grafana/loki:3.7.8
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/usr/bin/loki", "-health"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
     volumes:
       - loki_storage:/tmp/loki
       - ./infra/loki/loki.yaml:/etc/loki/local-config.yaml:ro
@@ -90,18 +142,37 @@ services:
   alloy:
     container_name: alloy_skyjo
     image: docker.io/grafana/alloy:v1.20.1-distroless
+    restart: unless-stopped
+    depends_on:
+      loki:
+        condition: service_healthy
+        restart: true
     volumes:
       - ./infra/alloy:/etc/alloy:ro
       - ${SOCKET}:/var/run/docker.sock:ro
-    depends_on:
-      - loki
+    networks:
+      - NW_skyjo
     command:
       - run
       - /etc/alloy/config.alloy
       - --storage.path=/var/lib/alloy/data
       - --server.http.listen-addr=0.0.0.0:12345
-    networks:
-      - NW_skyjo
+
+  alloy-health:
+    container_name: alloy_health_skyjo
+    image: docker.io/library/busybox:1.37
+    command: ["sleep", "infinity"]
+    network_mode: "service:alloy"
+    stop_signal: SIGKILL
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:12345/-/healthy"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    depends_on:
+      alloy:
+        restart: true
 
 volumes:
   postgres_data:
