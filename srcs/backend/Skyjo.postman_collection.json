@@ -151,7 +151,7 @@
                 "email"
               ]
             },
-            "description": "Signup POST request, sending data, in body.\n\nResponses:\n\n400: {message: \"Please Input Username, Password and Email Adress\"}\n\n400: {message: \"Username already exists\"}\n\n400: {message: \"Email already exists\"}\n\n201: {message: \"User successfully created\"}\n\n500: {message: \"Failed to create user\"}"
+            "description": "Signup PUT request, sending data, in body.\n\nResponses:\n\n400: {message} //erreur de validation (ne correspond pas au regex du back (si quelquun force le front))\n\n409: {message: \"Email already exists\"}\n\n200: {message: \"Email Updated\"}\n\n500: {message: \"Server Error\"}\n\n409: {message: \"Email can't be empty\"}"
           },
           "response": []
         },
@@ -183,7 +183,7 @@
                 "username"
               ]
             },
-            "description": "Signup POST request, sending data, in body.\n\nResponses:\n\n400: {message: \"Please Input Username, Password and Email Adress\"}\n\n400: {message: \"Username already exists\"}\n\n400: {message: \"Email already exists\"}\n\n201: {message: \"User successfully created\"}\n\n500: {message: \"Failed to create user\"}"
+            "description": "Signup PUT request, sending data, in body.\n\nResponses:\n\n400: {message} //erreur de validation (ne correspond pas au regex du back (si quelquun force le front))\n\n409: {message: \"Username already exists\"}\n\n200: {message: \"Username Updated\"}\n\n500: {message: \"Server Error\"}\n\n409: {message: \"Username can't be empty\"}"
           },
           "response": []
         },
@@ -198,9 +198,7 @@
                 {
                   "key": "image",
                   "type": "file",
-                  "src": [
-                    "/C:/Users/ibtih/Pictures/favicon4.png"
-                  ]
+                  "src": []
                 }
               ]
             },
@@ -218,7 +216,7 @@
                 "picture"
               ]
             },
-            "description": "Signup POST request, sending data, in body.\n\nResponses:\n\n400: {message: \"Please Input Username, Password and Email Adress\"}\n\n400: {message: \"Username already exists\"}\n\n400: {message: \"Email already exists\"}\n\n201: {message: \"User successfully created\"}\n\n500: {message: \"Failed to create user\"}"
+            "description": "Signup PUT request, sending file.\n\nResponses:\n\n413 erreur nginx request entity too large (plus que 2mb)\n\n400: {message : \"This is not an image, please stick to classic images' file extensions (jpg, png, jpeg, webp...)\"}\n\n200: {message: \"Profile picture changed\"}\n\n500: {message: \"Server Error, please retry\"}\n\n400: {message: \"No picture has been sent\"}"
           },
           "response": []
         },
@@ -250,7 +248,7 @@
                 "password"
               ]
             },
-            "description": "Signup POST request, sending data, in body.\n\nResponses:\n\n400: {message: \"Please Input Username, Password and Email Adress\"}\n\n400: {message: \"Username already exists\"}\n\n400: {message: \"Email already exists\"}\n\n201: {message: \"User successfully created\"}\n\n500: {message: \"Failed to create user\"}"
+            "description": "Signup PUT request, sending data, in body.\n\nResponses:\n\n400: {message} //erreur de validation (ne correspond pas au regex du back (si quelquun force le front))\n\n200: {message: \"Password Updated\"}\n\n500: {message: \"Server Error\"}\n\n409: {message: \"Password can't be empty\"}"
           },
           "response": []
         }
@@ -306,6 +304,27 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "https://localhost:44443/api/user/logout",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "44443",
+              "path": [
+                "api",
+                "user",
+                "logout"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -319,7 +338,7 @@
           "urlencoded": [
             {
               "key": "email",
-              "value": "ibtihalbaaziz2@hotmail.fr"
+              "value": "ibtihalbaaziz@hotmail.fr"
             },
             {
               "key": "password",
@@ -327,7 +346,7 @@
             },
             {
               "key": "username",
-              "value": "username2"
+              "value": "username"
             }
           ]
         },
@@ -415,11 +434,37 @@
         "description": "GET Profile email, username and avatar using cookie.\n\nresponses :\n\n401: {message: \"Unauthorized no token\"}\n\n403: {message: \"invalid token\"}\n\n404: {message: \"User not found\"}\n\n500: {message: \"Server error\"}\n\n200: \\[User\\]"
       },
       "response": []
+    },
+    {
+      "name": "image",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:44443/api/image/{{imageName}}",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "44443",
+          "path": [
+            "api",
+            "image",
+            "{{imageName}}"
+          ]
+        },
+        "description": "fetch /api/image/XXX (nom de l'image récupéré dans call au profile)\n\nstatus 400 {message: \"No picture asked for\"}\n\nstatus 200 (fileSent)\n\nstatus 404 (si une erreur pendant le sending file alors on send default_pic)\n\nstatus 500 {message: \"File error}"
+      },
+      "response": []
     }
   ],
   "variable": [
     {
       "key": "RoomID",
+      "value": ""
+    },
+    {
+      "key": "imageName",
       "value": ""
     }
   ]

@@ -11,7 +11,7 @@ var logout = async (req, res) => {
 		return (res.status(205).send());
     }
     catch (error) {
-        console.log(error);
+        console.log("app=node ERROR: ", error);
         return (res.status(500).send("Failed to log out, please retry"));
     }
 }

@@ -36,7 +36,7 @@ var signup = async (req, res) => {
         res.cookie("access_token", token, { httpOnly: true, secure: true });
         return res.status(201).json({message: "User successfully created"});
     } catch (error) {
-        console.log(error);
+        console.log("app=node ERROR: ", error);
         db.none('DELETE FROM users WHERE name = $1', username);
         return (res.status(500).json({message: "Failed to create user"}));
     }

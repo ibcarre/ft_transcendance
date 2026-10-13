@@ -9,8 +9,8 @@ exports.isLog = async (req, res, next) => {
     if (!token) return res.status(401).json({message: "Unauthorized: No token"});
     try {
         var decoded = jwt.verify(token, process.env.JWT_SECRETKEY);
-        var user = await db.oneOrNone('SELECT * FROM users WHERE id = $1', decoded.userId);
-        console.log("Auth");
+        var user = await db.oneOrNone('SELECT id, email, name, avatar_url, status FROM users WHERE id = $1', decoded.userId);
+        console.log("app=node INFO: Auth");
         if (!user) {
             res.clearCookie('access_token');
             return (res.status(401).json({message: "Unauthorized: User doesn't exist"}))
@@ -18,7 +18,7 @@ exports.isLog = async (req, res, next) => {
         req.user = user;
     }
     catch (error) {
-        console.log(error);
+        console.log("app=node ERROR: ", error);
         res.clearCookie('access_token');
         if (error.name === "TokenExpiredError") {
             return (res.status(401).json({message: "Token Expired, please log back in"}));

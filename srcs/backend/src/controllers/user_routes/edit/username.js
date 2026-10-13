@@ -19,7 +19,7 @@ var edit_username = async (req, res) => {
 		return (res.status(200).json({message: "Username Updated"}).redirect(req.originalUrl))
 	}
 	catch (error) {
-		console.log(error)
+		console.log("app=node ERROR: ", error)
 		if (error.message === 'duplicate key value violates unique constraint "users_name_key"')
 			return (res.status(409).json({ message: "Username already exists" }));
 		if (error.routine === "ReportNotNullViolationError" || error.message === "ReportNotNullViolationError")
