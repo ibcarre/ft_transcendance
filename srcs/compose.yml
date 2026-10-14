@@ -75,7 +75,7 @@ services:
     restart: unless-stopped
     depends_on:
       backend:
-        # condition: service_healthy
+        condition: service_started
         restart: true
     networks:
       - NW_skyjo
@@ -84,9 +84,9 @@ services:
     build: ./infra/nginx/
     container_name: nginx_skyjo
     restart: unless-stopped
-    depends_on:
-      frontend:
-        restart: true
+    # depends_on:
+    #   frontend:
+    #     restart: true
     ports:
       - "${APP_PORT}:443"
     networks:
@@ -100,7 +100,6 @@ services:
       - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - NW_skyjo
-    restart: unless-stopped
 
   prometheus-health:
     container_name: prom_health_skyjo
@@ -117,6 +116,7 @@ services:
       start_period: 3s
     depends_on:
       prometheus:
+        condition: service_started
         restart: true
 
 
