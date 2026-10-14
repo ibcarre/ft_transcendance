@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-if [ ! -f /run/secrets/postgres_password ]; then
-  echo "secret postgres_password not found" >&2
+if [ ! -f /run/secrets/postgres_url ]; then
+  echo "secret postgres_url not found" >&2
   exit 1
 fi
 
@@ -17,10 +17,7 @@ if [ ! -f /run/secrets/api_key ]; then
 fi
 
 
-postgres_pswd=$(cat /run/secrets/postgres_password)
-
-
-export DATABASE_URL="posgressql://${POSTGRES_USER}:${postgres_pswd}@postgres:5432/${POSTGRES_DB}"
+export DATABASE_URL=$(cat /run/secrets/postgres_url)
 export JWT_SECRETKEY=$(cat /run/secrets/jwt_secret_key)
 export API_KEY=$(cat /run/secrets/api_key)
 

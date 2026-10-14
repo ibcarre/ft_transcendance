@@ -25,7 +25,6 @@ fi
 
 source "${PWD}/srcs/.env"
 
-# create the DATABSE URL SECRET FOR BACK AND future postgres Exporter
 if [ ! -f "${PWD}/secrets/POSTGRES_PASSWORD.txt" ]; then
 	exit 1
 fi

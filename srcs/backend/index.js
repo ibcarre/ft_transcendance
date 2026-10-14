@@ -50,6 +50,5 @@ app.use('/user', Userroutes);
 app.use('/v1', api);
 
 app.listen(port, () => {
-    console.log(`level=INFO app=GameEngine message=Server listening on port ${port}`);
-    console.log(`level=INFO app=Node message=test`);
+    console.log(`level=INFO app=Node message=Server listening on port ${port}`);
 });
