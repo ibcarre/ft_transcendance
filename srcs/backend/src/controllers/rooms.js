@@ -27,14 +27,14 @@ exports.getRooms = async (req, res) => {
 exports.createRoom = async (req, res) => {
     console.log("app=node INFO: room creation");
     let ispass = 0;
-    const {password, name, max_players} = req.body;
-    let hashedPassword = '';
-    if (password) {
-        ispass = 1;
-        const saltRounds = 10;
-        hashedPassword = await bcrypt.hash(password, saltRounds);
-    }
 	try {
+		const {password, name, max_players} = req?.body;
+		let hashedPassword = '';
+		if (password) {
+			ispass = 1;
+			const saltRounds = 10;
+			hashedPassword = await bcrypt.hash(password, saltRounds);
+		}
         var room = await db.oneOrNone('SELECT * FROM games WHERE name = $1', name);
         if (room) {
             return res.status(400).json({ message: "A room already has that name" });

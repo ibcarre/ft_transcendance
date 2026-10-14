@@ -51,7 +51,7 @@
                 },
                 {
                   "key": "max_players",
-                  "value": "5"
+                  "value": "3"
                 }
               ]
             },
@@ -329,6 +329,42 @@
       ]
     },
     {
+      "name": "Friends",
+      "item": [
+        {
+          "name": "AddFriends",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "friendUsername",
+                  "value": "ibaaziz"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://localhost:44443/api/friends/add",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "44443",
+              "path": [
+                "api",
+                "friends",
+                "add"
+              ]
+            },
+            "description": "Signup POST request, sending data, in body.\n\nResponses:\n\n400: {message: \"Please Input Username, Password and Email Adress\"}\n\n400: {message: \"Username already exists\"}\n\n400: {message: \"Email already exists\"}\n\n201: {message: \"User successfully created\"}\n\n500: {message: \"Failed to create user\"}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "signup",
       "request": {
         "method": "POST",
@@ -338,7 +374,7 @@
           "urlencoded": [
             {
               "key": "email",
-              "value": "ibtihalbaaziz@hotmail.fr"
+              "value": "ibtihalbaaziz7@hotmail.fr"
             },
             {
               "key": "password",
@@ -346,7 +382,7 @@
             },
             {
               "key": "username",
-              "value": "username"
+              "value": "ibaaziz"
             }
           ]
         },
@@ -388,7 +424,7 @@
           "urlencoded": [
             {
               "key": "email",
-              "value": "ibtihalbaaziz2@hotmail.fr"
+              "value": "ibtihalbaaziz@hotmail.fr"
             },
             {
               "key": "password",
