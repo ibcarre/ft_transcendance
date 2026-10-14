@@ -35,6 +35,22 @@ services:
       - ./infra/postgres/init_sql/01_schema.sql:/docker-entrypoint-initdb.d/01_tables.sql
     networks:
       - NW_skyjo
+  
+  postgres-exporter:
+    image: docker.io/prometheuscommunity/postgres-exporter
+    container_name: postgres_exporter
+    environment:
+      DATA_SOURCE_NAME: ""
+    volumes:
+      - ../secrets/DATABASE_URL.txt:/run/secrets/pg_url:ro
+    networks:
+      - NW_skyjo
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        export DATA_SOURCE_NAME="$(cat /run/secrets/pg_url)?sslmode=disable"
+        exec /bin/postgres_exporter
+
 
   backend:
     secrets:

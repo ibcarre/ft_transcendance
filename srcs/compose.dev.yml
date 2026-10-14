@@ -31,7 +31,9 @@ services:
     ports:
       - "12345:12345"
 
-
+  postgres-exporter:
+    ports:
+      - "9187:9187"
 
 volumes:
   front-node_modules:

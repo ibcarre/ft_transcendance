@@ -4,20 +4,20 @@
   "metadata": {
     "name": "skyjo",
     "namespace": "default",
-    "uid": "3848249a-8cce-4571-a8ee-730eb1bab9f5",
-    "resourceVersion": "1791688704202017",
+    "uid": "75596d94-e554-4a4b-af10-28e927365025",
+    "resourceVersion": "1791958676528982",
     "generation": 1,
-    "creationTimestamp": "2026-10-11T03:18:24Z",
+    "creationTimestamp": "2026-10-14T06:17:56Z",
     "labels": {
-      "grafana.app/deprecatedInternalID": "1436783599853568"
+      "grafana.app/deprecatedInternalID": "2569129639362560"
     },
     "annotations": {
       "grafana.app/createdBy": "access-policy:service",
       "grafana.app/managedBy": "classic-file-provisioning",
       "grafana.app/managerId": "skyjo",
-      "grafana.app/sourceChecksum": "09614f787aecde0a013d20f4d4505e21",
+      "grafana.app/sourceChecksum": "949937969582f048c2b69e5f481d5c8b",
       "grafana.app/sourcePath": "/var/lib/grafana/dashboards/dashboard_skyjo.json",
-      "grafana.app/sourceTimestamp": "1791688640000",
+      "grafana.app/sourceTimestamp": "1791948791000",
       "grafana.app/folder": ""
     }
   },
@@ -269,12 +269,34 @@
                       "spec": {
                         "editorMode": "code",
                         "expr": "sum by (job) (up)",
-                        "legendFormat": "__auto",
+                        "legendFormat": "{{job}}",
                         "range": true
                       },
                       "version": "v0"
                     },
                     "refId": "A"
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "prometheus"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "pg_up",
+                        "instant": false,
+                        "legendFormat": "postgres",
+                        "range": true
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "B"
                   }
                 }
               ],

@@ -29,7 +29,7 @@ if [ ! -f "${PWD}/secrets/POSTGRES_PASSWORD.txt" ]; then
 	exit 1
 fi
 postgres_pswd=$(cat "${PWD}/secrets/POSTGRES_PASSWORD.txt")
-db_url="posgressql://${POSTGRES_USER}:${postgres_pswd}@postgres:5432/${POSTGRES_DB}"
+db_url="postgresql://${POSTGRES_USER}:${postgres_pswd}@postgres:5432/${POSTGRES_DB}"
 
 if [ ! -f "${PWD}/secrets/POSTGRES_PASSWORD" ]; then
 	exec echo ${db_url} > "${PWD}/secrets/DATABASE_URL.txt"

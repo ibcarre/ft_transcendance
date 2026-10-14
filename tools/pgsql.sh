@@ -11,7 +11,7 @@ else
 	start=$((RANDOM + RANDOM))
 fi
 
-end=$((start + 9))
+end=$((start + 900))
 echo "$end" > "$STATE"
 
 echo "=== signup 10 nouveaux users : test${start} .. test${end}"
