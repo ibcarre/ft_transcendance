@@ -1,5 +1,5 @@
 const db = require('../../db/db');
-const {inviteEvent} = require('../../socket/namespaces/notifications/events/InviteEvent');
+const {inviteEvent} = require('../../socket/namespaces/notifications/events/InviteEventNotif');
 const {sendInvite} = require('../../socket/namespaces/friendsList/events/invite');
 const {newFriend} = require('../../socket/namespaces/friendsList/events/friendList');
 
@@ -50,13 +50,13 @@ var add = async (user, friend, requestedby, res) => {
 }
 
 var addFriend = async (req, res) => {
-	const user = req.user;
-	const {friendUsername} = req.body;
-	if (friendUsername === user.name)
-		return (res.status(400).json({message: "Can't add yourself"}));
-	if (!friendUsername)
-		return (res.status(400).json({message: "Empty friend name"}));
 	try {
+		const user = req?.user;
+		const {friendUsername} = req.body;
+		if (!friendUsername || !user)
+			return (res.status(400).json({message: "Empty friend name"}));
+		if (friendUsername === user.name)
+			return (res.status(400).json({message: "Can't add yourself"}));
 		const userFriend = await db.oneOrNone('SELECT * FROM users WHERE name = $1', friendUsername);
 		if (!userFriend)
 			return (res.status(400).json({message: "User does not exist"}));

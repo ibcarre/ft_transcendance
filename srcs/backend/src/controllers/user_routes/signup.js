@@ -4,8 +4,8 @@ const db = require('../../db/db')
 const { validationResult } = require("express-validator");
 
 var signup = async (req, res) => {
-    const {username, email, password} = req.body;
     try {
+    	const {username, email, password} = req.body;
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return res.status(400).json({
