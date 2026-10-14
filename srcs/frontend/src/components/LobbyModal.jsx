@@ -11,10 +11,8 @@ export function LobbyModal({ title, onClose, children }) {
                     <button onClick={onClose} className="close-button">×</button>
                 </div>
 
-                <div className="modal-body">
-                    {children}
-                </div>
-
+                {children}
+                
             </div>
         </div>
     );
