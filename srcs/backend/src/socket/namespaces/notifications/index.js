@@ -2,20 +2,18 @@ var sockets = [];
 
 const notifInit = (io) => {
     io.of('/Notifications').on('connection', function (socket) {
-        console.log(socket?.user);
 		sockets.push(socket);
+		console.log("app=node INFO: connection : socket notif");
 		socket.on('disconnect', function () {
 			console.log("app=node INFO: Socket Notif disconnected");
-			let i;
-			for (i = 0; i < sockets.length; i++) {
-				if (sockets[i].id === socket.id)
-					break;
+			let i = sockets.findIndex((element) => element.id === socket.id);
+			if (i == -1) {console.log("app=node INFO Couldn't find socket notif (notif/index.js L18)")}
+			while (i > -1) {
+				sockets.splice(i, 1);
+				console.log("app=node INFO: Socket notif deleted from list");
+				console.log("app=node INFO: disconnect socket notif list: ", sockets.forEach((e) => e.id), "\nEND");
+				i = sockets.findIndex((element) => element.id === socket.id)
 			}
-			if (i < sockets.length) { // only splice array when item is found
-				sockets.splice(i, 1); // 2nd parameter means remove one item only
-				console.log("app=node INFO: Socket Notif deleted from list");
-			}
-			else {console.log("app=node INFO Couldn't find socket NOTIF (notifications/index.js L18)")}
     	})
     })
 }

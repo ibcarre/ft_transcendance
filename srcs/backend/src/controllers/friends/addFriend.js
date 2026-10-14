@@ -1,4 +1,7 @@
 const db = require('../../db/db');
+const {inviteEvent} = require('../../socket/namespaces/notifications/events/InviteEvent');
+const {sendInvite} = require('../../socket/namespaces/friendsList/events/invite');
+const {newFriend} = require('../../socket/namespaces/friendsList/events/friendList');
 
 var add = async (user, friend, requestedby, res) => {
 	try {
@@ -15,18 +18,25 @@ var add = async (user, friend, requestedby, res) => {
 			});
 			if (user === requestedby){
 				//emit invite friend && requestedby
-				//emit notif
+				sendInvite(friend.id, user.id)
+				//emit notif invite
+				inviteEvent(friend.id);
 			}
 			else {
 				//emit invite user && requestedby
-				//emit notif
+				sendInvite(user.id, friend.id)
+				//emit notif invite
+				inviteEvent(user.id);
 			}
 			return (res.status(200).json({message: "Invite sent"}))
 		}
 		if (!invite.accepted) {
-			if (requestedby != invite.requested_by) {
+			if (requestedby.id !== invite.requested_by) {
 				await db.none('UPDATE friends SET accepted = $1 WHERE user_id = $2 AND friend_id = $3', [true, user.id, friend.id]);
 				//emit friendslist newfriend
+				newFriend(user, friend);
+				//emit notif invite
+				inviteEvent(user.id);
 				return (res.status(200).json({message: "Friendship accepted"}))
 			}
 			else
