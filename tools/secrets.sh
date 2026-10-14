@@ -14,13 +14,24 @@ fi
 
 rm -rf changelog.txt
 
-if [ -d "$PWD/secrets" ]; then
-	exit 0
+if [ !  -d "$PWD/secrets" ]; then
+	if [ ! -f "$PWD/secrets.7z" ]; then
+		echo "No zip file, and no secrets directory. Could not be launched" >&2
+		exit 1
+	else
+		exec 7z x "${PWD}/secrets.7z" -o"${PWD}" -y
+	fi
 fi
 
-if [ ! -f "$PWD/secrets.7z" ]; then
-	echo "No zip file, and no secrets directory. Could not be launched" >&2
+source "${PWD}/srcs/.env"
+
+# create the DATABSE URL SECRET FOR BACK AND future postgres Exporter
+if [ ! -f "${PWD}/secrets/POSTGRES_PASSWORD.txt" ]; then
 	exit 1
-else
-	exec 7z x "${PWD}/secrets.7z" -o"${PWD}" -y
+fi
+postgres_pswd=$(cat "${PWD}/secrets/POSTGRES_PASSWORD.txt")
+db_url="posgressql://${POSTGRES_USER}:${postgres_pswd}@postgres:5432/${POSTGRES_DB}"
+
+if [ ! -f "${PWD}/secrets/POSTGRES_PASSWORD" ]; then
+	exec echo ${db_url} > "${PWD}/secrets/DATABASE_URL.txt"
 fi
