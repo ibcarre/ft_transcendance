@@ -90,7 +90,7 @@ services:
   prometheus-health:
     container_name: prom_health_skyjo
     image: docker.io/library/busybox:1.37
-    stop_signal: SIGKILL
+    init: true
     restart: unless-stopped
     command: ["sleep", "infinity"]
     network_mode: "service:prometheus"
@@ -188,9 +188,9 @@ services:
   alloy-health:
     container_name: alloy_health_skyjo
     image: docker.io/library/busybox:1.37
+    init: true
     command: ["sleep", "infinity"]
     network_mode: "service:alloy"
-    stop_signal: SIGKILL
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:12345/-/healthy"]
       interval: 5s
