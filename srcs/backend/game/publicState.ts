@@ -50,5 +50,10 @@ export function buildPublicState(state: GameState): PublicGameState {
 		discardTop: discardTop?.value ?? null,
 		pendingCard: buildPublicPendingCard(state),
 		version: state.version,
+		targetScore: state.targetScore,
+		roundStarterId: state.roundStarterId,
+		roundFinisherId: state.roundFinisherId,
+		roundHistory: structuredClone(state.roundHistory),
+		winnerIds: [...state.winnerIds],
 	};
 }

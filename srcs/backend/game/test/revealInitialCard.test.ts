@@ -143,12 +143,14 @@ two cards and a starting player has been determined", () => {
 	assert.equal(state.turnStage, null);
 	assert.equal(state.currentPlayerId, null);
 	assert.equal(state.version, 3);
+	assert.equal(state.roundStarterId, null);
 
 	state = revealSuccessfully(state, "user-1", 3);
 	assert.equal(state.phase, PHASE.PLAYING);
 	assert.equal(state.turnStage, TURN_STAGE.WAITING_FOR_DRAW);
 	assert.notEqual(state.currentPlayerId, null);
 	assert.equal(state.version, 4);
+	assert.equal(state.roundStarterId, state.currentPlayerId);
 });
 
 test("REVEAL_INITIAL_CARD can be performed by players in any order during \
@@ -271,6 +273,7 @@ test("the player with the unique highest initial sum starts the first round", ()
 	assert.equal(state.currentPlayerId, "user-1");
 	assert.equal(state.phase, PHASE.PLAYING);
 	assert.equal(state.turnStage, TURN_STAGE.WAITING_FOR_DRAW);
+	assert.equal(state.roundStarterId, "user-1");
 });
 
 test("the highest initial sum is selected correctly when all sums are negative", () => {
@@ -305,6 +308,7 @@ test("an initial sum tie is resolved randomly among the tied highest players", (
 		return 0.5;
 	};
 	state = revealSuccessfully(state, "user-3", 1, chooseSecondTiedPlayer);
+	assert.equal(state.roundStarterId, "user-3");
 	assert.equal(randomCallCount, 1);
 	assert.equal(state.currentPlayerId, "user-3");
 	assert.notEqual(state.currentPlayerId, "user-2");
@@ -350,4 +354,39 @@ test("the successful final reveal returns a PublicGameState matching the transit
 		return;
 	}
 	assert.deepEqual(result.publicState, buildPublicState(result.state));
+});
+
+test("roundStarterId and targetScore stay unchanged after a complete turn",
+() => {
+	let state = createGame({ id: "game-test",
+								players: [{ id: "user-1" }, { id: "user-2" }],
+								targetScore: 250},
+							() => 0.5);
+	setBoardCardValue(state, "user-1", 0, 12);
+	setBoardCardValue(state, "user-1", 1, 12);
+	setBoardCardValue(state, "user-2", 0, -2);
+	setBoardCardValue(state, "user-2", 1, -2);
+	state = revealSuccessfully(state, "user-1", 0);
+	state = revealSuccessfully(state, "user-1", 1);
+	state = revealSuccessfully(state, "user-2", 0);
+	state = revealSuccessfully(state, "user-2", 1);
+	assert.equal(state.roundStarterId, "user-1");
+	const drawn = applyAction(state,
+							  { type: ACTION.DRAW_DECK, playerId: "user-1" });
+	assert.equal(drawn.ok, true);
+	if (!drawn.ok) {
+		throw new Error("Expected DRAW_DECK success");
+	}
+	const swapped = applyAction(drawn.state,
+								{ type: ACTION.SWAP_CARD, playerId: "user-1",
+									position: 2});
+	assert.equal(swapped.ok, true);
+	if (!swapped.ok) {
+		throw new Error("Expected SWAP_CARD success");
+	}
+	assert.equal(swapped.state.roundStarterId, "user-1");
+	assert.equal(swapped.state.currentPlayerId, "user-2");
+	assert.equal(swapped.state.targetScore, 250);
+	assert.deepEqual(swapped.state.roundHistory, []);
+	assert.deepEqual(swapped.state.winnerIds, []);
 });

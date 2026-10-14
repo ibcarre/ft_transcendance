@@ -25,4 +25,6 @@ export type {
 	GameState,
 	PlayerId,
 	PublicGameState,
+	RoundPlayerScore,
+	RoundResult,
 } from "./types";

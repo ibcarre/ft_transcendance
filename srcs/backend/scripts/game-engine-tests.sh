@@ -36,6 +36,9 @@ run_test "createGame() tests" \
 run_test "buildPublicState() tests" \
 	"game/test/publicState.test.ts"
 
+run_test "State machine phase tests" \
+	"game/test/stateMachine.test.ts"
+
 run_test "REVEAL_INITIAL_CARD tests" \
 	"game/test/revealInitialCard.test.ts"
 

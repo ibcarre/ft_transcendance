@@ -223,7 +223,9 @@ reveal");
 	slot.revealed = true;
 	state.version++;
 	if (hasCompletedInitialReveal(state)) {
-		state.currentPlayerId = chooseInitialStartingPlayer(state, random);
+		const starterId = chooseInitialStartingPlayer(state, random);
+		state.roundStarterId = starterId;
+		state.currentPlayerId = starterId;
 		state.phase = PHASE.PLAYING;
 		state.turnStage = TURN_STAGE.WAITING_FOR_DRAW;
 	}
@@ -284,6 +286,11 @@ ${MAX_PLAYERS}`);
 		}
 	}
 
+	const targetScore = input.targetScore ?? 100;
+	if (!Number.isSafeInteger(targetScore) || targetScore <= 0) {
+		throw new Error("createGame() requires a positive integer targetScore");
+	}
+
 	const playerIds = input.players.map((player) => player.id);
 	const uniquePlayerIds = new Set(playerIds);
 	if (uniquePlayerIds.size !== playerIds.length) {
@@ -318,6 +325,10 @@ ${MAX_PLAYERS}`);
 		roundFinisherId: null,
 		finalTurnQueue: [],
 		version: 0,
+		targetScore,
+		roundStarterId: null,
+		roundHistory: [],
+		winnerIds: [],
 	};
 	return gameState;
 }

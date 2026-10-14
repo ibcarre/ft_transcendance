@@ -58,6 +58,23 @@ export interface GameState {
 	roundFinisherId: PlayerId | null;
 	finalTurnQueue: PlayerId[];
 	version: number;
+	targetScore: number;
+	roundStarterId: PlayerId | null;
+	roundHistory: RoundResult[];
+	winnerIds: PlayerId[];
+}
+
+export interface RoundPlayerScore {
+	playerId: PlayerId;
+	baseScore: number;
+	finalScore: number;
+}
+
+export interface RoundResult {
+	roundNumber: number;
+	starterId: PlayerId;
+	finisherId : PlayerId;
+	scores: RoundPlayerScore[];
 }
 
 
@@ -71,6 +88,7 @@ export interface CreateGamePlayerInput {
 export interface CreateGameInput {
 	id: GameId;
 	players: CreateGamePlayerInput[];
+	targetScore?: number;
 }
 
 export interface RevealInitialCardCommand {
@@ -145,6 +163,11 @@ export interface PublicGameState {
 	discardTop: CardValue | null;
 	pendingCard: PublicPendingCard | null;
 	version: number;
+	targetScore: number;
+	roundStarterId: PlayerId | null;
+	roundFinisherId: PlayerId | null;
+	roundHistory: RoundResult[];
+	winnerIds: PlayerId[];
 }
 
 export interface GameError {code: ErrorCode;}

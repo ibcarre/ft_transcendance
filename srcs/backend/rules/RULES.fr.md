@@ -6,7 +6,7 @@
 
 - **Joueurs :** 2 à 4.
 - **But :** terminer la partie avec le **plus petit score cumulé**.
-- Au début de chaque manche, chaque joueur reçoit **12 cartes face cachée disposées en 3 lignes x 4 colonnes** et révèle **2 cartes au choix**.
+- Au début de chaque manche, chaque joueur reçoit **12 cartes face cachée disposées en 3 lignes x 4 colonnes**. Lors de la première manche, chaque joueur révèle **2 cartes au choix**.
 - À son tour, un joueur peut soit :
   1. prendre la carte visible au sommet de la défausse et **l'échanger** contre l'une de ses cartes ;
   2. piocher la première carte face cachée de la pioche, puis soit **l'échanger** contre l'une de ses cartes, soit **la défausser et révéler l'une de ses cartes face cachée**.
@@ -14,7 +14,7 @@
 - Une manche entre dans sa phase de fin lorsqu'un joueur n'a plus aucune carte face cachée. Tous les autres joueurs disposent alors d'**un dernier tour**.
 - À la fin de la manche, les éventuelles dernières colonnes identiques sont retirées puis les scores sont calculés.
 - Le joueur qui a déclenché la fin de la manche doit avoir un score de manche **strictement inférieur** à celui de tous les autres joueurs. Si un autre joueur possède un score inférieur ou égal, le score **positif** du finisseur est doublé. Un score nul ou négatif n'est jamais doublé.
-- Les scores de manche sont ajoutés aux scores cumulés. Après une manche où au moins un joueur atteint **100 points ou plus**, la partie se termine ; le plus petit score cumulé gagne.
+- Les scores de manche sont ajoutés aux scores cumulés. Après une manche où au moins un joueur atteint **100 points (par défaut) ou plus**, la partie se termine ; le plus petit score cumulé gagne.
 
 ---
 
@@ -39,7 +39,7 @@ La valeur inscrite sur une carte correspond directement au nombre de points qu'e
 
 SKYJO se joue en plusieurs manches. Les joueurs accumulent des points d'une manche à l'autre.
 
-L'objectif est de conserver un score cumulé aussi faible que possible. Après le décompte d'une manche, si au moins un joueur possède un score cumulé de **100 points ou plus**, la partie se termine. Le ou les joueurs ayant alors le plus petit score cumulé remportent la partie.
+L'objectif est de conserver un score cumulé aussi faible que possible. Après le décompte d'une manche, si au moins un joueur possède un score cumulé de **100 points (par défaut) ou plus**, la partie se termine. Le ou les joueurs ayant alors le plus petit score cumulé remportent la partie.
 
 ## 3. Terminologie
 
@@ -69,7 +69,6 @@ Chaque colonne verticale contient donc exactement trois emplacements.
 
 Une carte supplémentaire est placée face visible pour constituer le début de la **défausse**. Toutes les autres cartes forment la **pioche**, face cachée.
 
-Chaque joueur choisit ensuite **deux cartes de son propre tableau** et les révèle. Aucune autre carte face cachée de son tableau ne peut être consultée pendant ce choix initial.
 Lors de la première manche chaque joueur choisit deux cartes de son tableau et les révèle. Lors des manches suivantes, toutes les cartes sont initialement cachées et le finisseur de la manche précédente commence directement.
 
 ## 5. Détermination du premier joueur

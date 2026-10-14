@@ -155,7 +155,6 @@ test("buildPublicState() doesn't expose private GameState informations", () => {
 	assert.equal(Object.hasOwn(publicState, "deck"), false);
 	assert.equal(Object.hasOwn(publicState, "discardPile"), false);
 	assert.equal(Object.hasOwn(publicState, "pendingCardSource"), false);
-	assert.equal(Object.hasOwn(publicState, "roundFinisherId"), false);
 	assert.equal(Object.hasOwn(publicState, "finalTurnQueue"), false);
 });
 
@@ -191,3 +190,46 @@ card", () => {
 	assert.throws(() => buildPublicState(game), { message: "Invalid GameState:\
  inconsistent pending card state" });
 });
+
+test("buildPublicState() exposes the new initial metadata", () => {
+	const game = createTestGame();
+	const publicState = buildPublicState(game);
+
+	assert.equal(publicState.targetScore, 100);
+	assert.equal(publicState.roundStarterId, null);
+	assert.equal(publicState.roundFinisherId, null);
+	assert.deepEqual(publicState.roundHistory, []);
+	assert.deepEqual(publicState.winnerIds, []);
+});
+
+test("buildPublicState() copies completed round result independently", () => {
+	const game = createTestGame();
+	game.targetScore = 250;
+	game.roundStarterId = "user-1";
+	game.roundFinisherId = "user-2";
+	game.winnerIds = ["user-2"];
+	game.roundHistory.push({ roundNumber: 1,
+						   starterId: "user-1",
+						   finisherId: "user-2",
+						   scores: [
+						{ playerId: "user-1", baseScore: 10, finalScore: 20 },
+						{ playerId: "user-2", baseScore: 9, finalScore: 9 }]});
+	const publicState = buildPublicState(game);
+	assert.equal(publicState.targetScore, 250);
+	assert.equal(publicState.roundStarterId, "user-1");
+	assert.equal(publicState.roundFinisherId, "user-2");
+	assert.deepEqual(publicState.roundHistory, game.roundHistory);
+	assert.deepEqual(publicState.winnerIds, game.winnerIds);
+	assert.notStrictEqual(publicState.roundHistory, game.roundHistory);
+
+	const publicRound = publicState.roundHistory[0];
+	assert.ok(publicRound);
+	const publicScore = publicRound.scores[0];
+	assert.ok(publicScore);
+	publicScore.finalScore = 999;
+	publicState.winnerIds.push("fake-user");
+	assert.equal(game.roundHistory[0]?.scores[0]?.finalScore, 20);
+	assert.deepEqual(game.winnerIds, ["user-2"]);
+});
+
+

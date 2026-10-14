@@ -14,13 +14,15 @@ import type {
 
 
 export function getAllowedActionTypes(state: GameState): ActionType[] {
-    if (state.phase === PHASE.GAME_OVER)
-		{ return []; }
+    if (state.phase === PHASE.ROUND_FINISHED
+		|| state.phase === PHASE.GAME_OVER) {
+			return []; }
 
-    if (state.phase === PHASE.INITIAL_REVEAL)
-		{ return [ACTION.REVEAL_INITIAL_CARD]; }
+    if (state.phase === PHASE.INITIAL_REVEAL) {
+		return [ACTION.REVEAL_INITIAL_CARD]; }
 
-    if (state.phase !== PHASE.PLAYING) { return []; }
+    if (state.phase !== PHASE.PLAYING) {
+		return []; }
 
     switch (state.turnStage) {
         case TURN_STAGE.WAITING_FOR_DRAW:
