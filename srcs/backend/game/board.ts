@@ -54,3 +54,30 @@ expected position");
 	player.board[bottomPosition] = null;
 	return true;
 }
+
+export function revealAllCards(player: PlayerState): void {
+	if (player.board.length !== BOARD_SIZE) {
+		throw new Error("Invalid GameState: player board must have 12 \
+positions");
+	}
+	for (const slot of player.board) {
+		if (slot === undefined) {
+			throw new Error("Invalid GameState: player board is missing an \
+expected position");
+		}
+		if (slot !== null) {
+			slot.revealed = true;
+		}
+	}
+}
+
+export function removeAllCompletedColumns(player: PlayerState,
+										  discardPile: Card[]): void {
+	if (player.board.length !== BOARD_SIZE) {
+		throw new Error("Invalid GameState: player board must have 12 \
+positions");
+	}
+	for (let column = 0; column < BOARD_COLUMNS; column++) {
+		removeCompletedColumnAtPosition(player, column, discardPile);
+	}
+}
