@@ -39,7 +39,7 @@ dev-logs:
 #
 
 game-test:
-	${CONTAINER} run --rm --name game-test -v "./srcs/backend:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npm run game:verify"
+	${CONTAINER} run --rm --name game-test_skyjo -v "./srcs/backend:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npm run game:verify"
 
 #
 # Clean
