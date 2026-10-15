@@ -3,6 +3,7 @@
 set -eu
 
 if [ ! -f "${PWD}/secrets/SMTP_ADDRESS.txt.txt" ]; then
+	printf "\033[0;32mSecrets/SMTP_ADDRESS not found\033[0m\n"
 	exit 1
 fi
 
