@@ -84,9 +84,10 @@ services:
     build: ./infra/nginx/
     container_name: nginx_skyjo
     restart: unless-stopped
-    # depends_on:
-    #   frontend:
-    #     restart: true
+    depends_on:
+      frontend:
+        condition: service_started
+        restart: true
     ports:
       - "${APP_PORT}:443"
     networks:
