@@ -2,6 +2,11 @@
 
 set -eu
 
+if [ ! -f "${PWD}/secrets/SMTP_ADDRESS.txt.txt" ]; then
+	exit 1
+fi
+
+
 smtp_mail=$(cat ${PWD}/secrets/SMTP_ADDRESS.txt)
 
 sed -i "s#GF_SMTP_USER=.*#GF_SMTP_USER=${smtp_mail}#w changelog.txt" ${PWD}/srcs/.env
