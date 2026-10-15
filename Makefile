@@ -1,5 +1,5 @@
 
-$(shell ./tools/secrets.sh > /dev/null)
+# $(shell ./tools/secrets.sh > /dev/null)
 $(shell ./tools/podman-sock.sh > /dev/null)
 
 include srcs/.env
@@ -7,7 +7,7 @@ include srcs/.env
 COMPOSE = ${CONTAINER} compose -f srcs/compose.yml
 COMPOSE_DEV = ${CONTAINER} compose -f srcs/compose.yml -f srcs/compose.dev.yml
 
-all: up
+all: secrets up
 
 #
 # Prod
@@ -40,7 +40,9 @@ dev-logs:
 #
 
 game-test:
-	${CONTAINER} run --rm -v "./srcs/backend:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npm run game:verify"
+	${CONTAINER} run --rm -v \
+		"./srcs/backend:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npm run game:verify" \
+		--name game-test
 
 #
 # Clean
@@ -103,6 +105,13 @@ watch-psa:
 
 dev-ps:
 	./tools/dps.sh
+
+#
+#	Tools
+#
+
+secrets:
+	./tools/secrets.sh
 
 #
 # Helps

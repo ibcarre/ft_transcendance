@@ -2,6 +2,17 @@
 
 set -eu
 
+if [ !  -d "$PWD/secrets" ]; then
+	if [ ! -f "$PWD/secrets.7z" ]; then
+		echo "No zip file, and no secrets directory. Could not be launched" >&2
+		exit 1
+	else
+		exec 7z x "${PWD}/secrets.7z" -o"${PWD}" -y
+	fi
+fi
+
+source "${PWD}/srcs/.env"
+
 if [ ! -f "${PWD}/secrets/SMTP_ADDRESS.txt.txt" ]; then
 	printf "\033[0;32mSecrets/SMTP_ADDRESS not found\033[0m\n"
 	exit 1
@@ -20,16 +31,6 @@ fi
 
 rm -rf changelog.txt
 
-if [ !  -d "$PWD/secrets" ]; then
-	if [ ! -f "$PWD/secrets.7z" ]; then
-		echo "No zip file, and no secrets directory. Could not be launched" >&2
-		exit 1
-	else
-		exec 7z x "${PWD}/secrets.7z" -o"${PWD}" -y
-	fi
-fi
-
-source "${PWD}/srcs/.env"
 
 if [ ! -f "${PWD}/secrets/POSTGRES_PASSWORD.txt" ]; then
 	exit 1
