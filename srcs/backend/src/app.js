@@ -2,13 +2,13 @@ const express = require('express');
 const cookieParser = require("cookie-parser");
 const clientProm = require("@prometheus-io/client");
 const Userroutes = require('./routes/User');
-const health = require('./controllers/health');
 const rooms = require('./routes/rooms');
 const api = require('./routes/api');
 const fileUpload = require('express-fileupload');
 const cors = require("cors");
 
 const app = express();
+app.set('trust proxy', 1)
 app.use(cors());
 
 // metric need to be declared before limite to avoid 429
@@ -48,7 +48,6 @@ app.use((req, res, next) => {
 
 //Routes
 app.use('/user', Userroutes);
-app.get('/health', health);
 app.use('/v1', api);
 app.use('/rooms', rooms);
 
