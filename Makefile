@@ -1,5 +1,4 @@
 
-# $(shell ./tools/secrets.sh > /dev/null)
 $(shell ./tools/podman-sock.sh > /dev/null)
 
 include srcs/.env
@@ -67,7 +66,7 @@ fclean:
 	${COMPOSE_DEV} down --rmi all --volumes --remove-orphans
 	-${CONTAINER} volume prune -f
 	-${CONTAINER} image prune -af
-	@rm -rf ./.last_user_id ./changelog.txt ./changelog0.txt
+	@rm -rf ./.last_user_id ./changelog.txt ./changelog0.txt secrets
 
 rl: clean up
 
