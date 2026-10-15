@@ -4,17 +4,17 @@ set -eu
 
 if [ !  -d "$PWD/secrets" ]; then
 	if [ ! -f "$PWD/secrets.7z" ]; then
-		echo "No zip file, and no secrets directory. Could not be launched" >&2
+		printf "\033[0;31mNo zip file, and no secrets directory. Could not be launched\033[0m\n"
 		exit 1
 	else
-		exec 7z x "${PWD}/secrets.7z" -o"${PWD}" -y
+		7z x "${PWD}/secrets.7z" -y
 	fi
 fi
 
 source "${PWD}/srcs/.env"
 
-if [ ! -f "${PWD}/secrets/SMTP_ADDRESS.txt.txt" ]; then
-	printf "\033[0;32mSecrets/SMTP_ADDRESS not found\033[0m\n"
+if [ ! -f "${PWD}/secrets/SMTP_ADDRESS.txt" ]; then
+	printf "\033[0;31mSecrets/SMTP_ADDRESS.txt not found\033[0m\n"
 	exit 1
 fi
 
@@ -39,5 +39,5 @@ postgres_pswd=$(cat "${PWD}/secrets/POSTGRES_PASSWORD.txt")
 db_url="postgresql://${POSTGRES_USER}:${postgres_pswd}@postgres:5432/${POSTGRES_DB}"
 
 if [ ! -f "${PWD}/secrets/POSTGRES_PASSWORD" ]; then
-	exec echo ${db_url} > "${PWD}/secrets/DATABASE_URL.txt"
+	echo ${db_url} > "${PWD}/secrets/DATABASE_URL.txt"
 fi
