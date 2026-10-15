@@ -39,30 +39,22 @@ dev-logs:
 #
 
 game-test:
-	${CONTAINER} run --rm -v \
-		"./srcs/backend:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npm run game:verify" \
-		--name game-test
+	${CONTAINER} run --rm --name game-test -v "./srcs/backend:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npm run game:verify"
 
 #
 # Clean
 #
 
 clean:
-	${COMPOSE} down --remove-orphans
+	${COMPOSE_DEV} down --remove-orphans
 
 clean-volumes:
-	$(COMPOSE) down --remove-orphans -v
 	$(COMPOSE_DEV) down --remove-orphans -v
 
 clean-images:
-	$(COMPOSE) down --remove-orphans --rmi local
 	$(COMPOSE_DEV) down --remove-orphans --rmi local
 
-dev-clean:
-	${COMPOSE_DEV} down --remove-orphans --rmi local -v
-
 fclean: 
-	${COMPOSE} down --rmi all --volumes --remove-orphans
 	${COMPOSE_DEV} down --rmi all --volumes --remove-orphans
 	-${CONTAINER} volume prune -f
 	-${CONTAINER} image prune -af
