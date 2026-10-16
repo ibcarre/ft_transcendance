@@ -32,9 +32,15 @@ exports.isLog = async (req, res, next) => {
 };
 
 exports.checkKey = function (req, res, next) {
-    if (!req.query.api_key)
-        return (res.status(403).send({message: "No API key"}));
-    if (req.query.api_key !== process.env.API_KEY)
-        return (res.status(403).send({message: "Wrong API_KEY"}))
-    next();
+	try {
+		const api_key = req.header('x-api-key');;
+		if (!api_key)
+			return (res.status(403).send({message: "No API key"}));
+		if (api_key !== process.env.API_KEY)
+			return (res.status(403).send({message: "Wrong API_KEY"}))
+		next();
+	}
+	catch (e) {
+		return (res.status(403).send({message: "No API key"}));
+	}
 };
