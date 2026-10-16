@@ -1,21 +1,43 @@
-import { useState } from 'react';
+import { useState , useEffect , useRef } from 'react';
 import './Header.css'
 import './Modal.css'
 
 export function Header() {
     const [menu, setMenu] = useState(false);
+    const menuRef = useRef(null);
 
     const toggleMenu = () => {
         setMenu(!menu)
     };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setMenu(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     return (
         <>
             <header className="header">
                 <h1>SKYJO</h1>
-                <h2 onClick={toggleMenu}>Username</h2>
-                <div className={menu ? "header-menu" : "offscreen"}>
-                    <p>Profile</p>
-                    <p>Logout</p>
+                <div className="user-section" ref={menuRef}>
+                    <h2 onClick={toggleMenu} className="Username">
+                        Username <span className="arrow"> {menu ? '▲' : '▼'}</span>
+                    </h2>
+                    {menu && (
+                        <div className="header-menu">
+                            <p>Profile</p>
+                            <p className="logout-text">Logout</p>
+                        </div>
+                    )}
                 </div>
             </header>
         </>

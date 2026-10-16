@@ -46,8 +46,7 @@ export function FindRoom() {
     // }, []);
 
     useEffect(() => {
-        const socket = io("/Rooms", {
-        });
+        const socket = io();
 
         socket.on("createRoom", (arg) => {
             setRooms(rooms => [arg, ...rooms]);
@@ -81,7 +80,6 @@ export function FindRoom() {
         return () => {
             socket.off("createRoom");
             socket.off("connect_error");
-            socket.disconnect();
         };
     }, []);
 
