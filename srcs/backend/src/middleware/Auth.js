@@ -13,7 +13,7 @@ exports.isLog = async (req, res, next) => {
         console.log("app=node INFO: Auth");
         if (!user) {
             res.clearCookie('access_token');
-            return (res.status(401).json({message: "Unauthorized: User doesn't exist"}))
+            return (res.status(401).json({message: "Unauthorized: User doesn't exist or Wrong Token"}))
         }
         req.user = user;
     }
