@@ -14,7 +14,7 @@
     "annotations": {
       "grafana.app/createdBy": "access-policy:service",
       "grafana.app/managedBy": "classic-file-provisioning",
-      "grafana.app/managerId": "Admin",
+      "grafana.app/managerId": "skyjo",
       "grafana.app/sourceChecksum": "949937969582f048c2b69e5f481d5c8b",
       "grafana.app/sourcePath": "/var/lib/grafana/dashboards/Dashboard.json",
       "grafana.app/sourceTimestamp": "1791948791000",
@@ -668,7 +668,7 @@
     "preload": false,
     "tags": [],
     "timeSettings": {
-      "autoRefresh": "auto",
+      "autoRefresh": "5s",
       "autoRefreshIntervals": [
         "5s",
         "10s",

@@ -4,19 +4,21 @@
   "metadata": {
     "name": "Skyjo",
     "namespace": "default",
-    "uid": "c5a51818-fe0f-477b-a09b-e3f21854f279",
-    "resourceVersion": "1792130990119993",
-    "generation": 8,
-    "creationTimestamp": "2026-10-16T04:43:05Z",
+    "uid": "b347e58a-0be9-4823-9a6c-8a28e3a2b829",
+    "resourceVersion": "1792131482119980",
+    "generation": 1,
+    "creationTimestamp": "2026-10-16T06:18:02Z",
     "labels": {
-      "grafana.app/deprecatedInternalID": "3270036503560192"
+      "grafana.app/deprecatedInternalID": "3293928823758848"
     },
     "annotations": {
-      "grafana.app/createdBy": "user:dg1d8nij8c9ogc",
-      "grafana.app/folder": "",
-      "grafana.app/saved-from-ui": "Grafana v13.0.9 (0b30eb6c90)",
-      "grafana.app/updatedBy": "user:dg1d8nij8c9ogc",
-      "grafana.app/updatedTimestamp": "2026-10-16T06:09:50Z"
+      "grafana.app/createdBy": "access-policy:service",
+      "grafana.app/managedBy": "classic-file-provisioning",
+      "grafana.app/managerId": "skyjo",
+      "grafana.app/sourceChecksum": "9427012660886680a9e99b8adc5f281f",
+      "grafana.app/sourcePath": "/var/lib/grafana/dashboards/Skyjo.json",
+      "grafana.app/sourceTimestamp": "1792131302000",
+      "grafana.app/folder": ""
     }
   },
   "spec": {
@@ -638,7 +640,7 @@
       "timezone": "browser",
       "from": "now-6h",
       "to": "now",
-      "autoRefresh": "",
+      "autoRefresh": "5s",
       "autoRefreshIntervals": [
         "5s",
         "10s",
