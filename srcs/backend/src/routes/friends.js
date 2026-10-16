@@ -10,6 +10,6 @@ router.use(isLog);
 router.post('/add', addFriend);
 router.post('/remove', removeFriend);
 router.get('/list', FriendsList);
-router.get('invites', getInvites);
+router.get('/invites', getInvites);
 
 module.exports = router;
