@@ -35,14 +35,18 @@ services:
       - ./infra/postgres/init_sql/01_schema.sql:/docker-entrypoint-initdb.d/01_tables.sql
     networks:
       - NW_skyjo
-  
+
   postgres-exporter:
     image: docker.io/prometheuscommunity/postgres-exporter
     container_name: postgres_exporter
+    depends_on:
+      - "postgres"
     environment:
       DATA_SOURCE_NAME: ""
+      PG_EXPORTER_EXTEND_QUERY_PATH: /data/queries.yml
     volumes:
       - ../secrets/DATABASE_URL.txt:/run/secrets/pg_url:ro
+      - ./infra/postgres-exporter/skyjo-queries.yml:/data/queries.yml:ro
     networks:
       - NW_skyjo
     entrypoint: ["/bin/sh", "-c"]

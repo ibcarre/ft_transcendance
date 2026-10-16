@@ -1,0 +1,33 @@
+
+skyjo_users:
+  query: "SELECT COUNT(*) AS total FROM users"
+  master: true
+  metric:
+    - total:
+      usage: counter
+      description: "Total number of registered users"
+
+skyjo_games:
+  query: "SELECT COUNT(*) AS total FROM games"
+  master: true
+  metric:
+    - total:
+      usage: counter
+      description: "Total number of played games"
+
+skyjo_active_games:
+  query: "SELECT COUNT(*) AS active FROM games WHERE status = 'pending'"
+  master: true
+  metric:
+    - total:
+      usage: counter
+      description: "Total number of active games"
+
+
+skyjo_users_in_game:
+  query: "SELECT COUNT(*) AS total FROM users_in_game"
+  master: true
+  metric:
+    - total:
+      usage: counter
+      description: "number of active user playing Skyjo"

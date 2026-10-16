@@ -4,7 +4,7 @@ CREATE TABLE users (
 	email		text NOT NULL UNIQUE,
 	name		text NOT NULL UNIQUE,
 	password	text NOT NULL,
-	avatar_url	text UNIQUE
+	avatar_url	text
 );
 
 CREATE TABLE games (

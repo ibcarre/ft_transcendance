@@ -62,7 +62,7 @@ fclean:
 
 rl: clean up
 
-dev-rl: dev-clean dev
+dev-rl: clean dev
 
 re: fclean up
 
