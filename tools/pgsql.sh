@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# IDs persistés dans .last_user_id pour ne pas recréer les users déjà en DB.
 
 STATE=.last_user_id
 PASS=XXX
@@ -11,7 +10,7 @@ else
 	start=$((RANDOM + RANDOM))
 fi
 
-end=$((start + 900))
+end=$((start + 9))
 echo "$end" > "$STATE"
 
 echo "=== signup 10 nouveaux users : test${start} .. test${end}"
