@@ -3,9 +3,12 @@ import { Modal } from '../../components/Modal';
 import { EditProfile } from './EditProfile';
 import defaultPic from '../../../imgs/default_pic.jpg';
 import { Header } from '../../components/Header';
+import { useAuth } from '../../context/AuthContext';
 import './Profile.css';
 
 export function Profile() {
+    const { userInfo } = useAuth();
+
     const [editModal, setEditModal] = useState(false);
 
     const closeModal = () => setEditModal(false);
@@ -20,7 +23,7 @@ export function Profile() {
                     <div className="profile-header-section">
                         <div className="profile-identity">
                             <img src={defaultPic} className="profile-pic" alt="Profile" />
-                            <h2 className="profile-username">Username</h2>
+                            <h2 className="profile-username">{userInfo.name}</h2>
                         </div>
                         <button className="edit-button" onClick={() => setEditModal(true)}>EDIT</button>
                     </div>

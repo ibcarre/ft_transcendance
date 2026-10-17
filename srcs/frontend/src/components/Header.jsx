@@ -2,10 +2,13 @@ import { useState , useEffect , useRef } from 'react';
 import { Link } from 'react-router';
 import './Header.css'
 import './Modal.css'
+import { useAuth } from '../context/AuthContext';
 
 export function Header() {
     const [menu, setMenu] = useState(false);
     const menuRef = useRef(null);
+
+    const { userInfo } = useAuth();
 
     const toggleMenu = () => {
         setMenu(!menu)
@@ -31,7 +34,7 @@ export function Header() {
                 <h1>SKYJO</h1>
                 <div className="user-section" ref={menuRef}>
                     <h2 onClick={toggleMenu} className="Username">
-                        Username <span className="arrow"> {menu ? '▲' : '▼'}</span>
+                        {userInfo.name} <span className="arrow"> {menu ? '▲' : '▼'}</span>
                     </h2>
                     {menu && (
                         <div className="header-menu">

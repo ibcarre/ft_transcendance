@@ -33,7 +33,7 @@ export function CreateRoom() {
                 setMaxPlayers('2');
 
                 console.log("Room creer");
-                navigate("/profile");
+                navigate("/game");
             }
 
         } catch (err) {
