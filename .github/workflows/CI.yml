@@ -37,7 +37,7 @@ jobs:
           cp ./tools/ci-setup.sh ./tools/podman-script.sh
 
       - name: Make (Docker)
-        run: make ci
+        run: make
 
 # ------------------------- JOB 2: Fedora 44 + Podman (build and dev) ------------
   test-fedora-podman:
@@ -62,5 +62,5 @@ jobs:
           cp ./srcs/.env.example ./srcs/.env
 
       - name: Make (Podman)
-        run: make ci
+        run: make
 
