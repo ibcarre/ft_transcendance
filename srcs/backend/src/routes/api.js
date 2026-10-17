@@ -3,9 +3,10 @@ const router = express.Router();
 const getAllProfiles = require('../controllers/public_api/getAllProfiles');
 const rateLimit = require('express-rate-limit');
 const checkKey = require('../middleware/Auth').checkKey;
+const health = require('../controllers/public_api/health');
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes window 
+  windowMs: 15 * 60 * 1000, // 15 minutes window
   max: 100, // Limit each IP to 100 requests per windowMs
   message: {
     error: 'Too many requests from this IP address',
@@ -26,7 +27,7 @@ const limiter = rateLimit({
 // Apply rate limiting to requests to public api
 router.use(limiter);
 router.use(checkKey);
-
+router.get('/health', health);
 router.get('/users', getAllProfiles);
 
 module.exports = router;
