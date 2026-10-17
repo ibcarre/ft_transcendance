@@ -22,7 +22,7 @@ export function RoomList() {
             setAuth(false);
         });
 
-        socket.on("playerJoined", ({ roomId, nbPlayers }) => {
+        socket.on("playerEvent", ({ roomId, nbPlayers }) => {
             setRooms(prev =>
                 prev.map(room =>
                     room.id === roomId ? { ...room, nb_players: nbPlayers } : room ));});

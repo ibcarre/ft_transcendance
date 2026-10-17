@@ -11,5 +11,5 @@ export function Room({id, name, isPassProt, created_by, nb_players, max_players}
                 <div>{created_by}</div>
                 <div>{nb_players}</div>
                 <div>{max_players}</div>
-            </div>) 
+            </div>)
 }

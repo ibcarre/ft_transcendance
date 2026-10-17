@@ -3,7 +3,8 @@ const pgp = require('pg-promise');
 const {TransactionMode, isolationLevel} = pgp.txMode;
 const bcrypt = require('bcrypt');
 const {Roomcreated} = require('../socket/namespaces/gamerooms/events/Roomcreated');
-const {playerJoined} = require('../socket/namespaces/gamerooms/events/playerJoined');
+const {RoomDeleted} = require('../socket/namespaces/gamerooms/events/Roomdeleted');
+const {playerEvent} = require('../socket/namespaces/gamerooms/events/playerEvent');
 
 
 const mode = new TransactionMode({
@@ -38,6 +39,11 @@ exports.createRoom = async (req, res) => {
         if (room) {
             return res.status(400).json({ message: "A room already has that name" });
         }
+		if (name.length < 1 || name.length > 24)
+			return (res.status(400).json({ message: "Room's name must be between 1 and 24 characters" }))
+		var users = await db.oneOrNone('SELECT * FROM users_in_game WHERE user_id = $1', req.user.id);
+		if (users)
+			return (res.status(409).json({message: "You can only be in one room"}))
         room = await db.one('INSERT INTO games VALUES(DEFAULT, $(password), $(ispass), $(name), DEFAULT, DEFAULT, DEFAULT, $(max_players), DEFAULT, $(user)) RETURNING *', {
 			name: name,
 			password: hashedPassword,
@@ -58,6 +64,8 @@ exports.createRoom = async (req, res) => {
         return (res.status(201).send(room.id));
     }
     catch (error) {
+		if(error?.constraint === "max_players")
+			return (res.status(400).json({message: "Wrong input for max players"}))
         console.log(error);
         return (res.status(500).json({message: error}));
     }
@@ -66,13 +74,16 @@ exports.createRoom = async (req, res) => {
 exports.joinRoom = async (req, res) => {
     const id = req.params.roomId;
     try {
-        const user = await db.oneOrNone('SELECT * FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, req.user.id]);
-        if (user) return (res.status(409).json({message: "Already in room"}));
+        //const user = await db.oneOrNone('SELECT * FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, req.user.id]);
+        //if (user) return (res.status(409).json({message: "Already in room"}));
         // BEGIN
+		var users = await db.oneOrNone('SELECT * FROM users_in_game WHERE user_id = $1', req.user.id);
+		if (users)
+			return (res.status(409).json({message: "You can only be in one room"}))
         var room;
         await db.tx({mode}, async t => {
             room = await t.one('SELECT * FROM games WHERE id = $1', id);
-            if (room.nb_players >= room.max_players) { 
+            if (room.nb_players >= room.max_players) {
                 throw(Error("Full room"));
             }
             if (room.status !== 'pending') {
@@ -88,7 +99,7 @@ exports.joinRoom = async (req, res) => {
             roomId: room.id,
             seat: room.nb_players, //seat indexe a 0 alors que nb_players indexe a 1
         })
-        playerJoined(room.nb_players + 1, room.id)
+        playerEvent(room.nb_players + 1, room.id)
         return (res.status(201).json({message: "Room Joined"}))
     }
     catch (error) {
@@ -113,10 +124,10 @@ exports.leaveRoom = async (req, res) => {
             return (res.status(409).json({message: "You weren't in the room anyway"}));
         const room = await db.one('SELECT * FROM games WHERE id = $1', id);
         await db.none('DELETE FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, user]);
+		playerEvent(room.nb_players - 1, room.id)
         if (room.nb_players <= 1) {
             await db.none('DELETE FROM games WHERE id = $1', id);
-
-
+			RoomDeleted(room.id);
             //socket deleteRoom(room id)
         }
         else
