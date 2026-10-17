@@ -48,7 +48,17 @@ jobs:
       - name: Install Podman + dependencies
         run: |
           sudo apt-get update 
-          sudo apt-get install -y podman podman-compose
+          sudo apt-get install -y install -y podman podman-compose uidmap slirp4netns fuse-overlayfs passt
+
+      - name: Configure rootless Podman
+        run: |
+          set -eux
+
+          id
+          podman --version
+          podman info
+          grep "^$(id -un):" /etc/subuid
+          grep "^$(id -un):" /etc/subgid
 
       - name: Create secrets
         run: | 
@@ -61,29 +71,36 @@ jobs:
           echo "${{ secrets.POSTGRES_PASSWORD }}" > secrets/POSTGRES_PASSWORD.txt
           cp ./srcs/.env.example ./srcs/.env
 
-      - name: Start Podman API socket
+      - name: Start rootless Podman socket
         run: |
-          podman system service --time=0 unix:///run/podman/podman.sock &
+          set -eux
+
+          export XDG_RUNTIME_DIR="${RUNNER_TEMP}/podman-runtime"
+          mkdir -p "$XDG_RUNTIME_DIR"
+          chmod 700 "$XDG_RUNTIME_DIR"
+          mkdir -p "$XDG_RUNTIME_DIR/podman"
+
+          podman system service --time=0 \
+            "unix://${XDG_RUNTIME_DIR}/podman/podman.sock" \
+            > "$RUNNER_TEMP/podman-service.log" 2>&1 &
+
+          echo $! > "$RUNNER_TEMP/podman-service.pid"
+          echo "XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR" >> "$GITHUB_ENV"
+          echo "DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock" >> "$GITHUB_ENV"
+
           for i in $(seq 1 30); do
-            if curl -s --unix-socket /run/podman/podman.sock \
-              http://d/v1.0.0/libpod/_ping >/dev/null; then
-              echo "Podman API is ready"
+            if test -S "$XDG_RUNTIME_DIR/podman/podman.sock"; then
               break
             fi
             sleep 1
           done
-          test -S /run/podman/podman.sock
 
-      - name: Configure environment
-        run: |
-          sed -i 's|^CONTAINER=.*|CONTAINER=podman|' srcs/.env
-          if grep -q '^SOCKET=' srcs/.env; then
-            sed -i 's|^SOCKET=.*|SOCKET=/run/podman/podman.sock|' srcs/.env
-          else
-            echo 'SOCKET=/run/podman/podman.sock' >> srcs/.env
+          if ! test -S "$XDG_RUNTIME_DIR/podman/podman.sock"; then
+            cat "$RUNNER_TEMP/podman-service.log"
+            exit 1
           fi
-          echo "DOCKER_HOST=unix:///run/podman/podman.sock" >> "$GITHUB_ENV"
 
+          podman info
 
       - name: Make (Podman)
         run: make ci
