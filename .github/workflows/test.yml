@@ -17,19 +17,13 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+# ------------------------- JOB 1: Ubuntu + docker (build and dev) ------------
+  test-ubuntu-docker:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      # Runs a single command using the runners shell
       - name: Create secrets
         run: | 
           mkdir secrets
@@ -41,6 +35,30 @@ jobs:
           echo "${{ secrets.POSTGRES_PASSWORD }}" > secrets/POSTGRES_PASSWORD.txt
           cp ./srcs/.env.example ./srcs/.env
 
-      # Runs a set of commands using the runners shell
-      - name: Make
+      - name: Make (Docker)
+        run: make
+
+# ------------------------- JOB 2: Fedora 44 + Podman (build and dev) ------------
+  test-fedora-podman:
+    runs-on: ubuntu-latest
+    container: fedora:44
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Podman + dependencies
+        run: |
+          dnf install -y podman make curl 
+    
+      - name: Create secrets
+        run: | 
+          mkdir secrets
+          echo "${{ secrets.API_KEY }}" > secrets/API_KEY.txt
+          echo "${{ secrets.DATABASE_URL }}" > secrets/DATABASE_URL.txt
+          echo "${{ secrets.GF_SMTP_PASSWORD }}" > secrets/GF_SMTP_PASSWORD.txt
+          echo "${{ secrets.GRAFANA_ADMIN_PASSWORD }}" > secrets/GRAFANA_ADMIN_PASSWORD.txt
+          echo "${{ secrets.JWT_SECRETKEY }}" > secrets/JWT_SECRETKEY.txt
+          echo "${{ secrets.POSTGRES_PASSWORD }}" > secrets/POSTGRES_PASSWORD.txt
+          cp ./srcs/.env.example ./srcs/.env
+
+      - name: Make (Podman)
         run: make
