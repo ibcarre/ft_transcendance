@@ -25,7 +25,7 @@ logs:
 # Dev
 #
 
-dev:
+dev: secrets
 	${COMPOSE_DEV} up --build -d
 
 dev-down:
