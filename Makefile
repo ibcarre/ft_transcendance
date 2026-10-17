@@ -25,6 +25,9 @@ logs:
 
 ci: ci-setup secrets up
 
+ci-setup:
+	./tools/ci-setup.sh
+
 dev-ci: ci-setup secrets
 	${COMPOSE_DEV} up --build -d
 
