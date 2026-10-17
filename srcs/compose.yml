@@ -64,8 +64,12 @@ services:
     build: ./backend/
     container_name: back_skyjo
     restart: unless-stopped
-    # healthcheck:
-    #   test: ["CMD-SHELL", "sh -c curl http://localhost/health"]
+    healthcheck:
+      test: ["CMD-SHELL", "/app/scripts/healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
     depends_on:
       postgres:
         condition: service_healthy
