@@ -1,10 +1,6 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "master" branch
   push:
     branches:
       - master
@@ -34,7 +30,6 @@ jobs:
           echo "${{ secrets.JWT_SECRETKEY }}" > secrets/JWT_SECRETKEY.txt
           echo "${{ secrets.POSTGRES_PASSWORD }}" > secrets/POSTGRES_PASSWORD.txt
           cp ./srcs/.env.example ./srcs/.env
-          # cp ./tools/ci-setup.sh ./tools/podman-sock.sh
 
       - name: Make (Docker)
         run: make ci
@@ -50,15 +45,15 @@ jobs:
           sudo apt update
           sudo apt install -y podman
 
-      - name: Configure rootless Podman
-        run: |
-          set -eux
-
-          id
-          podman --version
-          podman info
-          grep "^$(id -un):" /etc/subuid
-          grep "^$(id -un):" /etc/subgid
+      # - name: Configure rootless Podman
+      #   run: |
+      #     set -eux
+      #
+      #     id
+      #     podman --version
+      #     podman info
+      #     grep "^$(id -un):" /etc/subuid
+      #     grep "^$(id -un):" /etc/subgid
 
       - name: Create secrets
         run: | 
