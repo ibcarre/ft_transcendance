@@ -4,9 +4,10 @@ WORKDIR /app
 
 COPY ./package.json .
 COPY ./package-lock.json .
+COPY ./scripts/secrets.sh ./scripts/secrets.sh
+
+RUN chmod +x ./scripts/secrets.sh
 
 RUN npm ci
 
-
-CMD ["node", "--watch", "index.js"]
-
+ENTRYPOINT ["/bin/sh", "./scripts/secrets.sh", "dev"]
