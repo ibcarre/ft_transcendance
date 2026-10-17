@@ -1,5 +1,5 @@
 
-$(shell ./tools/ci-setup.sh > /dev/null)
+$(shell ./tools/podman-sock.sh.sh > /dev/null)
 include srcs/.env
 
 COMPOSE = ${CONTAINER} compose -f srcs/compose.yml
