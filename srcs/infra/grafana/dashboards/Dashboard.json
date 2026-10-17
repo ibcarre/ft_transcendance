@@ -2,7 +2,7 @@
   "apiVersion": "dashboard.grafana.app/v2",
   "kind": "Dashboard",
   "metadata": {
-    "name": "skyjo",
+    "name": "Admin",
     "namespace": "default",
     "uid": "75596d94-e554-4a4b-af10-28e927365025",
     "resourceVersion": "1791958676528982",
@@ -16,7 +16,7 @@
       "grafana.app/managedBy": "classic-file-provisioning",
       "grafana.app/managerId": "skyjo",
       "grafana.app/sourceChecksum": "949937969582f048c2b69e5f481d5c8b",
-      "grafana.app/sourcePath": "/var/lib/grafana/dashboards/dashboard_skyjo.json",
+      "grafana.app/sourcePath": "/var/lib/grafana/dashboards/Dashboard.json",
       "grafana.app/sourceTimestamp": "1791948791000",
       "grafana.app/folder": ""
     }
@@ -668,7 +668,7 @@
     "preload": false,
     "tags": [],
     "timeSettings": {
-      "autoRefresh": "auto",
+      "autoRefresh": "5s",
       "autoRefreshIntervals": [
         "5s",
         "10s",
@@ -687,7 +687,7 @@
       "timezone": "browser",
       "to": "now"
     },
-    "title": "Skyjo",
+    "title": "Admin",
     "variables": []
   }
 }
