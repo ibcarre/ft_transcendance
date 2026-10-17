@@ -1,6 +1,22 @@
+secrets:
+  api_key:
+    file: ../secrets/API_KEY.txt
+  grafana_smtp_pswd:
+    file: ../secrets/GF_SMTP_PASSWORD.txt
+  grafana_admin_pswd:
+    file: ../secrets/GRAFANA_ADMIN_PASSWORD.txt
+  jwt_secret_key:
+    file: ../secrets/JWT_SECRETKEY.txt
+  postgres_password:
+    file: ../secrets/POSTGRES_PASSWORD.txt
+  postgres_url:
+    file: ../secrets/DATABASE_URL.txt
+
 services:
 
   postgres:
+    secrets:
+      - postgres_password
     image: docker.io/library/postgres:18
     container_name: postgres_skyjo
     restart: unless-stopped
@@ -12,15 +28,35 @@ services:
       start_period: 5s
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_PASSWORD_FILE: "/run/secrets/postgres_password"
       POSTGRES_DB: "${POSTGRES_DB}"
     volumes:
       - postgres_data:/var/lib/postgresql
       - ./infra/postgres/init_sql/01_schema.sql:/docker-entrypoint-initdb.d/01_tables.sql
     networks:
       - NW_skyjo
+  
+  postgres-exporter:
+    image: docker.io/prometheuscommunity/postgres-exporter
+    container_name: postgres_exporter
+    environment:
+      DATA_SOURCE_NAME: ""
+    volumes:
+      - ../secrets/DATABASE_URL.txt:/run/secrets/pg_url:ro
+    networks:
+      - NW_skyjo
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        export DATA_SOURCE_NAME="$(cat /run/secrets/pg_url)?sslmode=disable"
+        exec /bin/postgres_exporter
+
 
   backend:
+    secrets:
+      - api_key
+      - jwt_secret_key
+      - postgres_url
     build: ./backend/
     container_name: back_skyjo
     restart: unless-stopped
@@ -30,10 +66,6 @@ services:
       postgres:
         condition: service_healthy
         restart: true
-    environment:
-      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}"
-      JWT_SECRETKEY: ${JWT_SECRETKEY}
-      API_KEY: ${API_KEY}
     networks:
       - NW_skyjo
 
@@ -43,7 +75,7 @@ services:
     restart: unless-stopped
     depends_on:
       backend:
-        # condition: service_healthy
+        condition: service_started
         restart: true
     networks:
       - NW_skyjo
@@ -54,6 +86,7 @@ services:
     restart: unless-stopped
     depends_on:
       frontend:
+        condition: service_started
         restart: true
     ports:
       - "${APP_PORT}:443"
@@ -68,27 +101,30 @@ services:
       - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - NW_skyjo
-    restart: unless-stopped
 
   prometheus-health:
     container_name: prom_health_skyjo
     image: docker.io/library/busybox:1.37
-    stop_signal: SIGKILL
+    init: true
     restart: unless-stopped
     command: ["sleep", "infinity"]
     network_mode: "service:prometheus"
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:9090/-/healthy"]
-      interval: 10s
+      interval: 5s
       timeout: 3s
       retries: 3
-      start_period: 5s
+      start_period: 3s
     depends_on:
       prometheus:
+        condition: service_started
         restart: true
 
 
   grafana:
+    secrets:
+      - grafana_admin_pswd
+      - grafana_smtp_pswd
     image: docker.io/grafana/grafana:13.0.9
     container_name: grafana_skyjo
     restart: unless-stopped
@@ -100,13 +136,20 @@ services:
         condition: service_healthy
         restart: true
     environment:
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+      GF_SECURITY_ADMIN_PASSWORD__FILE: "/run/secrets/grafana_admin_pswd"
       GF_SERVER_HTTP_ADDR: 0.0.0.0
       GF_SERVER_PROTOCOL: http
       GF_SERVER_HTTP_PORT: 3000
       GF_SERVER_DOMAIN: localhost
       GF_SERVER_ROOT_URL: https://localhost:${APP_PORT}/grafana/
       GF_SERVER_SERVE_FROM_SUB_PATH: true
+      GF_SMTP_ENABLED: true
+      GF_SMTP_HOST: smtp.protonmail.ch:587
+      GF_SMTP_USER: "${GF_SMTP_USER}"
+      GF_SMTP_PASSWORD__FILE: "/run/secrets/grafana_smtp_pswd"
+      GF_SMTP_FROM_ADDRESS: "${GF_SMTP_USER}"
+      GF_SMTP_FROM_NAME: Grafana Alerts
+      GF_SMTP_STARTTLS_POLICY: MandatoryStartTLS
     volumes:
       - grafana_storage:/var/lib/grafana
       - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
@@ -132,7 +175,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 3
-      start_period: 10s
+      start_period: 14s
     volumes:
       - loki_storage:/tmp/loki
       - ./infra/loki/loki.yaml:/etc/loki/local-config.yaml:ro
@@ -161,17 +204,18 @@ services:
   alloy-health:
     container_name: alloy_health_skyjo
     image: docker.io/library/busybox:1.37
+    init: true
     command: ["sleep", "infinity"]
     network_mode: "service:alloy"
-    stop_signal: SIGKILL
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:12345/-/healthy"]
-      interval: 10s
+      interval: 5s
       timeout: 3s
       retries: 3
-      start_period: 15s
+      start_period: 10s
     depends_on:
       alloy:
+        condition: service_started
         restart: true
 
 volumes:

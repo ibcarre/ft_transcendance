@@ -6,7 +6,7 @@ include srcs/.env
 COMPOSE = ${CONTAINER} compose -f srcs/compose.yml
 COMPOSE_DEV = ${CONTAINER} compose -f srcs/compose.yml -f srcs/compose.dev.yml
 
-all: up
+all: secrets up
 
 #
 # Prod
@@ -25,7 +25,7 @@ logs:
 # Dev
 #
 
-dev:
+dev: secrets
 	${COMPOSE_DEV} up --build -d
 
 dev-down:
@@ -39,32 +39,26 @@ dev-logs:
 #
 
 game-test:
-	${CONTAINER} run --rm -v "./srcs/backend:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npm run game:verify"
+	${CONTAINER} run --rm --name game-test_skyjo -v "./srcs/backend:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npm run game:verify"
 
 #
 # Clean
 #
 
 clean:
-	${COMPOSE} down --remove-orphans
+	${COMPOSE_DEV} down --remove-orphans
 
 clean-volumes:
-	$(COMPOSE) down --remove-orphans -v
 	$(COMPOSE_DEV) down --remove-orphans -v
 
 clean-images:
-	$(COMPOSE) down --remove-orphans --rmi local
 	$(COMPOSE_DEV) down --remove-orphans --rmi local
 
-dev-clean:
-	${COMPOSE_DEV} down --remove-orphans --rmi local -v
-
 fclean: 
-	${COMPOSE} down --rmi all --volumes --remove-orphans
 	${COMPOSE_DEV} down --rmi all --volumes --remove-orphans
 	-${CONTAINER} volume prune -f
 	-${CONTAINER} image prune -af
-	@rm -rf ./.last_user_id ./changelog.txt ./changelog0.txt
+	@rm -rf ./.last_user_id ./changelog.txt ./changelog0.txt secrets
 
 rl: clean up
 
@@ -102,6 +96,13 @@ watch-psa:
 
 dev-ps:
 	./tools/dps.sh
+
+#
+#	Tools
+#
+
+secrets:
+	./tools/secrets.sh
 
 #
 # Helps

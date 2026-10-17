@@ -4,9 +4,10 @@ import { defineConfig } from 'vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  server: {
-    hmr: {
-        host: 'localhost:44443'
-    }
-}
+	server: {
+		allowedHosts: true,
+	},
+	hmr: {
+		host: 'localhost:44443'
+	}
 })
