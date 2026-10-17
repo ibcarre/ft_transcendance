@@ -12,6 +12,7 @@ import {
 import type {
 	ApplyActionResult,
 	BoardSlot,
+	Card,
 	CreateGameInput,
 	DiscardDrawnCardCommand,
 	DrawDeckCommand,
@@ -49,6 +50,8 @@ import {
 import {
 	isValidBoardPosition,
 	removeCompletedColumnAtPosition,
+	removeAllCompletedColumns,
+	revealAllCards,
 } from "./board";
 
 import {
@@ -56,6 +59,10 @@ import {
 	getNextPlayerId,
 	hasHiddenCards,
 } from "./turn";
+
+import {
+	buildRoundResult,
+} from "./scoring";
 
 
 
@@ -268,6 +275,28 @@ pile");
 	return succeed(state);
 }
 
+/*
+ * Deal a new deck of 150 cards.
+ *
+ * Modify only the provided player tables.
+ * Do not change their IDs or cumulative scores.
+ *
+ * @param random A random number generator that returns a number in the range [0, 1).
+*/
+function dealNewRound(players: PlayerState[], random: () => number):
+{ deck: Card[]; discardPile: Card[] } {
+	const deck = shuffleDeck(createDeck(), random);
+	for (const player of players) {
+		const board: BoardSlot[] = [];
+		for (let position = 0; position < BOARD_SIZE; position++) {
+			const card = takeTopCard(deck);
+			board.push({ card, revealed: false });
+		}
+		player.board = board;
+	}
+	return { deck, discardPile: [takeTopCard(deck)] };
+}
+
 export function createGame(input: CreateGameInput,
 						   random: () => number = Math.random): GameState {
 	if (input.players.length < MIN_PLAYERS
@@ -296,21 +325,11 @@ ${MAX_PLAYERS}`);
 	if (uniquePlayerIds.size !== playerIds.length) {
 		throw new Error("createGame() requires unique player IDs");
 	}
-
-	const deck = shuffleDeck(createDeck(), random);
-	const players: PlayerState[] = [];
-
-	for (const playerInput of input.players) {
-		const board: BoardSlot[] = [];
-		for (let pos = 0; pos < BOARD_SIZE; pos++) {
-			const card = takeTopCard(deck);
-			board.push({card, revealed: false});
-		}
-		players.push({id: playerInput.id, board, totalScore: 0});
-	}
-
-	const firstDiscard = takeTopCard(deck);
-	const discardPile = [firstDiscard];
+	const players: PlayerState[] = input.players.map((player) =>
+													 ({ id: player.id,
+													  board: [],
+													  totalScore: 0 }));
+	const { deck, discardPile } = dealNewRound(players, random);
 	const gameState: GameState = {
 		id: input.id,
 		players,
@@ -331,6 +350,57 @@ ${MAX_PLAYERS}`);
 		winnerIds: [],
 	};
 	return gameState;
+}
+
+export function startNextRound(oldState: GameState,
+							   random: () => number = Math.random): GameState {
+	if (oldState.phase !== PHASE.ROUND_FINISHED) {
+		throw new Error("Invalid GameState: a new round requires \
+ROUND_FINISHED");
+	}
+	if (!Number.isSafeInteger(oldState.roundNumber)
+	|| oldState.roundNumber < 1
+	|| oldState.roundNumber === Number.MAX_SAFE_INTEGER) {
+		throw new Error("Invalid GameState: invalid round number for next \
+round");
+	}
+	if (!Number.isSafeInteger(oldState.version)
+	|| oldState.version < 0
+	|| oldState.version === Number.MAX_SAFE_INTEGER) {
+		throw new Error("Invalid GameState: invalid version for next round");
+	}
+	const lastRound = oldState.roundHistory.at(-1);
+	const finisherId = oldState.roundFinisherId;
+	if (finisherId === null
+	|| !oldState.players.some((player) => player.id === finisherId)
+	|| lastRound === undefined
+	|| lastRound.roundNumber !== oldState.roundNumber
+	|| lastRound.finisherId !== finisherId
+	|| lastRound.starterId !== oldState.roundStarterId
+	|| oldState.roundHistory.length !== oldState.roundNumber) {
+		throw new Error("Invalid GameState: previous round result is \
+inconsistent");
+	}
+	if (oldState.currentPlayerId !== null
+	|| oldState.turnStage !== null
+	|| oldState.pendingCard !== null
+	|| oldState.pendingCardSource !== null
+	|| oldState.finalTurnQueue.length !== 0
+	|| oldState.winnerIds.length !== 0) {
+		throw new Error("Invalid GameState: previous round is not fully resolved");
+	}
+	const state = structuredClone(oldState);
+	const { deck, discardPile } = dealNewRound(state.players, random);
+	state.deck = deck;
+	state.discardPile = discardPile;
+	state.roundNumber++;
+	state.roundStarterId = finisherId;
+	state.roundFinisherId = null;
+	state.currentPlayerId = finisherId;
+	state.turnStage = TURN_STAGE.WAITING_FOR_DRAW;
+	state.phase = PHASE.PLAYING;
+	state.version++;
+	return state;
 }
 
 /**
@@ -361,24 +431,132 @@ export function applyAction(oldState: GameState,
 	}
 }
 
-function completeRegularTurn(state: GameState, player: PlayerState): void {
-	if (state.roundFinisherId !== null || state.finalTurnQueue.length !== 0) {
-		throw new Error("Invalid GameState: regular turn completion called \
-during final turn");
-	}
-	if (!hasHiddenCards(player)) {
-		state.roundFinisherId = player.id;
-		state.finalTurnQueue = buildFinalTurnQueue(state.players, player.id);
-		const nextPlayerId = state.finalTurnQueue[0];
-		if (nextPlayerId === undefined) {
-			throw new Error("Invalid GameState: final turn queue is empty \
-after a finisher");
+function determineWinnerIds(players: readonly PlayerState[]): PlayerId[] {
+	let lowestScore = Number.POSITIVE_INFINITY;
+	const winnerIds: PlayerId[] = [];
+	for (const player of players) {
+		if (!Number.isFinite(player.totalScore)) {
+			throw new Error("Invalid GameState: player has a non-finite total \
+score");
 		}
-		state.currentPlayerId = nextPlayerId;
+		if (player.totalScore < lowestScore) {
+			lowestScore = player.totalScore;
+			winnerIds.length = 0;
+			winnerIds.push(player.id);
+		}
+		else if (player.totalScore === lowestScore) {
+			winnerIds.push(player.id);
+		}
 	}
-	else {
+	if (winnerIds.length === 0) {
+		throw new Error("Invalid GameState: can't determine game winner");
+	}
+	return winnerIds;
+}
+
+function resolveFinishedRound(state: GameState): void {
+	if (state.phase !== PHASE.PLAYING) {
+		throw new Error("Invalid GameState: only a playing round can be \
+resolved");
+	}
+	if (state.roundStarterId === null) {
+		throw new Error("Invalid GameState: finished round has no starter");
+	}
+	if (state.roundFinisherId === null) {
+		throw new Error("Invalid GameState: finished round has no finisher");
+	}
+	if (state.finalTurnQueue.length !== 0) {
+		throw new Error("Invalid GameState: final turns remain before round \
+resolution");
+	}
+	if (state.pendingCard !== null || state.pendingCardSource !== null) {
+		throw new Error("Invalid GameState: round resolution requires no \
+pending card");
+	}
+
+	for (const player of state.players) {
+		revealAllCards(player);
+	}
+
+	for (const player of state.players) {
+		removeAllCompletedColumns(player, state.discardPile);
+	}
+
+	const roundResult = buildRoundResult(state.players,
+											state.roundNumber,
+											state.roundStarterId,
+											state.roundFinisherId);
+
+	for (const score of roundResult.scores) {
+		const player =
+			state.players.find((candidate) => candidate.id === score.playerId);
+		if (player === undefined) {
+			throw new Error("Invalid GameState: scored player doesn't exist");
+		}
+		player.totalScore += score.finalScore;
+	}
+
+	state.roundHistory.push(roundResult);
+
+	state.currentPlayerId = null;
+	state.turnStage = null;
+
+	if (state.players.some((player) =>
+						   player.totalScore >= state.targetScore)) {
+		state.winnerIds = determineWinnerIds(state.players);
+		state.phase = PHASE.GAME_OVER;
+		return;
+	}
+	state.phase = PHASE.ROUND_FINISHED;
+}
+
+function completeTurn(state: GameState, player: PlayerState): void {
+	// CASE 1: No player has finished their board yet
+	if (state.roundFinisherId === null) {
+		if (state.finalTurnQueue.length !== 0) {
+			throw new Error("Invalid GameState: final turn queue exists \
+without a finisher");
+		}
+		if (!hasHiddenCards(player)) {
+			state.roundFinisherId = player.id;
+			state.finalTurnQueue = buildFinalTurnQueue(state.players,
+													   player.id);
+			const nextPlayerId = state.finalTurnQueue[0];
+			if (nextPlayerId === undefined) {
+				throw new Error("Invalid GameState: final turn queue is empty \
+after a finisher");
+			}
+			state.currentPlayerId = nextPlayerId;
+			state.turnStage = TURN_STAGE.WAITING_FOR_DRAW;
+			return;
+		}
+
 		state.currentPlayerId = getNextPlayerId(state.players, player.id);
+		state.turnStage = TURN_STAGE.WAITING_FOR_DRAW;
+		return;
 	}
+
+	// CASE 2: A finisher already exists
+	const expectedPlayerId = state.finalTurnQueue[0];
+	if (expectedPlayerId === undefined) {
+		throw new Error("Invalid GameState: final turn queue is empty before a \
+final turn");
+	}
+	if (expectedPlayerId !== player.id) {
+		throw new Error("Invalid GameState: final turn doesn't match the \
+queue");
+	}
+	state.finalTurnQueue.shift();
+	if (state.finalTurnQueue.length === 0) {
+		resolveFinishedRound(state);
+		return;
+	}
+	const nextPlayerId = state.finalTurnQueue[0];
+	if (nextPlayerId === undefined) {
+		throw new Error("Invalid GameState: final turn queue has an invalid \
+next player");
+	}
+	state.currentPlayerId = nextPlayerId;
 	state.turnStage = TURN_STAGE.WAITING_FOR_DRAW;
 }
 
@@ -429,7 +607,7 @@ expected position");
 	removeCompletedColumnAtPosition(player,
 									command.position,
 									state.discardPile);
-	completeRegularTurn(state, player);
+	completeTurn(state, player);
 	state.version++;
 	return succeed(state);
 }
@@ -504,7 +682,7 @@ expected position");}
 	removeCompletedColumnAtPosition(player,
 									command.position,
 									state.discardPile);
-	completeRegularTurn(state, player);
+	completeTurn(state, player);
 	state.version++;
 	return succeed(state);
 }

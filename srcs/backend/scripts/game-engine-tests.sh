@@ -95,6 +95,8 @@ run_test "SWAP_CARD"						"game/test/swapCard.test.ts"
 run_test "DISCARD_DRAWN_CARD"				"game/test/discardDrawnCard.test.ts"
 run_test "REVEAL_CARD"						"game/test/revealCard.test.ts"
 run_test "Round scoring"					"game/test/scoring.test.ts"
+run_test "Round resolution"					"game/test/roundResolution.test.ts"
+run_test "Subsequent rounds"				"game/test/nextRound.test.ts"
 
 printf '\n------------------------------------------------------------\n'
 printf '  RESULT: %d / %d tests passed\n' "$passed" "$total"
