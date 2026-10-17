@@ -60,7 +60,30 @@ jobs:
           echo "${{ secrets.JWT_SECRETKEY }}" > secrets/JWT_SECRETKEY.txt
           echo "${{ secrets.POSTGRES_PASSWORD }}" > secrets/POSTGRES_PASSWORD.txt
           cp ./srcs/.env.example ./srcs/.env
-          cp ./tools/ci-setup.sh ./tools/podman-sock.sh
+
+      - name: Start Podman API socket
+        run: |
+          podman system service --time=0 unix:///run/podman/podman.sock &
+          for i in $(seq 1 30); do
+            if curl -s --unix-socket /run/podman/podman.sock \
+              http://d/v1.0.0/libpod/_ping >/dev/null; then
+              echo "Podman API is ready"
+              break
+            fi
+            sleep 1
+          done
+          test -S /run/podman/podman.sock
+
+      - name: Configure environment
+        run: |
+          sed -i 's|^CONTAINER=.*|CONTAINER=podman|' srcs/.env
+          if grep -q '^SOCKET=' srcs/.env; then
+            sed -i 's|^SOCKET=.*|SOCKET=/run/podman/podman.sock|' srcs/.env
+          else
+            echo 'SOCKET=/run/podman/podman.sock' >> srcs/.env
+          fi
+          echo "DOCKER_HOST=unix:///run/podman/podman.sock" >> "$GITHUB_ENV"
+
 
       - name: Make (Podman)
         run: make ci
