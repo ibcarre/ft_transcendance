@@ -60,7 +60,7 @@ jobs:
           echo "${{ secrets.JWT_SECRETKEY }}" > secrets/JWT_SECRETKEY.txt
           echo "${{ secrets.POSTGRES_PASSWORD }}" > secrets/POSTGRES_PASSWORD.txt
           cp ./srcs/.env.example ./srcs/.env
-          cp ./tools/ci-setup.sh .srcs/podman-sock.sh
+          cp ./tools/ci-setup.sh ./tools/podman-sock.sh
 
       - name: Make (Podman)
         run: make ci
