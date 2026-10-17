@@ -1,4 +1,5 @@
 
+$(shell ./tools/podman-sock.sh > /dev/null)
 include srcs/.env
 
 COMPOSE = ${CONTAINER} compose -f srcs/compose.yml
@@ -22,15 +23,6 @@ logs:
 #
 # CI
 #
-
-ci: ci-setup secrets up
-
-ci-setup:
-	./tools/ci-setup.sh
-
-dev-ci: ci-setup secrets
-	${COMPOSE_DEV} up --build -d
-
 
 #
 # Dev
