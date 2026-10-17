@@ -154,10 +154,21 @@ services:
       GF_SMTP_FROM_ADDRESS: "${GF_SMTP_USER}"
       GF_SMTP_FROM_NAME: Grafana Alerts
       GF_SMTP_STARTTLS_POLICY: MandatoryStartTLS
+      GF_RENDERING_SERVER_URL: http://grafana-renderer:8081/render
+      GF_RENDERING_CALLBACK_URL: http://grafana:3000/grafana/
+      GF_RENDERING_RENDERER_TOKEN: qwertyuiop
     volumes:
       - grafana_storage:/var/lib/grafana
       - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
       - ./infra/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - NW_skyjo
+
+  grafana-renderer:
+    image: docker.io/grafana/grafana-image-renderer:v5.12.7
+    container_name: GF_image_renderer_skyjo
+    environment:
+      AUTH_TOKEN: qwertyuiop
     networks:
       - NW_skyjo
 
