@@ -28,13 +28,14 @@
 	width: 45%;
 	margin-bottom: auto;
 	margin-top: auto;
-	min-width: 380px; 
-	max-width: 1400px; 
-	padding: 80px 60px; 
+	min-width: 380px;
+	max-width: 1400px;
+	padding: 80px 60px;
 	border-radius: 24px;
 	background-color: #e0f2fe;
 	gap: 30px;
 	box-sizing: border-box;
+	border: 2px solid #ffffff;
 }
 
 .button-container .lobby-button {

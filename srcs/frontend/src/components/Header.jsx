@@ -1,4 +1,5 @@
 import { useState , useEffect , useRef } from 'react';
+import { Link } from 'react-router';
 import './Header.css'
 import './Modal.css'
 
@@ -34,7 +35,8 @@ export function Header() {
                     </h2>
                     {menu && (
                         <div className="header-menu">
-                            <p>Profile</p>
+                            <Link to="/profile"><p>Profile</p></Link>
+                            <p>Chat</p>
                             <p className="logout-text">Logout</p>
                         </div>
                     )}
