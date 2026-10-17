@@ -28,4 +28,6 @@ if [ "$container" = "docker" ]; then
   fi
 fi
 
+cat "$env_file"
+
 echo "CI setup done (CONTAINER=${container})"
