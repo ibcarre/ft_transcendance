@@ -5,21 +5,10 @@ env_file="srcs/.env"
 
 if command -v podman &>/dev/null; then
 	container="podman"
-		if [ -S /run/podman/podman.sock ]; then
-			socket="/run/podman/podman.sock"
-		elif [ -n "${XDG_RUNTIME_DIR:-}" ] && [ -S "${XDG_RUNTIME_DIR}/podman/podman.sock" ]; then
-			socket="${XDG_RUNTIME_DIR}/podman/podman.sock"
-		else
-			echo "No socket here"
-			socket="/tmp"
-		fi
+	socket="/run/podman/podman.sock"
 	echo "CI: using Podman"
-elif command -v docker &>/dev/null; then
-  container="docker"
-  socker="/var/run/docker.sock"
-  echo "CI: using Docker"
 else
-	echo "Neither found" >&2
+	echo "Podman not found" >&2
 	exit 1
 fi
 
