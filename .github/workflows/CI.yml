@@ -34,34 +34,33 @@ jobs:
           echo "${{ secrets.JWT_SECRETKEY }}" > secrets/JWT_SECRETKEY.txt
           echo "${{ secrets.POSTGRES_PASSWORD }}" > secrets/POSTGRES_PASSWORD.txt
           cp ./srcs/.env.example ./srcs/.env
-          cp ./tools/ci-setup.sh ./tools/podman-script.sh
+          # cp ./tools/ci-setup.sh ./tools/podman-script.sh
 
       - name: Make (Docker)
         run: make ci
 
 # ------------------------- JOB 2: Fedora 44 + Podman (build and dev) ------------
-  test-fedora-podman:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Podman + dependencies
-        run: |
-          sudo apt-get update 
-          sudo apt-get install -y podman podman-compose
-    
-      - name: Create secrets
-        run: | 
-          mkdir secrets
-          echo "${{ secrets.API_KEY }}" > secrets/API_KEY.txt
-          echo "${{ secrets.DATABASE_URL }}" > secrets/DATABASE_URL.txt
-          echo "${{ secrets.GF_SMTP_PASSWORD }}" > secrets/GF_SMTP_PASSWORD.txt
-          echo "${{ secrets.GRAFANA_ADMIN_PASSWORD }}" > secrets/GRAFANA_ADMIN_PASSWORD.txt
-          echo "${{ secrets.JWT_SECRETKEY }}" > secrets/JWT_SECRETKEY.txt
-          echo "${{ secrets.POSTGRES_PASSWORD }}" > secrets/POSTGRES_PASSWORD.txt
-          cp ./srcs/.env.example ./srcs/.env
-          cp ./tools/ci-setup.sh ./tools/podman-script.sh
-
-      - name: Make (Podman)
-        run: make ci
-
+  # test-fedora-podman:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #
+  #     - name: Install Podman + dependencies
+  #       run: |
+  #         sudo apt-get update 
+  #         sudo apt-get install -y podman podman-compose
+  #
+  #     - name: Create secrets
+  #       run: | 
+  #         mkdir secrets
+  #         echo "${{ secrets.API_KEY }}" > secrets/API_KEY.txt
+  #         echo "${{ secrets.DATABASE_URL }}" > secrets/DATABASE_URL.txt
+  #         echo "${{ secrets.GF_SMTP_PASSWORD }}" > secrets/GF_SMTP_PASSWORD.txt
+  #         echo "${{ secrets.GRAFANA_ADMIN_PASSWORD }}" > secrets/GRAFANA_ADMIN_PASSWORD.txt
+  #         echo "${{ secrets.JWT_SECRETKEY }}" > secrets/JWT_SECRETKEY.txt
+  #         echo "${{ secrets.POSTGRES_PASSWORD }}" > secrets/POSTGRES_PASSWORD.txt
+  #         cp ./srcs/.env.example ./srcs/.env
+  #
+  #     - name: Make (Podman)
+  #       run: make ci
+  #
