@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { LobbyModal } from '../../components/LobbyModal';
-import { RoomList } from '../../components/RoomList';
-import { CreateRoom } from '../../components/CreateRoom';
+import { Header } from '../../components/Header';
+import { Modal } from '../../components/Modal';
+import { FindRoom } from './FindRoom';
+import { CreateRoom } from './CreateRoom';
 import './Lobby.css';
 
 export function Lobby() {
@@ -12,10 +13,7 @@ export function Lobby() {
     return (
         <div className="lobby-container">
 
-            <header className="lobby-header">
-                <h1>SKYJO</h1>
-                <h2>Menu</h2>
-            </header>
+            <Header />
 
             <div className="lobby-wrapper">
                 <div className="button-container">
@@ -33,24 +31,21 @@ export function Lobby() {
             </div>
 
             {modalType === 'create' && (
-                <LobbyModal title="Create a room" onClose={closeModal}>
+                <Modal title="Create a room" onClose={closeModal}>
                     <CreateRoom />
-                </LobbyModal>
+                </Modal>
             )}
 
             {modalType === 'find' && (
-                <LobbyModal title="Find a room" onClose={closeModal}>
-                    <p>Recherche des parties de Skyjo en cours...</p>
-                    <ul>
-                        <RoomList></RoomList>
-                    </ul>
-                </LobbyModal>
+                <Modal title="Find a room" onClose={closeModal}>
+                    <FindRoom />
+                </Modal>
             )}
 
             {modalType === 'offline' && (
-                <LobbyModal title="Play offline" onClose={closeModal}>
+                <Modal title="Play offline" onClose={closeModal}>
                     <p>COMING SOON</p>
-                </LobbyModal>
+                </Modal>
             )}
 
         </div>
