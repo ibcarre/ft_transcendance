@@ -1,8 +1,8 @@
-import './LobbyModal.css';
+import './Modal.css';
 
-export function LobbyModal({ title, onClose, children }) {
+export function Modal({ title, onClose, children }) {
     return (
-        <div className="lobby-modal">
+        <div className="modal">
             <div onClick={onClose} className="overlay" />
             <div className="modal-content">
 
