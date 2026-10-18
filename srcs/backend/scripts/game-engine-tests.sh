@@ -97,6 +97,7 @@ run_test "REVEAL_CARD"						"game/test/revealCard.test.ts"
 run_test "Round scoring"					"game/test/scoring.test.ts"
 run_test "Round resolution"					"game/test/roundResolution.test.ts"
 run_test "Subsequent rounds"				"game/test/nextRound.test.ts"
+run_test "GameManager orchestration"		"src/game/test/GameManager.test.ts"
 
 printf '\n------------------------------------------------------------\n'
 printf '  RESULT: %d / %d tests passed\n' "$passed" "$total"

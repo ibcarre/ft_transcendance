@@ -5,11 +5,7 @@ import {
     ACTION,
     PHASE,
     TURN_STAGE,
-} from "../../../../game";
-
-import type {
-    PublicGameState,
-} from "../../../../game";
+} from "../../../game";
 
 import {
     GameManager,
@@ -19,9 +15,33 @@ import type {
     ManagerResult,
 } from "../GameManager";
 
+import type {
+	PublicGameState,
+	PublicPlayerState,
+} from "../../../game/types";
+
 const GAME_ID = "game-42";
 const ALICE = "user-11";
 const BOB = "user-22";
+
+function findPlayer(state: PublicGameState, userId: string): PublicPlayerState {
+	for (const player of state.players) {
+		if (player.id === userId) {
+			return player;
+		}
+	}
+	throw new Error(`Player not found in public state: ${userId}`);
+}
+
+function firstHiddenPosition(player: PublicPlayerState): number {
+	for (let position = 0; position < player.board.length; position++) {
+		const card = player.board[position];
+		if (card !== undefined && card.status === "hidden") {
+			return position;
+		}
+	}
+	throw new Error(`No hidden card remaining for ${player.id}`);
+}
 
 function expectState(result: ManagerResult): PublicGameState {
 	if (!result.ok) {
@@ -74,7 +94,9 @@ function finishRound(manager: GameManager, state: PublicGameState): PublicGameSt
 			return state;
 		}
 		const userId = state.currentPlayerId;
-		assert.ok(userId);
+		if (userId === null) {
+			throw new Error("PLAYING requires a current player");
+		}
 		if (state.turnStage === TURN_STAGE.WAITING_FOR_DRAW) {
 			state = act(manager, state, userId, { type: ACTION.DRAW_DECK });
 		}
@@ -83,12 +105,8 @@ function finishRound(manager: GameManager, state: PublicGameState): PublicGameSt
 						{ type: ACTION.DISCARD_DRAWN_CARD });
 		}
 		else if (state.turnStage === TURN_STAGE.MUST_REVEAL_CARD) {
-			const player =
-				state.players.find((candidate) => candidate.id === userId);
-			assert.ok(player);
-			const position =
-				player.board.findIndex((slot) => slot.status === "hidden");
-			assert.notEqual(position, -1);
+			const player = findPlayer(state, userId);
+			const position = firstHiddenPosition(player);
 			state = act(manager, state, userId,
 						{ type: ACTION.REVEAL_CARD, position });
 		}
@@ -106,9 +124,12 @@ test("create() registers an initial public state", () => {
 	assert.equal(state.phase, PHASE.INITIAL_REVEAL);
 	assert.equal(state.players.length, 2);
 	assert.equal(state.deckCount, 125);
-	assert.ok(state.players.every((player) =>
-								  player.board.every((card) =>
-													card.status === "hidden")));
+	for (const player of state.players) {
+		assert.equal(player.board.length, 12);
+		for (const card of player.board) {
+			assert.equal(card.status, "hidden");
+		}
+	}
 });
 
 test("create() refuses duplicate game IDs without replacing the original",
@@ -134,7 +155,7 @@ test("only a participant can submit a action", () => {
 									{ type: ACTION.REVEAL_INITIAL_CARD,
 										position: 0 },
 									state.version), "GAME_UNAVAILABLE");
-	assert.equal(expectState(manager.getPublicState(GAME_ID, ALICE)).version);
+	assert.equal(expectState(manager.getPublicState(GAME_ID, ALICE)).version, 0);
 });
 
 test("client-supplied playerId and unexpected keys are rejected", () => {
@@ -176,9 +197,81 @@ test("malformed payloads, positions and versions are safely rejected", () => {
 				 0);
 });
 
-test("authenticated identity, not an untrusted command identity, determines \
-the actor", () => {
+test("authenticated identity determines the actor", () => {
 	const { manager, state } = setup();
 	const next = act(manager, state, ALICE,
 					 { type: ACTION.REVEAL_INITIAL_CARD, position: 0 });
+	const alice = findPlayer(next, ALICE);
+	const bob = findPlayer(next, BOB);
+	const aliceFirstCard = alice.board[0];
+	const bobFirstCard = bob.board[0];
+	assert.ok(aliceFirstCard);
+	assert.ok(bobFirstCard);
+	assert.equal(aliceFirstCard.status, "revealed");
+	assert.equal(bobFirstCard.status, "hidden");
+});
+
+test("stale versions are rejected without changing the authoritative state",
+() => {
+	const { manager, state } = setup();
+	const next = act(manager, state, ALICE,
+					 { type: ACTION.REVEAL_INITIAL_CARD, position: 0 });
+	expectCode(manager.submitAction(GAME_ID, BOB,
+									{ type: ACTION.REVEAL_INITIAL_CARD,
+										position: 0 },
+									state.version),	"VERSION_CONFLICT");
+	assert.deepEqual(expectState(manager.getPublicState(GAME_ID, ALICE)), next);
+});
+
+test("engine errors propagate while invalid actions leave the state untouched",
+() => {
+	const { manager, state } = setup();
+	expectCode(manager.submitAction(GAME_ID, ALICE, { type: ACTION.DRAW_DECK },
+									state.version), "ACTION_NOT_ALLOWED");
+	assert.deepEqual(expectState(manager.getPublicState(GAME_ID, BOB)), state);
+});
+
+test("advanceRound rejects missing games, invalid phases and invalid \
+versions", () => {
+	const { manager, state } = setup();
+	expectCode(manager.advanceRound("missing", 0), "GAME_UNAVAILABLE");
+	expectCode(manager.advanceRound(GAME_ID, -1), "INVALID_ACTION_PAYLOAD");
+	expectCode(manager.advanceRound(GAME_ID, 77), "VERSION_CONFLICT");
+	expectCode(manager.advanceRound(GAME_ID, state.version),
+									"INVALID_GAME_PHASE");
+});
+
+test("complete a real round and advance only once using the expected version",
+() => {
+	const { manager, state: initial } = setup();
+	const finished = finishRound(manager, startPlaying(manager, initial));
+	assert.equal(finished.phase, PHASE.ROUND_FINISHED);
+	assert.equal(finished.roundHistory.length, 1);
+	assert.ok(finished.roundFinisherId);
+	const next = expectState(manager.advanceRound(GAME_ID, finished.version));
+	assert.equal(next.phase, PHASE.PLAYING);
+	assert.equal(next.roundNumber, 2);
+	assert.equal(next.currentPlayerId, finished.roundFinisherId);
+	assert.equal(next.roundStarterId, finished.roundFinisherId);
+	assert.equal(next.version, finished.version + 1);
+	assert.deepEqual(next.roundHistory, finished.roundHistory);
+	assert.deepEqual(next.players.map((player) => player.totalScore),
+					 finished.players.map((player) => player.totalScore));
+	assert.ok(next.players.every((player) => player.board.every(
+		(card) => card.status === "hidden")));
+	expectCode(manager.advanceRound(GAME_ID, finished.version),
+			   "VERSION_CONFLICT");
+	expectCode(manager.advanceRound(GAME_ID, next.version),
+			   "INVALID_GAME_PHASE");
+});
+
+test("remove() frees a game and its identifier for future reuse", () => {
+	const { manager } = setup();
+	assert.equal(manager.remove(GAME_ID), true);
+	assert.equal(manager.remove(GAME_ID), false);
+	expectCode(manager.getPublicState(GAME_ID, ALICE), "GAME_UNAVAILABLE");
+	const replacement = expectState(manager.create({ id: GAME_ID,
+												   players: [{ id: ALICE },
+															{ id: BOB }]}));
+	assert.equal(replacement.version, 0);
 });

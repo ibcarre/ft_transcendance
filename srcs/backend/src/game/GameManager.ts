@@ -5,7 +5,7 @@ import {
     buildPublicState,
     createGame,
     startNextRound,
-} from "../../../game";
+} from "../../game";
 
 import type {
     CreateGameInput,
@@ -14,11 +14,11 @@ import type {
     GameState,
     PlayerId,
     PublicGameState,
-} from "../../../game";
+} from "../../game";
 
 import type {
 	ErrorCode,
-} from "../../../game/constants";
+} from "../../game/constants";
 
 export type ClientGameAction =
 	| { type: "REVEAL_INITIAL_CARD"; position: number }
@@ -45,6 +45,10 @@ export type ManagerResult =
 		ok: false;
 		error: { code: ManagerErrorCode };
 	};
+
+function fail(code: ManagerErrorCode): ManagerResult {
+    return { ok: false, error: { code: code } };
+}
 
 function success(state: GameState): ManagerResult {
 	return { ok: true, publicState: buildPublicState(state) };
@@ -79,9 +83,14 @@ function parseClientAction(value: unknown): ClientGameAction | null {
 	}
 }
 
-export classe GameManager {
+export class GameManager {
 	private readonly games = new Map<GameId, GameState>();
-	constructor(private readonly random: () => number = Math.random) {}
+	private readonly random: () => number;
+	
+	constructor(random: () => number = Math.random) {
+		this.random = random;
+	}
+	
 	create(input: CreateGameInput): ManagerResult {
 		if (this.games.has(input.id)) {
 			return fail("GAME_ALREADY_EXISTS");
@@ -153,10 +162,14 @@ export classe GameManager {
 	private findAuthorizedGame(gameId: GameId, userId: PlayerId):
 	GameState | null {
 		const state = this.games.get(gameId);
-		if (state === undefined
-		|| !state.players.some((players) => player.id === userId)) {
+		if (state === undefined) {
 			return null;
 		}
-		return state;
+		for (const player of state.players) {
+			if (player.id === userId) {
+				return state;
+			}
+		}
+		return null;
 	}
 }
