@@ -35,14 +35,18 @@ services:
       - ./infra/postgres/init_sql/01_schema.sql:/docker-entrypoint-initdb.d/01_tables.sql
     networks:
       - NW_skyjo
-  
+
   postgres-exporter:
     image: docker.io/prometheuscommunity/postgres-exporter
     container_name: postgres_exporter
+    depends_on:
+      - "postgres"
     environment:
       DATA_SOURCE_NAME: ""
+      PG_EXPORTER_EXTEND_QUERY_PATH: /data/queries.yml
     volumes:
       - ../secrets/DATABASE_URL.txt:/run/secrets/pg_url:ro
+      - ./infra/postgres-exporter/skyjo-queries.yml:/data/queries.yml:ro
     networks:
       - NW_skyjo
     entrypoint: ["/bin/sh", "-c"]
@@ -60,8 +64,12 @@ services:
     build: ./backend/
     container_name: back_skyjo
     restart: unless-stopped
-    # healthcheck:
-    #   test: ["CMD-SHELL", "sh -c curl http://localhost/health"]
+    healthcheck:
+      test: ["CMD-SHELL", "/app/scripts/healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
     depends_on:
       postgres:
         condition: service_healthy
@@ -150,10 +158,21 @@ services:
       GF_SMTP_FROM_ADDRESS: "${GF_SMTP_USER}"
       GF_SMTP_FROM_NAME: Grafana Alerts
       GF_SMTP_STARTTLS_POLICY: MandatoryStartTLS
+      GF_RENDERING_SERVER_URL: http://grafana-renderer:8081/render
+      GF_RENDERING_CALLBACK_URL: http://grafana:3000/grafana/
+      GF_RENDERING_RENDERER_TOKEN: qwertyuiop
     volumes:
       - grafana_storage:/var/lib/grafana
       - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
       - ./infra/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - NW_skyjo
+
+  grafana-renderer:
+    image: docker.io/grafana/grafana-image-renderer:v5.12.7
+    container_name: GF_image_renderer_skyjo
+    environment:
+      AUTH_TOKEN: qwertyuiop
     networks:
       - NW_skyjo
 

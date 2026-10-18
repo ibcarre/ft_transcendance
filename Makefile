@@ -1,6 +1,5 @@
 
 $(shell ./tools/podman-sock.sh > /dev/null)
-
 include srcs/.env
 
 COMPOSE = ${CONTAINER} compose -f srcs/compose.yml
@@ -22,10 +21,19 @@ logs:
 	${COMPOSE} logs
 
 #
+# CI
+#
+
+ci: up
+
+ci-dev:
+	${COMPOSE_DEV} up --build -d
+
+#
 # Dev
 #
 
-dev: secrets
+dev:
 	${COMPOSE_DEV} up --build -d
 
 dev-down:
@@ -58,13 +66,13 @@ fclean:
 	${COMPOSE_DEV} down --rmi all --volumes --remove-orphans
 	-${CONTAINER} volume prune -f
 	-${CONTAINER} image prune -af
-	@rm -rf ./.last_user_id ./changelog.txt ./changelog0.txt secrets
+	@rm -rf ./.last_user_id ./changelog.txt ./changelog0.txt
 
 rl: clean up
 
-dev-rl: dev-clean dev
+dev-rl: clean dev
 
-re: fclean up
+re: fclean all
 
 rd: fclean dev
 
