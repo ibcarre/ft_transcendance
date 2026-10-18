@@ -4,9 +4,11 @@ var getInvites = async (req, res) => {
 	try {
 		const user = req.user;
 
-		const invites = await db.any('SELECT * FROM friends WHERE user_id = $1 OR friend_id = $1 AND accepted is FALSE AND requested_by != $1', user.id);
+		const invites = await db.any('SELECT * FROM friends WHERE requested_by != $1 AND accepted is FALSE AND (user_id = $1 OR friend_id = $1)', user.id);
 		if (Object.keys(invites).length === 0)
 			return (res.status(200).send());
+		console.log(invites);
+		console.log(invites[0].requested_by, user.id);
 		const invitesId = [];
 		invites.forEach((e)=> {
 		if (e.user_id === user.id)
