@@ -4,7 +4,7 @@ const {sendInvite} = require('../../socket/namespaces/friendsList/events/invite'
 const {newFriend} = require('../../socket/namespaces/friendsList/events/friendList');
 
 //invite = id
-//friends = user
+//friends = id
 
 var add = async (user, friend, requestedby, res) => {
 	try {
