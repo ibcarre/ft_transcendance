@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Modal } from '../../components/Modal';
 import { EditProfile } from './EditProfile';
-import defaultPic from '../../../imgs/default_pic.jpg';
+import defaultPic from '../../assets/cartes_home.png';
 import { Header } from '../../components/Header';
 import { useAuth } from '../../context/AuthContext';
 import './Profile.css';
@@ -60,7 +60,7 @@ export function Profile() {
 
             {editModal && (
                 <Modal title="Edit profile" onClose={closeModal}>
-                    <EditProfile />
+                    <EditProfile defaultPic={defaultPic} />
                 </Modal>
             )}
 

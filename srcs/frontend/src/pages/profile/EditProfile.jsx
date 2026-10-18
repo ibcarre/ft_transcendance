@@ -1,7 +1,6 @@
-import defaultPic from '../../../imgs/default_pic.jpg';
 import './EditProfile.css';
 
-export function EditProfile() {
+export function EditProfile( { defaultPic }) {
     return (
         <div className="profile-content">
             <div className="profile-header">
