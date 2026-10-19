@@ -16,6 +16,7 @@
 	font-weight: 900;
 	color: #1e3a8a;
 	letter-spacing: 2px;
+	user-select: none;
 }
 
 /* =========================================
@@ -31,51 +32,39 @@
 	cursor: pointer;
 }
 
-/* Le pseudo cliquable */
 .username {
 	margin: 0;
 	color: #1e293b;
 	font-size: 35px;
 	font-weight: 700;
 	user-select: none;
-	/* Empêche le texte de se surligner en bleu si on double-clique */
 	transition: color 0.2s;
 }
 
 .username:hover {
 	color: #3b82f6;
-	/* Bleu au survol */
 }
 
 .username .arrow {
 	font-size: 20px;
-	/* Rend la petite flèche légèrement plus discrète */
 	vertical-align: middle;
 }
 
-/* La boîte du menu déroulant */
 .header-menu {
 	position: absolute;
 	top: 100%;
-	/* Se place pile sous la hauteur du "user-section" */
 	right: 0;
-	/* Aligne le bord droit du menu avec le bord droit du texte */
 	margin-top: 12px;
 	background-color: #ffffff;
 	border: 1px solid #e2e8f0;
 	border-radius: 12px;
 	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-	/* Ombre douce comme tes formulaires */
 	min-width: 160px;
 	overflow: hidden;
-	/* Empêche les éléments internes de déborder des coins arrondis */
 	z-index: 100;
-	/* S'assure que le menu passe par-dessus les autres boutons de la page */
 	animation: slideDown 0.2s ease-out;
-	/* Petite animation d'apparition */
 }
 
-/* Les boutons à l'intérieur du menu */
 .header-menu p {
 	margin: 0;
 	padding: 14px 20px;
@@ -88,23 +77,20 @@
 	user-select: none;
 }
 
-.header-menu a {
+.header a {
 	text-decoration: none;
 	color: inherit;
 }
 
-/* Ajoute une fine ligne grise entre Profile et Logout */
 .header-menu p:last-child {
 	border-top: 1px solid #f1f5f9;
 }
 
-/* Survol de Profile */
 .header-menu p:hover {
 	background-color: #f8fafc;
 	color: #3b82f6;
 }
 
-/* Survol spécifique pour le Logout (action de sortie) */
 .header-menu .logout-text:hover {
 	color: #ef4444;
 	background-color: #fef2f2;

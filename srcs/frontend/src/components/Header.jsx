@@ -2,10 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import { Friends } from './Friends';
+import { Modal } from './Modal';
 import './Header.css'
 import './Modal.css'
-import { Modal } from './Modal';
-
 
 export function Header() {
     const [friendsModal, setFriendsModal] = useState(false);
@@ -37,7 +36,7 @@ export function Header() {
     return (
         <>
             <header className="header">
-                <h1>SKYJO</h1>
+                <Link to="/lobby"><h1>SKYJO</h1></Link>
                 <div className="user-section" ref={menuRef}>
                     <h2 onClick={toggleMenu} className="Username">
                         {userInfo.name} <span className="arrow"> {menu ? '▲' : '▼'}</span>
@@ -45,7 +44,7 @@ export function Header() {
                     {menu && (
                         <div className="header-menu">
                             <Link to="/profile"><p>Profile</p></Link>
-                            <p onClick={() =>setFriendsModal(true)}>Friends</p>
+                            <p onClick={() => { setFriendsModal(true); setMenu(false); }}>Friends</p>
                             <p>Chat</p>
                             <p className="logout-text">Logout</p>
                         </div>

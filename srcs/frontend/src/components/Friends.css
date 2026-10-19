@@ -1,0 +1,152 @@
+/* =========================================
+   CONTENEUR PRINCIPAL
+   ========================================= */
+.friend-container {
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+	gap: 32px;
+	width: 400px;
+	box-sizing: border-box;
+}
+
+/* =========================================
+   BARRE D'AJOUT
+   ========================================= */
+.add-friend-section {
+	display: flex;
+	gap: 12px;
+}
+
+.friend-input {
+	flex: 1;
+	padding: 12px 16px;
+	border: 1px solid #cbd5e1;
+	border-radius: 8px;
+	font-size: 15px;
+	outline: none;
+	transition: border-color 0.2s;
+}
+
+.friend-input:focus {
+	border-color: #3b82f6;
+}
+
+/* =========================================
+   SECTIONS (Titres et Conteneurs de listes)
+   ========================================= */
+.friend-section {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.section-title {
+	margin: 0;
+	font-size: 18px;
+	font-weight: 700;
+	color: #1e293b;
+	border-bottom: 2px solid #e2e8f0;
+	padding-bottom: 8px;
+}
+
+.friends-list-container {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	max-height: 250px;
+	overflow-y: auto;
+	padding-right: 8px; 
+}
+
+.requests-container {
+	max-height: 150px; 
+}
+
+/* =========================================
+   CARTE D'UN AMI (La boîte)
+   ========================================= */
+.friend-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: #f8fafc;
+	border: 1px solid #e2e8f0;
+	padding: 12px 16px;
+	border-radius: 12px;
+	transition: background-color 0.2s, border-color 0.2s;
+	flex-shrink: 0; 
+}
+
+.friend-item:hover {
+	background-color: #f1f5f9;
+	border-color: #cbd5e1;
+}
+
+.request-item {
+	background-color: #fefce8; 
+	border-color: #fef08a;
+}
+
+.friend-name {
+	margin: 0;
+	font-weight: 700;
+	color: #1e293b;
+	font-size: 16px;
+}
+
+/* =========================================
+   BOUTONS D'ACTION
+   ========================================= */
+.friend-actions {
+	display: flex;
+	gap: 8px;
+}
+
+.action-button {
+	padding: 8px 12px;
+	border: none;
+	border-radius: 8px;
+	font-weight: 600;
+	font-size: 14px;
+	cursor: pointer;
+	color: white;
+	transition: background-color 0.2s, transform 0.2s;
+}
+
+.action-button:hover {
+	transform: translateY(-2px);
+}
+
+.add-btn {
+	background-color: #3b82f6;
+	padding: 12px 24px;
+}
+
+.add-btn:hover {
+	background-color: #2563eb;
+}
+
+.chat-btn {
+	background-color: #3b82f6;
+}
+
+.chat-btn:hover {
+	background-color: #2563eb;
+}
+
+.accept-btn {
+	background-color: #22c55e;
+}
+
+.accept-btn:hover {
+	background-color: #16a34a;
+}
+
+.refuse-btn, .delete-btn {
+	background-color: #ef4444;
+}
+
+.refuse-btn:hover, .delete-btn:hover {
+	background-color: #dc2626;
+}
