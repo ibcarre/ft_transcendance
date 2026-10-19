@@ -3,24 +3,22 @@ import type {
 	CardValue,
 } from "./types";
 
-const CARD_DISTRIBUTION:
-    ReadonlyArray<readonly [CardValue, number]> = [
-        [-2, 5],
-        [-1, 10],
-        [0, 15],
-        [1, 10],
-        [2, 10],
-        [3, 10],
-        [4, 10],
-        [5, 10],
-        [6, 10],
-        [7, 10],
-        [8, 10],
-        [9, 10],
-        [10, 10],
-        [11, 10],
-        [12, 10],
-    ];
+const CARD_DISTRIBUTION: ReadonlyArray<readonly [CardValue, number]> = [
+	[-2, 5],
+	[-1, 10],
+	[0, 15],
+	[1, 10],
+	[2, 10],
+	[3, 10],
+	[4, 10],
+	[5, 10],
+	[6, 10],
+	[7, 10],
+	[8, 10],
+	[9, 10],
+	[10, 10],
+	[11, 10],
+	[12, 10]];
 
 
 export function createDeck(): Card[]
@@ -41,19 +39,23 @@ export function createDeck(): Card[]
  * @param random Function returning a number in [0, 1).
  */
 export function shuffleDeck(deck: readonly Card[],
-							random: () => number = Math.random): Card[]
-{
+							random: () => number = Math.random): Card[] {
 	const shuffled = [...deck];
-
 	for (let i = shuffled.length - 1; i > 0; i--) {
-		const j = Math.floor(random() * (i + 1));
+		const randomValue = random();
+		if (!Number.isFinite(randomValue)
+		|| randomValue < 0
+		|| randomValue >= 1) {
+			throw new Error("Invalid random source: expected a number in \
+[0, 1)");
+		}
+		const j = Math.floor(randomValue * (i + 1));
 		[shuffled[i], shuffled[j]] = [shuffled[j]!, shuffled[i]!];
 	}
 	return shuffled;
 }
 
-export function takeTopCard(deck: Card[]): Card
-{
+export function takeTopCard(deck: Card[]): Card {
 	const card = deck.pop();
 
 	if (card === undefined) {

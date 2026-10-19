@@ -38,6 +38,6 @@ fi
 postgres_pswd=$(cat "${PWD}/secrets/POSTGRES_PASSWORD.txt")
 db_url="postgresql://${POSTGRES_USER}:${postgres_pswd}@postgres:5432/${POSTGRES_DB}"
 
-if [ ! -f "${PWD}/secrets/POSTGRES_PASSWORD" ]; then
+if [ ! -f "${PWD}/secrets/DATABASE_URL.txt" ]; then
 	echo ${db_url} > "${PWD}/secrets/DATABASE_URL.txt"
 fi

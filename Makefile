@@ -1,6 +1,5 @@
 
 $(shell ./tools/podman-sock.sh > /dev/null)
-
 include srcs/.env
 
 COMPOSE = ${CONTAINER} compose -f srcs/compose.yml
@@ -22,10 +21,19 @@ logs:
 	${COMPOSE} logs
 
 #
+# CI
+#
+
+ci: up
+
+ci-dev:
+	${COMPOSE_DEV} up --build -d
+
+#
 # Dev
 #
 
-dev: secrets
+dev:
 	${COMPOSE_DEV} up --build -d
 
 dev-down:
@@ -39,7 +47,7 @@ dev-logs:
 #
 
 game-test:
-	${CONTAINER} run --rm --name game-test_skyjo -v "./srcs/backend:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npm run game:verify"
+	${CONTAINER} run --rm -t --name game-test_skyjo -v "./srcs/backend:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npm run game:verify"
 
 #
 # Clean
@@ -58,13 +66,13 @@ fclean:
 	${COMPOSE_DEV} down --rmi all --volumes --remove-orphans
 	-${CONTAINER} volume prune -f
 	-${CONTAINER} image prune -af
-	@rm -rf ./.last_user_id ./changelog.txt ./changelog0.txt secrets
+	@rm -rf ./.last_user_id ./changelog.txt ./changelog0.txt
 
 rl: clean up
 
-dev-rl: dev-clean dev
+dev-rl: clean dev
 
-re: fclean up
+re: fclean all
 
 rd: fclean dev
 
@@ -151,4 +159,5 @@ help-services:
 	clean clean-volumes clean-images dev-clean fclean re rl rd drl \
 	inspect dev-inspect ps watch-psa dev-ps \
 	game-test \
-	help help-prod help-dev help-clean help-info help-services
+	help help-prod help-dev help-clean help-info help-services \
+	secrets

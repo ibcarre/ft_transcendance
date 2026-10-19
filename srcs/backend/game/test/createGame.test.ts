@@ -96,6 +96,10 @@ test("createGame() initializes the game control state", () => {
 	assert.equal(game.roundFinisherId, null);
 	assert.deepEqual(game.finalTurnQueue, []);
 	assert.equal(game.version, 0);
+	assert.equal(game.targetScore, 100);
+	assert.equal(game.roundStarterId, null);
+	assert.deepEqual(game.roundHistory, []);
+	assert.deepEqual(game.winnerIds, []);
 });
 
 function collectAllCards(game: GameState): Card[] {
@@ -187,3 +191,35 @@ test("createGame() rejects empty game ID", () => {
 		id: "",
 		players: [{ id: "alice" }, { id: "bob" }]}));
 });
+
+test("createGame() uses 100 as the default target score", () => {
+	const game = createGame({ id: "game-test",
+							players: [{ id: "alice" }, { id: "bob" }]});
+	assert.equal(game.targetScore, 100);
+});
+
+test("createGame() accepts a custom target score", () => {
+	const game = createGame({ id: "game-test",
+							players: [{ id: "alice" }, { id: "bob" }],
+							targetScore: 250});
+	assert.equal(game.targetScore, 250);
+});
+
+test("createGame() initializes the new round metadata", () => {
+	const game = createGame({ id: "game-test",
+							players: [{ id: "alice" }, { id: "bob" }]});
+	assert.equal(game.roundStarterId, null);
+	assert.deepEqual(game.roundHistory, []);
+	assert.deepEqual(game.winnerIds, []);
+});
+
+for (const targetScore of [0, -1, 2.5, Number.NaN, Infinity,
+	 Number.MAX_SAFE_INTEGER + 1]) {
+	test(`createGame() rejects invalid target score ${String(targetScore)}`,
+	() => {
+		assert.throws(() => createGame(
+			{ id: "game-test", players: [{ id: "alice" }, { id: "bob" }],
+				targetScore}),
+			{ message: "createGame() requires a positive integer targetScore"});
+	});
+}

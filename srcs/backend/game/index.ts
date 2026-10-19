@@ -1,13 +1,14 @@
 export {
     createGame,
     applyAction,
+	startNextRound,
 } from "./engine";
 
 
-// export {
-//     buildPublicState,
-// } from "./publicState";
-//
+export {
+    buildPublicState,
+} from "./publicState";
+
 
 export {
     ACTION,
@@ -25,4 +26,6 @@ export type {
 	GameState,
 	PlayerId,
 	PublicGameState,
+	RoundPlayerScore,
+	RoundResult,
 } from "./types";

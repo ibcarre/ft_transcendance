@@ -6,3 +6,4 @@ to-do*
 changelog*.txt
 secrets/
 secrets*
+srcs/backend/build/

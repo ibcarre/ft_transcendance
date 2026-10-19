@@ -18,7 +18,8 @@
         "noEmit": true
     },
 
-    "include": [
-        "game/**/*.ts"
-    ]
+	"include": [
+		"game/**/*.ts",
+		"src/game/**/*.ts"
+	]
 }

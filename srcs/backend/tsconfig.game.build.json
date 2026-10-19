@@ -1,0 +1,16 @@
+{
+    "extends": "./tsconfig.game.json",
+    "compilerOptions": {
+        "noEmit": false,
+        "rootDir": ".",
+        "outDir": "build"
+    },
+    "include": [
+        "game/*.ts",
+        "src/game/GameManager.ts"
+    ],
+    "exclude": [
+        "game/test/**",
+        "src/game/test/**"
+    ]
+}
