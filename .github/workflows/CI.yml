@@ -34,6 +34,9 @@ jobs:
       - name: Make (Docker)
         run: make ci
 
+      - name: Game test
+        run: make game-test
+
 # ------------------------- JOB 2: Podman (build and dev) ------------
   test-podman:
     runs-on: ubuntu-latest
@@ -44,16 +47,6 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y podman
-
-      # - name: Configure rootless Podman
-      #   run: |
-      #     set -eux
-      #
-      #     id
-      #     podman --version
-      #     podman info
-      #     grep "^$(id -un):" /etc/subuid
-      #     grep "^$(id -un):" /etc/subgid
 
       - name: Create secrets
         run: | 
@@ -68,4 +61,7 @@ jobs:
 
       - name: Make (Podman)
         run: make ci
+
+      - name: Game test
+        run: make game-test
 

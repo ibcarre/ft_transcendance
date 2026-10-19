@@ -24,7 +24,7 @@ logs:
 # CI
 #
 
-ci: up game-test
+ci: up
 
 ci-dev:
 	${COMPOSE_DEV} up --build -d
