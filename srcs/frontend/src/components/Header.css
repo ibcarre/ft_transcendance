@@ -90,12 +90,12 @@
 
 .header-menu a {
 	text-decoration: none;
-	color: inherit; /* Permet au lien de garder la couleur définie par ton design et non le bleu par défaut */
+	color: inherit;
 }
 
 /* Ajoute une fine ligne grise entre Profile et Logout */
-.header-menu p:not(:last-child) {
-	border-bottom: 1px solid #f1f5f9;
+.header-menu p:last-child {
+	border-top: 1px solid #f1f5f9;
 }
 
 /* Survol de Profile */
@@ -107,7 +107,6 @@
 /* Survol spécifique pour le Logout (action de sortie) */
 .header-menu .logout-text:hover {
 	color: #ef4444;
-	/* Rouge doux */
 	background-color: #fef2f2;
 }
 
@@ -118,7 +117,6 @@
 	width: 100vw;
 	height: 100vh;
 	z-index: 90;
-	/* Se place par-dessus la page... */
 	cursor: default;
 }
 

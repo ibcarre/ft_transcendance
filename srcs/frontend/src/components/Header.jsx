@@ -1,14 +1,20 @@
-import { useState , useEffect , useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router';
+import { useAuth } from '../context/AuthContext';
+import { Friends } from './Friends';
 import './Header.css'
 import './Modal.css'
-import { useAuth } from '../context/AuthContext';
+import { Modal } from './Modal';
+
 
 export function Header() {
+    const [friendsModal, setFriendsModal] = useState(false);
     const [menu, setMenu] = useState(false);
     const menuRef = useRef(null);
 
     const { userInfo } = useAuth();
+
+    const closeModal = () => setFriendsModal(false);
 
     const toggleMenu = () => {
         setMenu(!menu)
@@ -39,12 +45,19 @@ export function Header() {
                     {menu && (
                         <div className="header-menu">
                             <Link to="/profile"><p>Profile</p></Link>
+                            <p onClick={() =>setFriendsModal(true)}>Friends</p>
                             <p>Chat</p>
                             <p className="logout-text">Logout</p>
                         </div>
                     )}
                 </div>
             </header>
+
+            {friendsModal && (
+                <Modal title="Friends" onClose={closeModal}>
+                    <Friends />
+                </Modal>
+            )}
         </>
     );
 }
