@@ -67,3 +67,11 @@ sequence", () => {
 	assert.equal(randomIndex, 3);
 })
 
+test("shuffleDeck() rejects random values outside [0, 1)", () => {
+	const deck: Card[] = [{ id: 0, value: 0 }, { id: 1, value: 1 }];
+	for (const value of [-0.01, 1, Number.NaN, Number.POSITIVE_INFINITY]) {
+		assert.throws(() => shuffleDeck(deck, () => value),
+					  { message: "Invalid random source: expected a number in \
+[0, 1)" });
+	}
+});
