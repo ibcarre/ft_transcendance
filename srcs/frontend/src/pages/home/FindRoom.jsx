@@ -56,7 +56,7 @@ export function FindRoom() {
                         onClick={() => setSelectedRoomId(room.id)}
                     >
                         <p className="my-1 break-all">{room.name}</p>
-                        {room.ispass && <p className="my-1">cadenas</p>}
+                        {!!room.ispass && <p className="my-1">cadenas</p>}
                         <p className="my-1">{room.nb_players} / {room.max_players}</p>
                     </div>
                 ))}
