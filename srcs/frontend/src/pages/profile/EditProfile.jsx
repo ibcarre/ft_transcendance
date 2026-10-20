@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
-import './EditProfile.css';
+import { inputClass, btnPrimary, labelClass, hint, success, hintOrHidden } from '../../styles/ui';
+
+const section = "flex flex-col gap-2";
+const inputRow = "mb-0.5 flex gap-3";
+const validateButton = `${btnPrimary} shrink-0 px-4 py-2.5`;
+const editInput = `${inputClass} px-4 py-2.5`;
 
 const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9\-_]{3,23}$/;
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -84,20 +89,21 @@ export function EditProfile({ defaultPic }) {
     const renderStatus = (field) => {
         const s = status[field];
         if (!s) return null;
-        return <div className={s.ok ? "edit-success" : "instructions"}>{s.message}</div>;
+        return <div className={s.ok ? success : hint}>{s.message}</div>;
     };
 
     return (
-        <div className="profile-content">
-            <div className="profile-header">
-                <img src={defaultPic} alt="Profile" className="profile-pic" />
+        <div className="flex w-full flex-col gap-6 sm:w-[400px]">
+            <div className="flex flex-col items-center gap-3 border-b border-slate-200 pb-5">
+                <img src={defaultPic} alt="Profile" className="size-[100px] rounded-full border-[3px] border-blue-500 object-cover" />
             </div>
 
-            <form className="profile-section" onSubmit={handleUsername}>
-                <label htmlFor="new-username">New Username</label>
-                <div className="input-row">
+            <form className={section} onSubmit={handleUsername}>
+                <label htmlFor="new-username" className={labelClass}>New Username</label>
+                <div className={inputRow}>
                     <input
                         id="new-username"
+                        className={editInput}
                         type="text"
                         placeholder={userInfo.name}
                         autoComplete="off"
@@ -110,12 +116,12 @@ export function EditProfile({ defaultPic }) {
                     />
                     <button
                         type="submit"
-                        className="validate-button"
+                        className={validateButton}
                         disabled={loading === 'username' || !validName}>
                         Update
                     </button>
                 </div>
-                <p id="edit-uidnote" className={username && !validName && !usernameFocus ? "instructions" : "offscreen"}>
+                <p id="edit-uidnote" className={hintOrHidden(username && !validName && !usernameFocus)}>
                     4 to 24 characters.<br />
                     Must begin with a letter.<br />
                     Letters, numbers, underscores, hyphens allowed.
@@ -123,11 +129,12 @@ export function EditProfile({ defaultPic }) {
                 {renderStatus('username')}
             </form>
 
-            <form className="profile-section" onSubmit={handleEmail}>
-                <label htmlFor="new-email">New email address</label>
-                <div className="input-row">
+            <form className={section} onSubmit={handleEmail}>
+                <label htmlFor="new-email" className={labelClass}>New email address</label>
+                <div className={inputRow}>
                     <input
                         id="new-email"
+                        className={editInput}
                         type="email"
                         placeholder={userInfo.email}
                         aria-invalid={validEmail ? "false" : "true"}
@@ -139,21 +146,22 @@ export function EditProfile({ defaultPic }) {
                     />
                     <button
                         type="submit"
-                        className="validate-button"
+                        className={validateButton}
                         disabled={loading === 'email' || !validEmail}>
                         Update
                     </button>
                 </div>
-                <p id="edit-emailnote" className={email && !validEmail && !emailFocus ? "instructions" : "offscreen"}>
+                <p id="edit-emailnote" className={hintOrHidden(email && !validEmail && !emailFocus)}>
                     Invalid email address.
                 </p>
                 {renderStatus('email')}
             </form>
 
-            <form className="profile-section" onSubmit={handlePassword}>
-                <label htmlFor="new-pwd">New password</label>
+            <form className={section} onSubmit={handlePassword}>
+                <label htmlFor="new-pwd" className={labelClass}>New password</label>
                 <input
                     id="new-pwd"
+                    className={editInput}
                     type="password"
                     aria-invalid={validPwd ? "false" : "true"}
                     aria-describedby="edit-pwdnote"
@@ -162,15 +170,16 @@ export function EditProfile({ defaultPic }) {
                     onFocus={() => setPwdFocus(true)}
                     onBlur={() => setPwdFocus(false)}
                 />
-                <p id="edit-pwdnote" className={password && !pwdFocus && !validPwd ? "instructions" : "offscreen"}>
+                <p id="edit-pwdnote" className={hintOrHidden(password && !pwdFocus && !validPwd)}>
                     8 to 64 characters.<br />
                     Must include uppercase and lowercase letters, a number and a special character.
                 </p>
 
-                <label htmlFor="confirm-new-pwd" className="mt-2">Confirm new password</label>
-                <div className="input-row">
+                <label htmlFor="confirm-new-pwd" className={`${labelClass} mt-2`}>Confirm new password</label>
+                <div className={inputRow}>
                     <input
                         id="confirm-new-pwd"
+                        className={editInput}
                         type="password"
                         aria-invalid={validMatch ? "false" : "true"}
                         aria-describedby="edit-confirmnote"
@@ -181,12 +190,12 @@ export function EditProfile({ defaultPic }) {
                     />
                     <button
                         type="submit"
-                        className="validate-button"
+                        className={validateButton}
                         disabled={loading === 'password' || !validPwd || !validMatch}>
                         Update
                     </button>
                 </div>
-                <p id="edit-confirmnote" className={confirmPassword && !validMatch && !matchFocus ? "instructions" : "offscreen"}>
+                <p id="edit-confirmnote" className={hintOrHidden(confirmPassword && !validMatch && !matchFocus)}>
                     Must match the first password input field.
                 </p>
                 {renderStatus('password')}

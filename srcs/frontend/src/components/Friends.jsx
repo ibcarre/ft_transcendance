@@ -1,5 +1,5 @@
 import { useState } from "react";
-import './Friends.css';
+import { inputClass, btnPrimary } from '../styles/ui';
 
 const mockRequests = [
     { id: 1, name: "New friend 1" },
@@ -15,29 +15,35 @@ const mockFriends = [
     { id: 105, name: "Demahom 5" }
 ];
 
+const sectionTitle = "border-b-2 border-slate-200 pb-2 text-lg font-bold text-slate-800";
+const listContainer = "flex flex-col gap-2.5 overflow-y-auto pr-2";
+const friendItem = "flex shrink-0 items-center justify-between gap-3 rounded-xl border px-4 py-3 transition-colors";
+const friendName = "truncate text-base font-bold text-slate-800";
+const actionButton = "cursor-pointer rounded-lg px-3 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5";
+
 export function Friends() {
     const [requests, setRequests] = useState(mockRequests);
     const [friendsList, setFriendsList] = useState(mockFriends);
 
     return (
-        <div className="friend-container">
+        <div className="box-border flex w-full flex-col gap-8 p-2.5 sm:w-[400px]">
 
-            <div className="add-friend-section">
-                <input placeholder="Add a friend" className="friend-input" />
-                <button className="action-button add-btn">ADD</button>
+            <div className="flex gap-3">
+                <input placeholder="Add a friend" className={inputClass} />
+                <button className={`${btnPrimary} px-4 py-3 text-sm sm:px-6`}>ADD</button>
             </div>
 
             {requests.length > 0 && (
-                <div className="friend-section">
-                    <p className="section-title">Friend request</p>
+                <div className="flex flex-col gap-3">
+                    <p className={sectionTitle}>Friend request</p>
 
-                    <div className="friends-list-container requests-container">
+                    <div className={`${listContainer} max-h-[150px]`}>
                         {requests.map((req) => (
-                            <div key={req.id} className="friend-item request-item">
-                                <p className="friend-name">{req.name}</p>
-                                <div className="friend-actions">
-                                    <button className="action-button accept-btn">✔</button>
-                                    <button className="action-button refuse-btn">✖</button>
+                            <div key={req.id} className={`${friendItem} border-yellow-200 bg-yellow-50`}>
+                                <p className={friendName}>{req.name}</p>
+                                <div className="flex shrink-0 gap-2">
+                                    <button className={`${actionButton} bg-green-500 hover:bg-green-600`}>✔</button>
+                                    <button className={`${actionButton} bg-red-500 hover:bg-red-600`}>✖</button>
                                 </div>
                             </div>
                         ))}
@@ -45,15 +51,15 @@ export function Friends() {
                 </div>
             )}
 
-            <div className="friend-section">
-                <p className="section-title">Friend list</p>
-                <div className="friends-list-container">
+            <div className="flex flex-col gap-3">
+                <p className={sectionTitle}>Friend list</p>
+                <div className={`${listContainer} max-h-[250px]`}>
                     {friendsList.map((friend) => (
-                        <div key={friend.id} className="friend-item">
-                            <p className="friend-name">{friend.name}</p>
-                            <div className="friend-actions">
-                                <button className="action-button chat-btn">Chat</button>
-                                <button className="action-button delete-btn">✖</button>
+                        <div key={friend.id} className={`${friendItem} border-slate-200 bg-slate-50 hover:border-slate-300 hover:bg-slate-100`}>
+                            <p className={friendName}>{friend.name}</p>
+                            <div className="flex shrink-0 gap-2">
+                                <button className={`${actionButton} bg-blue-500 hover:bg-blue-600`}>Chat</button>
+                                <button className={`${actionButton} bg-red-500 hover:bg-red-600`}>✖</button>
                             </div>
                         </div>
                     ))}

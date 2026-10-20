@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import dayjs from 'dayjs';
 import { useAuth } from '../context/AuthContext';
-import './Chat.css';
+import { inputClass, btnPrimary } from '../styles/ui';
 
 const mockMessages = [
     { id: 1, author: "Demahom 1", body: "Salut tout le monde !", sentAt: "2026-10-20T14:02:00" },
@@ -36,32 +36,32 @@ export function Chat() {
     };
 
     return (
-        <div className="chat-container">
+        <div className="box-border flex w-full flex-col gap-5 p-2.5 sm:w-[450px]">
 
-            <div className="chat-messages" ref={listRef}>
+            <div className="flex h-[50vh] flex-col gap-3.5 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50 p-4 pr-2 sm:h-[400px]" ref={listRef}>
                 {messages.map((msg) => {
                     const isMine = msg.author === userInfo.name;
                     return (
-                        <div key={msg.id} className={`chat-message ${isMine ? 'mine' : ''}`}>
-                            {!isMine && <p className="chat-author">{msg.author}</p>}
-                            <div className="chat-bubble">
-                                <p className="chat-body">{msg.body}</p>
-                                <p className="chat-time">{dayjs(msg.sentAt).format('HH:mm')}</p>
+                        <div key={msg.id} className={`flex max-w-[80%] shrink-0 flex-col gap-1 ${isMine ? 'items-end self-end' : 'items-start'}`}>
+                            {!isMine && <p className="pl-1 text-[13px] font-bold text-blue-900">{msg.author}</p>}
+                            <div className={`flex flex-col gap-1 rounded-xl border px-3.5 py-2.5 ${isMine ? 'rounded-tr-sm border-blue-500 bg-blue-500' : 'rounded-tl-sm border-slate-200 bg-white'}`}>
+                                <p className={`break-words text-[15px] ${isMine ? 'text-white' : 'text-slate-800'}`}>{msg.body}</p>
+                                <p className={`self-end text-[11px] ${isMine ? 'text-blue-100' : 'text-slate-400'}`}>{dayjs(msg.sentAt).format('HH:mm')}</p>
                             </div>
                         </div>
                     );
                 })}
             </div>
 
-            <form className="chat-form" onSubmit={sendMessage}>
+            <form className="flex gap-3" onSubmit={sendMessage}>
                 <input
                     placeholder="Write a message"
-                    className="chat-input"
+                    className={inputClass}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     maxLength={500}
                 />
-                <button type="submit" className="chat-send-btn">SEND</button>
+                <button type="submit" className={`${btnPrimary} px-4 py-3 text-sm sm:px-6`}>SEND</button>
             </form>
 
         </div>

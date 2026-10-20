@@ -1,24 +1,25 @@
-body {
-  font-family: Roboto, Arial;
-  color: rgb(0, 0, 0);
-  margin: 0;
+@import "tailwindcss";
+
+@theme {
+  --font-sans: Roboto, Arial, sans-serif;
+
+  --animate-slide-down: slide-down 0.2s ease-out;
+
+  @keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-5px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
-p {
-  margin: 0;
-}
-
-.privacy {
-	margin-top: 30px;
-	font-size: 13px;
-	color: #94a3b8;
-	cursor: pointer;
-	transition: color 0.2s;
-}
-
-.privacy:hover {
-	color: #3b82f6;
-}
-.privacy-link {
-	text-decoration: none;
+@layer base {
+  body {
+    @apply bg-cover bg-center bg-no-repeat md:bg-fixed;
+    background-image: url("./assets/image_cartes.jpg");
+  }
 }

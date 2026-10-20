@@ -6,17 +6,16 @@ import { Lobby } from './pages/home/Lobby';
 import { Profile } from './pages/profile/Profile';
 import { GameRoom } from './pages/game/gameRoom';
 import { Privacy } from './pages/privacy/Privacy';
-import './App.css';
 
 export function App() {
   const { isAuth } = useAuth();
 
   if (isAuth === null) {
-    return <div className="loading-screen">Chargement...</div>;
+    return <div className="flex min-h-screen items-center justify-center text-xl font-semibold text-slate-800">Chargement...</div>;
   }
 
   return (
-    <div className="app-container">
+    <div className="min-h-screen">
       <Routes>
         <Route index element={isAuth ? <Navigate replace to="/lobby" /> : <SignIn />} />
         <Route path="signup" element={isAuth ? <Navigate replace to="/lobby" /> : <SignUp />} />
