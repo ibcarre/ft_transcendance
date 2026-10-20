@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { useState } from 'react';
 import { Header } from '../../components/Header';
 import { Modal } from '../../components/Modal';
@@ -27,7 +28,7 @@ export function Lobby() {
                         Play offline
                     </button>
                 </div>
-                <p className="privacy">Privacy Terms & Conditions</p>
+                <Link to="/privacy" className="privacy-link"><p className="privacy">Privacy Policy & Terms Conditions</p></Link>
             </div>
 
             {modalType === 'create' && (

@@ -128,7 +128,7 @@ export function SignIn() {
                 </form>
 
             </div>
-            <p className="privacy">Privacy Terms & Conditions</p>
+            <Link to="/privacy" className="privacy-link"><p className="privacy">Privacy Policy & Terms Conditions</p></Link>
         </div>
     );
 }

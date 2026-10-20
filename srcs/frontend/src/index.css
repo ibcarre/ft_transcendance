@@ -19,3 +19,6 @@ p {
 .privacy:hover {
 	color: #3b82f6;
 }
+.privacy-link {
+	text-decoration: none;
+}

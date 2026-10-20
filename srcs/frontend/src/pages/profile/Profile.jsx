@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { useState } from 'react';
 import { Modal } from '../../components/Modal';
 import { EditProfile } from './EditProfile';
@@ -55,7 +56,7 @@ export function Profile() {
                     </div>
 
                 </div>
-                <p className="privacy">Privacy Terms & Conditions</p>
+                <Link to="/privacy" className="privacy-link"><p className="privacy">Privacy Policy & Terms Conditions</p></Link>
             </div>
 
             {editModal && (
