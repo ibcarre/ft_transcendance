@@ -5,7 +5,6 @@ import { SignUp } from './pages/authentification/SignUp';
 import { Lobby } from './pages/home/Lobby';
 import { Profile } from './pages/profile/Profile';
 import { GameRoom } from './pages/game/gameRoom';
-import { Chat } from './pages/chat/Chat';
 import './App.css';
 
 export function App() {
@@ -23,7 +22,6 @@ export function App() {
         <Route path="lobby" element={isAuth ? <Lobby /> : <Navigate replace to="/" />} />
         <Route path="profile" element={isAuth ? <Profile /> : <Navigate replace to="/" />} />
         <Route path="game" element={isAuth ? <GameRoom /> : <Navigate replace to="/" />} />
-        <Route path="chat" element={isAuth ? <Chat /> : <Navigate replace to="/" />} />
       </Routes>
     </div>
   );
