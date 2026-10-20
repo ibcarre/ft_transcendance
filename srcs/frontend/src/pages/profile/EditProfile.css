@@ -72,3 +72,43 @@
     background-color: #2563eb;
     transform: translateY(-2px);
 }
+.validate-button:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* =========================================
+   INDICATIONS (même rendu que Auth.css)
+   ========================================= */
+.profile-content .offscreen {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* La bulle d'information quand le format est incorrect */
+.profile-content .instructions {
+    font-size: 13px;
+    color: #334155;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    line-height: 1.5;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    position: relative;
+    animation: slideDown 0.2s ease-out;
+}
+
+.edit-success {
+    font-size: 13px;
+    font-weight: 600;
+    color: #22c55e;
+}
