@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router';
 import axios from 'axios';
 import { PrivacyLink } from '../../components/PrivacyLink';
-import { panel, inputClass, btnPrimary, hint, hintOrHidden } from '../../styles/ui';
+import { panel, inputClass, btnPrimary, hintTooltip, tooltipOrHidden } from '../../styles/ui';
 
 const fieldLabel = "mb-1.5 text-sm font-semibold text-slate-600";
 const authInput = `${inputClass} p-3 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.2)]`;
@@ -86,7 +86,7 @@ export function SignUp() {
                 <form className="flex w-full flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-[0_4px_15px_rgba(0,0,0,0.05)] md:w-auto md:min-w-80 md:p-10" onSubmit={handleSubmit}>
                     <h2 className="mb-6 text-[28px] font-bold text-slate-800">Create Account</h2>
 
-                    <div className="mb-4 flex flex-col">
+                    <div className="relative mb-4 flex flex-col">
                         <label htmlFor="username" className={fieldLabel}>Username</label>
                         <input
                             id="username"
@@ -102,14 +102,14 @@ export function SignUp() {
                             onBlur={() => setUsernameFocus(false)}
                             required
                         />
-                        <p id="uidnote" className={hintOrHidden(username && !validName && !usernameFocus)}>
+                        <p id="uidnote" className={tooltipOrHidden(username && !validName && !usernameFocus)}>
                             4 to 24 characters.<br />
                             Must begin with a letter.<br />
                             Letters, numbers, underscores, hyphens allowed.
                         </p>
                     </div>
 
-                    <div className="mb-4 flex flex-col">
+                    <div className="relative mb-4 flex flex-col">
                         <label htmlFor="email" className={fieldLabel}>Email</label>
                         <input
                             id="email"
@@ -124,12 +124,12 @@ export function SignUp() {
                             onBlur={() => setEmailFocus(false)}
                             required
                         />
-                        <p id="emailnote" className={hintOrHidden(email && !validEmail && !emailFocus)}>
+                        <p id="emailnote" className={tooltipOrHidden(email && !validEmail && !emailFocus)}>
                             Invalid email address.
                         </p>
                     </div>
 
-                    <div className="mb-4 flex flex-col">
+                    <div className="relative mb-4 flex flex-col">
                         <label htmlFor="password" className={fieldLabel}>Password</label>
                         <input
                             id="password"
@@ -144,13 +144,13 @@ export function SignUp() {
                             onBlur={() => setPwdFocus(false)}
                             required
                         />
-                        <p id="pwdnote" className={hintOrHidden(password && !pwdFocus && !validPwd)}>
+                        <p id="pwdnote" className={tooltipOrHidden(password && !pwdFocus && !validPwd)}>
                             8 to 64 characters.<br />
                             Must include uppercase and lowercase letters, a number and a special character.
                         </p>
                     </div>
 
-                    <div className="mb-4 flex flex-col">
+                    <div className="relative mb-4 flex flex-col">
                         <label htmlFor="confirmPassword" className={fieldLabel}>Confirm Password</label>
                         <input
                             id="confirmPassword"
@@ -165,12 +165,14 @@ export function SignUp() {
                             onBlur={() => setMatchFocus(false)}
                             required
                         />
-                        <p id="confirmnote" className={hintOrHidden(confirmPassword && !validMatch && !matchFocus)}>
+                        <p id="confirmnote" className={tooltipOrHidden(confirmPassword && !validMatch && !matchFocus)}>
                             Must match the first password input field.
                         </p>
                     </div>
 
-                    {error && <div className={hint}>{error}</div>}
+                    <div className="relative">
+                        {error && <div className={`${hintTooltip} xl:top-[-8px]`}>{error}</div>}
+                    </div>
 
                         <button
                             type="submit"

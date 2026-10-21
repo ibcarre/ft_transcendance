@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router';
 import axios from 'axios';
 import { PrivacyLink } from '../../components/PrivacyLink';
-import { panel, inputClass, btnPrimary, hint, hintOrHidden } from '../../styles/ui';
+import { panel, inputClass, btnPrimary, hintTooltip, tooltipOrHidden } from '../../styles/ui';
 
 const fieldLabel = "mb-1.5 text-sm font-semibold text-slate-600";
 const authInput = `${inputClass} p-3 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.2)]`;
@@ -84,7 +84,7 @@ export function SignIn() {
                 <form className="flex w-full flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-[0_4px_15px_rgba(0,0,0,0.05)] md:w-auto md:min-w-80 md:p-10" onSubmit={handleSubmit}>
                     <h2 className="mb-6 text-[28px] font-bold text-slate-800">Login</h2>
 
-                    <div className="mb-4 flex flex-col">
+                    <div className="relative mb-4 flex flex-col">
                         <label htmlFor="email" className={fieldLabel}>Email</label>
                         <input
                             id="email"
@@ -100,12 +100,12 @@ export function SignIn() {
                             required
                         />
                         {/* Bulle d'instruction pour l'email */}
-                        <p id="emailnote" className={hintOrHidden(email && !validEmail && !emailFocus)}>
+                        <p id="emailnote" className={tooltipOrHidden(email && !validEmail && !emailFocus)}>
                             Invalid email address.
                         </p>
                     </div>
 
-                    <div className="mb-4 flex flex-col">
+                    <div className="relative mb-4 flex flex-col">
                         <label htmlFor="password" className={fieldLabel}>Password</label>
                         <input
                             id="password"
@@ -119,7 +119,9 @@ export function SignIn() {
                     </div>
 
                     {/* Affichage des erreurs retournées par Axios */}
-                    {error && <div className={hint}>{error}</div>}
+                    <div className="relative">
+                        {error && <div className={`${hintTooltip} xl:top-[-8px]`}>{error}</div>}
+                    </div>
 
                     <button
                         type="submit"

@@ -20,3 +20,11 @@ export const success = "text-[13px] font-semibold text-green-500";
 
 // Classe d'une bulle d'information : visible ou cachée (lue seulement par les lecteurs d'écran)
 export const hintOrHidden = (visible) => (visible ? hint : "sr-only");
+
+// Sur grand écran (xl), la bulle sort à droite du formulaire au lieu d'agrandir le cadre.
+// Le parent doit être en "relative" ; ml-14 = padding du formulaire (p-10) + 16px d'écart.
+const tooltip = "xl:absolute xl:top-[26px] xl:left-full xl:z-10 xl:mt-0 xl:ml-14 xl:w-60 xl:py-2 xl:text-xs xl:leading-snug xl:before:absolute xl:before:top-4 xl:before:-left-[7px] xl:before:size-3 xl:before:rotate-45 xl:before:border-b xl:before:border-l xl:before:border-slate-200 xl:before:bg-slate-50 xl:before:content-['']";
+
+export const hintTooltip = `${hint} ${tooltip}`;
+
+export const tooltipOrHidden = (visible) => (visible ? hintTooltip : "sr-only");
