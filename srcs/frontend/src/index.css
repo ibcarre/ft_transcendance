@@ -18,8 +18,11 @@
 }
 
 @layer base {
-  body {
-    @apply bg-cover bg-center bg-no-repeat md:bg-fixed;
+  /* Fond sur un calque fixe plutôt que background-attachment: fixed,
+     qui forçait à repeindre tout l'écran à chaque image de défilement */
+  body::before {
+    content: "";
+    @apply fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat;
     background-image: url("./assets/image_cartes.jpg");
   }
 }

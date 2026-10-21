@@ -1,7 +1,8 @@
 // Classes Tailwind partagées entre plusieurs composants
 
-// Verre dépoli : fond blanc translucide en dégradé, flou de l'arrière-plan, reflet en haut
-export const glass = "bg-linear-to-br from-white/45 via-white/20 to-sky-100/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.7),0_10px_30px_rgba(0,0,0,0.2)] backdrop-blur-md backdrop-saturate-150";
+// Verre dépoli : fond blanc translucide en dégradé + reflet en haut.
+// Pas de backdrop-blur : l'image de fond est déjà floue, et le flou était recalculé à chaque image de scroll.
+export const glass = "bg-linear-to-br from-white/55 via-white/35 to-sky-100/25 shadow-[inset_0_1px_1px_rgba(255,255,255,0.7),0_10px_30px_rgba(0,0,0,0.2)]";
 
 // Bordure arc-en-ciel : un ::before dont le masque ne garde que l'anneau de 3px (le centre reste translucide)
 const rainbowBorder = "before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:p-[3px] before:content-[''] before:bg-[linear-gradient(135deg,var(--color-red-500),var(--color-orange-400),var(--color-yellow-400),var(--color-green-500),var(--color-blue-500),var(--color-violet-600))] before:[mask:linear-gradient(#000_0_0)_content-box_exclude,linear-gradient(#000_0_0)]";
