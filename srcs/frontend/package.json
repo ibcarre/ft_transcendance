@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite",
+    "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite"
+    "preview": "vite preview"
   },
   "dependencies": {
     "axios": "^1.20.0",
