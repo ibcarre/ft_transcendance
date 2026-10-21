@@ -87,7 +87,7 @@ export function GameRoom() {
             <main className="flex flex-1 flex-col gap-6 px-4 pb-3 sm:px-8 sm:pb-6 lg:flex-row lg:px-[60px]">
 
                 {/* ===== Zone de jeu ===== */}
-                <section className={`${panel} flex min-w-0 flex-1 flex-col gap-4 p-3 shadow-none sm:gap-6 sm:p-6`}>
+                <section className={`${panel} flex min-w-0 flex-1 flex-col gap-4 p-3 sm:gap-6 sm:p-6`}>
 
                     <div className="flex flex-wrap items-center justify-between gap-3">
                         <p className="text-lg font-bold text-blue-900 sm:text-xl">
@@ -176,11 +176,11 @@ export function GameRoom() {
 
                 {/* ===== Colonne latérale (desktop) ===== */}
                 <aside className="hidden w-80 shrink-0 flex-col gap-6 lg:flex xl:w-96">
-                    <div className={`${panel} p-5 shadow-none`}>
+                    <div className={`${panel} p-5`}>
                         <h2 className="mb-4 border-b-2 border-white pb-2 text-xl font-bold text-blue-900">Scores</h2>
                         <Scoreboard game={game} />
                     </div>
-                    <div className={`${panel} p-5 shadow-none`}>
+                    <div className={`${panel} p-5`}>
                         <h2 className="mb-4 border-b-2 border-white pb-2 text-xl font-bold text-blue-900">Game chat</h2>
                         <Chat embedded />
                     </div>

@@ -4,9 +4,9 @@ import { Modal } from '../../components/Modal';
 import { FindRoom } from './FindRoom';
 import { CreateRoom } from './CreateRoom';
 import { PrivacyLink } from '../../components/PrivacyLink';
-import { panel, btnPrimary } from '../../styles/ui';
+import { panel, btnLobby, logoSlice } from '../../styles/ui';
 
-const lobbyButton = `${btnPrimary} w-full rounded-xl p-5 text-xl hover:-translate-y-[3px] sm:p-6 sm:text-2xl`;
+const lobbyButton = `${btnLobby} w-full rounded-xl p-5 text-xl sm:p-6 sm:text-2xl`;
 
 export function Lobby() {
     const [modalType, setModalType] = useState(null);
@@ -19,14 +19,14 @@ export function Lobby() {
             <Header />
 
             <div className="my-auto flex w-full flex-col items-center justify-center px-4 pt-6">
-                <div className={`${panel} box-border flex w-full max-w-xl flex-col items-stretch gap-6 px-6 py-10 shadow-none sm:gap-[30px] sm:px-[60px] sm:py-20 lg:w-[45%] lg:max-w-[1400px]`}>
-                    <button className={lobbyButton} onClick={() => setModalType('create')}>
+                <div className={`${panel} box-border flex w-full max-w-xl flex-col items-stretch gap-6 px-6 py-10 sm:gap-[30px] sm:px-[60px] sm:py-20 lg:w-[45%] lg:max-w-[1400px]`}>
+                    <button className={`${lobbyButton} ${logoSlice.SK}`} onClick={() => setModalType('create')}>
                         Create a room
                     </button>
-                    <button className={lobbyButton} onClick={() => setModalType('find')}>
+                    <button className={`${lobbyButton} ${logoSlice.Y}`} onClick={() => setModalType('find')}>
                         Find a room
                     </button>
-                    <button className={lobbyButton} onClick={() => setModalType('offline')}>
+                    <button className={`${lobbyButton} ${logoSlice.JO}`} onClick={() => setModalType('offline')}>
                         Play offline
                     </button>
                 </div>

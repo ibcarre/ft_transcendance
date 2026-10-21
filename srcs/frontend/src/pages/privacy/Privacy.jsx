@@ -3,7 +3,7 @@ import { Header } from '../../components/Header';
 import { useAuth } from '../../context/AuthContext';
 import { panel, logoGradient } from '../../styles/ui';
 
-const block = `${panel} w-full max-w-[600px] p-6 shadow-none sm:p-10 md:min-w-0 md:flex-1`;
+const block = `${panel} w-full max-w-[600px] p-6 sm:p-10 md:min-w-0 md:flex-1`;
 const blockTitle = "mb-5 border-b-2 border-white pb-3 text-2xl font-bold text-blue-900 sm:text-[28px]";
 const list = "flex list-disc flex-col gap-3 pl-5 marker:text-blue-500";
 const item = "text-base leading-normal text-slate-800";
