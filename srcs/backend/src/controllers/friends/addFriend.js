@@ -31,7 +31,7 @@ var add = async (user, friend, requestedby, res) => {
 				//emit notif invite
 				inviteEvent(user.id);
 			}
-			return (res.status(200).json({message: "Invite sent"}))
+			return (res.status(201).json({message: "Invite sent"}))
 		}
 		if (!invite.accepted) {
 			if (requestedby.id !== invite.requested_by) {
