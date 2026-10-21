@@ -11,7 +11,8 @@ const mockMessages = [
     { id: 5, author: "Demahom 4", body: "Je vous rejoins dans 5 min", sentAt: "2026-10-20T14:07:00" }
 ];
 
-export function Chat() {
+// embedded : version intégrée dans une colonne (page game) au lieu d'une modal
+export function Chat({ embedded = false }) {
     const { userInfo } = useAuth();
     const [messages, setMessages] = useState(mockMessages);
     const [input, setInput] = useState('');
@@ -36,9 +37,9 @@ export function Chat() {
     };
 
     return (
-        <div className="box-border flex w-full flex-col gap-5 p-2.5 sm:w-[450px]">
+        <div className={`box-border flex w-full flex-col ${embedded ? 'gap-4' : 'gap-5 p-2.5 sm:w-[450px]'}`}>
 
-            <div className="flex h-[50vh] flex-col gap-3.5 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50 p-4 pr-2 sm:h-[400px]" ref={listRef}>
+            <div className={`flex flex-col gap-3.5 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50 p-4 pr-2 ${embedded ? 'h-80' : 'h-[50vh] sm:h-[400px]'}`} ref={listRef}>
                 {messages.map((msg) => {
                     const isMine = msg.author === userInfo.name;
                     return (
