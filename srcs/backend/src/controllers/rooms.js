@@ -123,10 +123,12 @@ exports.leaveRoom = async (req, res) => {
         if (!check)
             return (res.status(409).json({message: "You weren't in the room anyway"}));
         const room = await db.one('SELECT * FROM games WHERE id = $1', id);
-        await db.none('DELETE FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, user]);
+		if (room.status === 'pending')
+        	await db.none('DELETE FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, user]);
 		playerEvent(room.nb_players - 1, room.id)
         if (room.nb_players <= 1) {
-            await db.none('DELETE FROM games WHERE id = $1', id);
+			if (room.status === 'pending')
+            	await db.none('DELETE FROM games WHERE id = $1', id);
 			RoomDeleted(room.id);
             //socket deleteRoom(room id)
         }

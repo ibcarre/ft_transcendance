@@ -16,5 +16,5 @@ exports.removeInvite = (recipient) => {
 	const invited_sock = sockets.filter((elem) => elem.user.id === recipient);
 	console.log("app=node INFO: sending invite to ", invited_sock.length, " sockets")
 	invited_sock.forEach((elem) => getIo().of("/Friends").to(elem.id).emit("removeInvite", recipient));
-	//envoie juste l'id de la personne qui veut l'inviter
+	//envoie juste l'id de la personne qui veut plus l'inviter
 }

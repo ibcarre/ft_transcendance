@@ -27,7 +27,7 @@ var signup = async (req, res) => {
         email: email,
         name: username,
         password: hashedPassword,
-        pic: "/imgs/default_pic.jpg"
+        pic: "default_pic.jpg"
         });
         const token = jwt.sign(
             { userId: user.id, username: user.name },

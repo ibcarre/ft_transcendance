@@ -16,7 +16,7 @@ var edit_username = async (req, res) => {
 		if (!newUsername)
 			throw (Error("ReportNotNullViolationError"))
 		await db.none('UPDATE users SET name = $1 WHERE id = $2', [newUsername, userId])
-		return (res.status(200).json({message: "Username Updated"}).redirect(req.originalUrl))
+		return (res.status(200).json({message: "Username Updated"}))
 	}
 	catch (error) {
 		console.log("app=node ERROR: ", error)

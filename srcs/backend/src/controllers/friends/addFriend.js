@@ -39,7 +39,7 @@ var add = async (user, friend, requestedby, res) => {
 				//emit friendslist newfriend
 				newFriend(user, friend);
 				//emit notif invite
-				inviteEvent(user.id);
+				inviteEvent(invite.requested_by);
 				return (res.status(200).json({message: "Friendship accepted"}))
 			}
 			else

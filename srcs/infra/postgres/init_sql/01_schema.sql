@@ -25,7 +25,7 @@ CREATE TABLE games (
 	max_players	int NOT NULL DEFAULT 4,
 	CONSTRAINT	max_players CHECK (max_players >= 2 AND max_players <= 4),
 	created_at	timestamptz NOT NULL DEFAULT now(),
-	created_by	text NOT NULL REFERENCES users(name),
+	created_by	text NOT NULL REFERENCES users(name) ON UPDATE CASCADE,
 	winner		uuid REFERENCES users(id)
 );
 
