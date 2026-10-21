@@ -12,7 +12,7 @@
 - **One successful command = `version + 1`.** Pass the current version to `submitAction()`; use the version from each newly received state. Errors do not modify the stored game.
 - **Identity:** `userId` comes from the server (authenticated user), **never from the command's JSON**. The manager adds `playerId` itself.
 - **End of round:** When the state enters `ROUND_FINISHED`, the server can call `advanceRound()` with the current version. `GAME_OVER` is terminal.
-- **Typical results:** `{ ok: true, publicState }` or `{ ok: false, error: { code } }`. **Exception:** Invalid creation inputs and internal inconsistencies may throw a JavaScript exception.
+- **Typical results:** `{ ok: true, publicState }` or `{ ok: false, error: { code } }`. Invalid creation inputs yield `INVALID_GAME_INPUT`. Internal failures, including an invalid random source, may still throw JavaScript exceptions.
 
 ### Quick navigation
 
@@ -35,7 +35,7 @@ The manager holds a private `Map<GameId, GameState>`. A single instance manages 
 | Method | Parameters | Success / effect | Return | Failure |
 |---|---|---|---|---|
 | `new GameManager(random?)` | `random?: () => number` | Initializes an independent manager; defaults to `Math.random`. | `GameManager` | — |
-| `create(input)` | `input: CreateGameInput` | Stores a new game in `INITIAL_REVEAL`, `version: 0`. | `ManagerResult` | `GAME_ALREADY_EXISTS`; **exception** if creation input is invalid. |
+| `create(input)` | `input: CreateGameInput` | Stores a new game in `INITIAL_REVEAL`, `version: 0`. | `ManagerResult` | `GAME_ALREADY_EXISTS`, `INVALID_GAME_INPUT`; possible exception for internal failures. |
 | `getPublicState(gameId, userId)` | `gameId: GameId`, `userId: PlayerId` | Reads the public state if the player belongs to the game, **without modifying it**. | `ManagerResult` | `GAME_UNAVAILABLE`. |
 | `submitAction(gameId, userId, payload, expectedVersion)` | `GameId`, `PlayerId`, `unknown`, `number` | Validates the action, stores the new state, and increments its version. | `ManagerResult` | Version, payload, or game-rule error: [§4](#4-errors-and-exceptions). |
 | `advanceRound(gameId, expectedVersion)` | `GameId`, `number` | From `ROUND_FINISHED`, creates the next round (`version + 1`). | `ManagerResult` | `GAME_UNAVAILABLE`, `INVALID_ACTION_PAYLOAD`, `VERSION_CONFLICT`, `INVALID_GAME_PHASE`. |
@@ -43,7 +43,11 @@ The manager holds a private `Map<GameId, GameState>`. A single instance manages 
 
 `GameId` and `PlayerId` are aliases for `string`. `CreateGameInput` has the shape `{ id: string; players: { id: string }[]; targetScore?: number }`.
 
-**Creation constraints:** `2` to `4` players; non-empty game and player IDs (whitespace-only strings are rejected); distinct player IDs; a strictly positive safe integer for `targetScore`, **defaulting to `100`**. IDs are strings; the manager does not check whether they exist in a database.
+**Creation constraints:** The input must be an object `{ id, players, targetScore? }` containing `2` to `4` players. Game and player IDs must be non-empty strings (whitespace-only strings are rejected), and player IDs must be unique. `targetScore` must be a strictly positive safe integer; it **defaults to `100` when absent or `undefined`**, while `null` is invalid.
+
+Validation is shared between the engine and the manager, but their behavior differs: `GameManager.create()` returns `INVALID_GAME_INPUT` for invalid creation data, whereas calling `createGame()` directly throws an explicit exception.
+
+IDs are not normalized, and the manager does not check their existence in the database. Invalid creation attempts neither mutate existing games nor reserve the requested game ID. Input validation takes precedence over the duplicate game ID check.
 
 **Shared return format** (`create`, `getPublicState`, `submitAction`, `advanceRound`):
 
@@ -198,6 +202,7 @@ Business-logic errors use **symbolic codes**, not HTTP status codes or messages 
 | Code | Meaning |
 |---|---|
 | `GAME_ALREADY_EXISTS` | `create()`: this ID is already in use within the instance. |
+| `INVALID_GAME_INPUT` | `create()`: malformed creation data (structure, IDs, player count, or target score). Input validation precedes the duplicate game ID check. |
 | `GAME_UNAVAILABLE` | Game does not exist **or** the actor is not a participant (read/action); for `advanceRound`, the game is absent. Does not reveal whether a game exists to a non-participant. |
 | `VERSION_CONFLICT` | `expectedVersion` differs from `state.version`; retrieve the updated state before acting. |
 | `INVALID_ACTION_PAYLOAD` | Malformed payload or invalid version (not an integer or negative). Includes a client-supplied `playerId`, additional keys, a non-integer `position`, or an unknown action type. |
@@ -217,7 +222,9 @@ Business-logic errors use **symbolic codes**, not HTTP status codes or messages 
 
 **Two validation layers:** The manager first validates membership, version, and the **shape** of the payload; the engine checks whether the action is legal. For example, `position: 1.5` produces `INVALID_ACTION_PAYLOAD`, while `position: 99` produces `INVALID_POSITION`. Checks are performed in a specific order: do not assume that a request containing multiple errors will always return the same code.
 
-**Exceptions (`throw`):** These must be distinguished from the errors above. `create()` propagates exceptions from `createGame()` for invalid parameters. The engine may also throw when a `GameState` violates its invariants, when a random-number source is invalid, or when an internal operation is impossible (insufficient cards, inconsistent round state, etc.). Manager methods **do not convert** these exceptions into `ManagerResult` values. Catch them at the HTTP/Socket boundary, log them on the server, and do not expose technical details to clients.
+**Exceptions (`throw`):** These must be distinguished from business errors returned by the manager. `GameManager.create()` returns `INVALID_GAME_INPUT` for ordinary malformed creation inputs without calling the engine. Calling `createGame()` directly with invalid input still throws an explicit exception.
+
+The engine may also throw when a `GameState` violates its invariants, when a random-number source is invalid, or when an internal operation cannot be completed. The manager does not convert these internal failures into business errors. Catch them at the HTTP/Socket boundary, log them on the server, and do not expose technical details to clients.
 
 ## 5. Rules and behaviors to know
 
@@ -259,6 +266,7 @@ These are intended for tests and internal implementation, **not** for processing
 
 | File | Exported functions and purpose |
 |---|---|
+| `createInputValidation.ts` | `getCreateGameInputError(input: unknown): string \| null`: internal validator shared by the engine and manager; returns `null` for valid input or a diagnostic message otherwise. |
 | `deck.ts` | `createDeck(): Card[]` (150 cards); `shuffleDeck(deck: readonly Card[], random?: () => number): Card[]` (new array, Fisher–Yates); `takeTopCard(deck: Card[]): Card` (removes the last element, **mutates the array**, throws if empty). |
 | `board.ts` | `isValidBoardPosition(position: number): boolean`; `getColumnPositions(position: number): readonly [number,number,number]`; `removeCompletedColumnAtPosition(player, position, discardPile): boolean` (**mutates arguments** if a column is removed); `revealAllCards(player): void`; `removeAllCompletedColumns(player, discardPile): void` (**mutate arguments**). |
 | `turn.ts` | `hasHiddenCards(player): boolean`; `getNextPlayerId(players, currentPlayerId): PlayerId` (circular turn order); `buildFinalTurnQueue(players, finisherId): PlayerId[]` (all other players in that order). |

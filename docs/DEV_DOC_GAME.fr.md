@@ -12,7 +12,7 @@
 - **Une commande réussie = `version + 1`.** Fournir la version courante à `submitAction()` ; réutiliser celle de chaque nouvel état reçu. Les erreurs ne changent pas la partie enregistrée.
 - **Identité :** `userId` vient du serveur (utilisateur authentifié), **jamais du JSON de la commande**. Le manager ajoute lui-même `playerId`.
 - **Fin de manche :** lorsque l'état passe à `ROUND_FINISHED`, le serveur peut appeler `advanceRound()` avec la version courante. `GAME_OVER` est terminal.
-- **Retours habituels :** `{ ok: true, publicState }` ou `{ ok: false, error: { code } }`. **Exception :** des entrées de création invalides et des incohérences internes peuvent lever une exception JavaScript.
+- **Retours habituels :** `{ ok: true, publicState }` ou `{ ok: false, error: { code } }`. Les entrées de création invalides sont refusées avec `INVALID_GAME_INPUT`. Les incohérences internes, notamment une source aléatoire invalide, peuvent toujours lever une exception JavaScript.
 
 ### Accès rapide
 
@@ -35,7 +35,7 @@ Le manager contient une `Map<GameId, GameState>` privée. Une instance gère plu
 | Méthode | Paramètres | Succès / effet | Retour | Échec |
 |---|---|---|---|---|
 | `new GameManager(random?)` | `random?: () => number` | Initialise un gestionnaire indépendant ; `Math.random` par défaut. | `GameManager` | — |
-| `create(input)` | `input: CreateGameInput` | Enregistre une nouvelle partie en `INITIAL_REVEAL`, `version: 0`. | `ManagerResult` | `GAME_ALREADY_EXISTS` ; **exception** si création invalide. |
+| `create(input)` | `input: CreateGameInput` | Enregistre une nouvelle partie en `INITIAL_REVEAL`, `version: 0`. | `ManagerResult` | `GAME_ALREADY_EXISTS`, `INVALID_GAME_INPUT` ; exception possible en cas de défaillance interne. |
 | `getPublicState(gameId, userId)` | `gameId: GameId`, `userId: PlayerId` | Lit l'état public si le joueur appartient à la partie, **sans modification**. | `ManagerResult` | `GAME_UNAVAILABLE`. |
 | `submitAction(gameId, userId, payload, expectedVersion)` | `GameId`, `PlayerId`, `unknown`, `number` | Valide l'action, enregistre le nouvel état et incrémente sa version. | `ManagerResult` | Version, payload ou règle du jeu : [§4](#4-erreurs-et-exceptions). |
 | `advanceRound(gameId, expectedVersion)` | `GameId`, `number` | Depuis `ROUND_FINISHED`, crée la manche suivante (`version + 1`). | `ManagerResult` | `GAME_UNAVAILABLE`, `INVALID_ACTION_PAYLOAD`, `VERSION_CONFLICT`, `INVALID_GAME_PHASE`. |
@@ -43,7 +43,11 @@ Le manager contient une `Map<GameId, GameState>` privée. Une instance gère plu
 
 `GameId` et `PlayerId` sont des alias de `string`. `CreateGameInput` correspond à `{ id: string; players: { id: string }[]; targetScore?: number }`.
 
-**Contraintes de création :** `2` à `4` joueurs ; ID de partie et IDs de joueurs non vides (une chaîne uniquement composée d'espaces est refusée) ; IDs de joueurs distincts ; `targetScore` entier sûr strictement positif, **`100` par défaut**. Les IDs sont des chaînes ; le manager ne vérifie pas lui-même leur existence en base.
+**Contraintes de création :** l'entrée doit être un objet `{ id, players, targetScore? }` contenant de `2` à `4` joueurs. L'identifiant de la partie et ceux des joueurs doivent être des chaînes non vides (les chaînes uniquement composées d'espaces sont refusées). Les identifiants des joueurs doivent être distincts. `targetScore` doit être un entier sûr strictement positif ; il vaut **`100` lorsqu'il est absent ou `undefined`**, tandis que `null` est invalide.
+
+La validation est commune au moteur et au manager, mais leurs comportements diffèrent : `GameManager.create()` retourne `INVALID_GAME_INPUT` pour une entrée invalide, tandis qu'un appel direct à `createGame()` lève une exception explicite.
+
+Les identifiants ne sont pas normalisés et le manager ne vérifie pas leur existence en base de données. Une création invalide ne modifie aucune partie et ne réserve pas l'identifiant demandé. La validation des données précède la vérification de l'unicité de l'identifiant dans le manager.
 
 **Format de retour commun** (`create`, `getPublicState`, `submitAction`, `advanceRound`) :
 
@@ -198,6 +202,7 @@ Les erreurs métier sont des **codes symboliques**, pas des codes HTTP ni des me
 | Code | Signification |
 |---|---|
 | `GAME_ALREADY_EXISTS` | `create()` : cet ID est déjà utilisé dans l'instance. |
+| `INVALID_GAME_INPUT` | `create()` : données de création invalides (structure, identifiants, nombre de joueurs ou score cible). Cette validation précède la recherche d'un ID déjà utilisé. |
 | `GAME_UNAVAILABLE` | Partie inexistante **ou** acteur extérieur à la partie (lecture/action) ; pour `advanceRound`, partie absente. Ne révèle pas à un non-participant si la partie existe. |
 | `VERSION_CONFLICT` | `expectedVersion` diffère de `state.version` ; récupérer le nouvel état avant d'agir. |
 | `INVALID_ACTION_PAYLOAD` | Payload non conforme ou version invalide (non entière ou négative). Inclut un champ `playerId` fourni par le client, des clés supplémentaires, un `position` non entier ou un type d'action inconnu. |
@@ -217,8 +222,9 @@ Les erreurs métier sont des **codes symboliques**, pas des codes HTTP ni des me
 
 **Deux niveaux de vérification :** le manager valide d'abord l'appartenance, la version et la **forme** du payload ; le moteur vérifie la légalité de l'action. Par exemple, `position: 1.5` produit `INVALID_ACTION_PAYLOAD`, mais `position: 99` produit `INVALID_POSITION`. Les vérifications sont ordonnées : ne pas supposer qu'une requête cumulant plusieurs erreurs renverra toujours le même code.
 
-**Exceptions (`throw`) :** à distinguer des erreurs ci-dessus. `create()` relaie les exceptions de `createGame()` pour ses paramètres invalides. Le moteur peut aussi lever une exception lorsqu'un `GameState` viole ses invariants, lors d'une source aléatoire invalide ou d'une impossibilité interne (pile insuffisante, état de manche incohérent, etc.). Les méthodes du manager **ne convertissent pas** ces exceptions en `ManagerResult`. Les intercepter à la frontière HTTP/Socket, journaliser côté serveur, ne pas exposer le détail technique aux clients.
+**Exceptions (`throw`) :** elles doivent être distinguées des erreurs métier retournées par le manager. `GameManager.create()` renvoie `INVALID_GAME_INPUT` pour les entrées de création invalides ordinaires, sans appeler le moteur. En revanche, un appel direct à `createGame()` avec une entrée invalide continue de lever une exception explicite.
 
+Le moteur peut également lever une exception lorsqu'un `GameState` viole ses invariants, lorsqu'une source aléatoire est invalide ou lorsqu'une opération interne est impossible. Le manager ne convertit pas ces défaillances internes en erreurs métier. Elles doivent être interceptées à la frontière HTTP/Socket, journalisées côté serveur et ne doivent pas exposer leurs détails techniques aux clients.
 ## 5. Règles et comportements à connaître
 
 - **Distribution :** 150 cartes (`-2` ×5 ; `-1` ×10 ; `0` ×15 ; chaque valeur `1` à `12` ×10). Chaque joueur reçoit 12 cartes cachées, une carte initialise la défausse. La pioche est remélangée à chaque nouvelle manche.
@@ -259,6 +265,7 @@ Ils sont destinés aux tests et à l'implémentation interne, **pas** au traitem
 
 | Fichier | Fonctions exportées et rôle |
 |---|---|
+| `createInputValidation.ts` | `getCreateGameInputError(input: unknown): string \| null` : validation interne commune au moteur et au manager ; retourne `null` si l'entrée est valide, sinon un message de diagnostic. |
 | `deck.ts` | `createDeck(): Card[]` (150 cartes) ; `shuffleDeck(deck: readonly Card[], random?: () => number): Card[]` (nouveau tableau, Fisher–Yates) ; `takeTopCard(deck: Card[]): Card` (retire le dernier élément, **mutation**, exception si vide). |
 | `board.ts` | `isValidBoardPosition(position: number): boolean` ; `getColumnPositions(position: number): readonly [number,number,number]` ; `removeCompletedColumnAtPosition(player, position, discardPile): boolean` (**mutation** si colonne retirée) ; `revealAllCards(player): void` ; `removeAllCompletedColumns(player, discardPile): void` (**mutations**). |
 | `turn.ts` | `hasHiddenCards(player): boolean` ; `getNextPlayerId(players, currentPlayerId): PlayerId` (ordre circulaire) ; `buildFinalTurnQueue(players, finisherId): PlayerId[]` (tous les autres joueurs dans cet ordre). |
