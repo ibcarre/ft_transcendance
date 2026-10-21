@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { Friends } from './Friends';
 import { Chat } from './Chat';
@@ -12,13 +13,28 @@ export function Header() {
     const [menu, setMenu] = useState(false);
     const menuRef = useRef(null);
 
-    const { userInfo } = useAuth();
+    const { userInfo, setIsAuth, setUserInfo } = useAuth();
+    const navigate = useNavigate();
 
     const closeModal = () => setModalType(null);
 
     const openModal = (type) => {
         setModalType(type);
         setMenu(false);
+    };
+
+    const logout = async () => {
+        setMenu(false);
+        try {
+            // Le back passe le statut à offline et supprime le cookie access_token
+            await axios.post('/api/user/logout', {}, { withCredentials: true });
+            setIsAuth(false);
+            setUserInfo(null);
+            navigate('/');
+        } catch (err) {
+            // Un 401 est déjà géré par l'intercepteur de AuthContext
+            console.log(err.response?.data || err);
+        }
     };
 
     const toggleMenu = () => {
@@ -54,7 +70,7 @@ export function Header() {
                             <Link to="/profile"><p className={menuItem}>Profile</p></Link>
                             <p className={menuItem} onClick={() => openModal('friends')}>Friends</p>
                             <p className={menuItem} onClick={() => openModal('chat')}>Chat</p>
-                            <p className={`${menuItem} border-t border-slate-100 hover:!bg-red-50 hover:!text-red-500`}>Logout</p>
+                            <p className={`${menuItem} border-t border-slate-100 hover:!bg-red-50 hover:!text-red-500`} onClick={logout}>Logout</p>
                         </div>
                     )}
                 </div>
