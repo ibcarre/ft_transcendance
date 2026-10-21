@@ -46,6 +46,9 @@ dev-logs:
 # Services
 #
 
+db-test:
+	./tools/test_init_db.sh
+
 game-test:
 	${CONTAINER} run --rm -t --name game-test_skyjo -v "./srcs/backend:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npm run game:verify"
 
