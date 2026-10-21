@@ -5,7 +5,7 @@
 export const glass = "bg-linear-to-br from-white/55 via-white/35 to-sky-100/25 shadow-[inset_0_1px_1px_rgba(255,255,255,0.7),0_10px_30px_rgba(0,0,0,0.2)]";
 
 // Bordure arc-en-ciel : un ::before dont le masque ne garde que l'anneau de 3px (le centre reste translucide)
-const rainbowBorder = "before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:p-[3px] before:content-[''] before:bg-[linear-gradient(135deg,var(--color-red-500),var(--color-orange-400),var(--color-yellow-400),var(--color-green-500),var(--color-blue-500),var(--color-violet-600))] before:[mask:linear-gradient(#000_0_0)_content-box_exclude,linear-gradient(#000_0_0)]";
+export const rainbowBorder = "before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:p-[3px] before:content-[''] before:bg-[linear-gradient(135deg,var(--color-red-500),var(--color-orange-400),var(--color-yellow-400),var(--color-green-500),var(--color-blue-500),var(--color-violet-600))] before:[mask:linear-gradient(#000_0_0)_content-box_exclude,linear-gradient(#000_0_0)]";
 
 // Bloc principal (lobby, profil, privacy, auth, game) : verre dépoli + bordure arc-en-ciel
 export const panel = `relative rounded-3xl ${glass} ${rainbowBorder}`;
@@ -51,3 +51,13 @@ export const logoSlice = {
     Y: "bg-linear-to-r from-yellow-400 to-green-500",
     JO: "bg-linear-to-r from-green-500 via-blue-500 to-violet-600",
 };
+
+// Mêmes tranches du logo, appliquées seulement au survol (menu déroulant du header)
+export const logoSliceHover = {
+    SK: "hover:bg-linear-to-r hover:from-red-500 hover:via-orange-400 hover:to-yellow-400",
+    Y: "hover:bg-linear-to-r hover:from-yellow-400 hover:to-green-500",
+    JO: "hover:bg-linear-to-r hover:from-green-500 hover:via-blue-500 hover:to-violet-600",
+};
+
+// Texte qui passe en dégradé arc-en-ciel (celui du logo) au survol
+export const logoGradientHover = "hover:bg-[linear-gradient(to_right,var(--color-red-500),var(--color-orange-400),var(--color-yellow-400),var(--color-green-500),var(--color-blue-500),var(--color-violet-600))] hover:bg-clip-text hover:text-transparent";

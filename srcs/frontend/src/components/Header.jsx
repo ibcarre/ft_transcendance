@@ -5,9 +5,10 @@ import { useAuth } from '../context/AuthContext';
 import { Friends } from './Friends';
 import { Chat } from './Chat';
 import { Modal } from './Modal';
-import { logoGradient } from '../styles/ui';
+import { logoGradient, logoGradientHover, logoSliceHover, rainbowBorder } from '../styles/ui';
 
-const menuItem = "cursor-pointer select-none px-5 py-3.5 text-left text-base font-semibold text-slate-800 transition-colors hover:bg-slate-50 hover:text-blue-500";
+// Profile / Friends / Chat : au survol, même dégradé que les boutons du lobby (SK / Y / JO) ; Logout en dégradé rouge
+const menuLink = "cursor-pointer select-none px-5 py-3.5 text-left text-base font-semibold text-slate-800 hover:text-white hover:text-shadow-md";
 
 export function Header() {
     const [modalType, setModalType] = useState(null);
@@ -63,15 +64,15 @@ export function Header() {
                     <h1 className={`select-none text-5xl font-black tracking-[2px] sm:text-6xl lg:text-[80px] ${logoGradient}`}>SKYJO</h1>
                 </Link>
                 <div className="relative flex min-w-0 cursor-pointer select-none flex-col items-end" ref={menuRef}>
-                    <h2 onClick={toggleMenu} className="max-w-[50vw] truncate text-xl font-bold text-slate-800 transition-colors hover:text-blue-500 sm:text-2xl lg:text-[35px]">
+                    <h2 onClick={toggleMenu} className={`max-w-[50vw] truncate text-xl font-bold text-slate-800 sm:text-2xl lg:text-[35px] ${logoGradientHover}`}>
                         {userInfo.name} <span className="align-middle text-sm sm:text-xl"> {menu ? '▲' : '▼'}</span>
                     </h2>
                     {menu && (
-                        <div className="absolute top-full right-0 z-[100] mt-3 min-w-40 animate-slide-down overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_10px_25px_rgba(0,0,0,0.1)]">
-                            <Link to="/profile"><p className={menuItem}>Profile</p></Link>
-                            <p className={menuItem} onClick={() => openModal('friends')}>Friends</p>
-                            <p className={menuItem} onClick={() => openModal('chat')}>Chat</p>
-                            <p className={`${menuItem} border-t border-slate-100 hover:!bg-red-50 hover:!text-red-500`} onClick={logout}>Logout</p>
+                        <div className={`absolute top-full right-0 z-[100] mt-3 min-w-40 animate-slide-down overflow-hidden rounded-xl bg-white shadow-[0_10px_30px_rgba(0,0,0,0.2)] ${rainbowBorder}`}>
+                            <Link to="/profile"><p className={`${menuLink} ${logoSliceHover.SK}`}>Profile</p></Link>
+                            <p className={`${menuLink} ${logoSliceHover.Y}`} onClick={() => openModal('friends')}>Friends</p>
+                            <p className={`${menuLink} ${logoSliceHover.JO}`} onClick={() => openModal('chat')}>Chat</p>
+                            <p className={`${menuLink} border-t border-slate-100 hover:bg-linear-to-r hover:from-red-500 hover:to-rose-600`} onClick={logout}>Logout</p>
                         </div>
                     )}
                 </div>

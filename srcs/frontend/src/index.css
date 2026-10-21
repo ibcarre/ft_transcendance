@@ -17,12 +17,19 @@
   }
 }
 
+/* Image de cartes du fond (page et voile des modals) */
+@utility bg-cards {
+  background-image: url("./assets/image_cartes.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 @layer base {
   /* Fond sur un calque fixe plutôt que background-attachment: fixed,
      qui forçait à repeindre tout l'écran à chaque image de défilement */
   body::before {
     content: "";
-    @apply fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat;
-    background-image: url("./assets/image_cartes.jpg");
+    @apply fixed inset-0 -z-10 bg-cards;
   }
 }
