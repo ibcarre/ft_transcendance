@@ -1,6 +1,9 @@
 const { Server } = require("socket.io");
 const gameRoomsinit = require('./namespaces/gamerooms/index');
 const checkAuth = require('./middlewares/checkAuth');
+const {notifInit} = require('./namespaces/notifications/index');
+const {friendsInit} = require('./namespaces/friendsList/index');
+
 
 let io;
 const initSocket = (httpServer) => {
@@ -14,15 +17,9 @@ const initSocket = (httpServer) => {
   io.on("new_namespace", (namespace) => {
     namespace.use(checkAuth);
   });
-  // io.on("disconnect", (socket) => {
-  //   console.log("socket disconnected");
-  //   socket.on("disconnect", (reason) => {
-  //     console.log(reason);
-  //     if (reason == "server namespace disconnect")
-  //       socket.emit('not_authentified')
-  //   });
-  // })
   gameRoomsinit(io);
+  notifInit(io);
+  friendsInit(io);
 };
 
 const getIo = () => {

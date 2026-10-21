@@ -2,7 +2,9 @@ const express = require('express');
 const cookieParser = require("cookie-parser");
 const clientProm = require("@prometheus-io/client");
 const Userroutes = require('./routes/User');
+const friends = require('./routes/friends');
 const rooms = require('./routes/rooms');
+const gameStats = require('./routes/gameStats');
 const api = require('./routes/api');
 const fileUpload = require('express-fileupload');
 const cors = require("cors");
@@ -50,5 +52,7 @@ app.use((req, res, next) => {
 app.use('/user', Userroutes);
 app.use('/v1', api);
 app.use('/rooms', rooms);
+app.use('/friends', friends);
+app.use('/gameStats', gameStats);
 
 module.exports = app;

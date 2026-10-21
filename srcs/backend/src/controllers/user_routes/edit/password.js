@@ -22,9 +22,9 @@ var edit_password = async (req, res) => {
 		return (res.status(200).json({message: "Password Updated"}).redirect(req.originalUrl))
 	}
 	catch (error) {
-		console.log(error)
+		console.log("app=node ERROR: ", error)
 		if (error.routine === "ReportNotNullViolationError" || error.message === "ReportNotNullViolationError")
-			return (res.status(409).json({ message: "Email can't be empty" }));
+			return (res.status(409).json({ message: "Password can't be empty" }));
 		return (res.status(500).json({message: "Server error"}));
 	}
 }
