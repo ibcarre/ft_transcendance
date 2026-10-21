@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { Friends } from './Friends';
 import { Chat } from './Chat';
 import { Modal } from './Modal';
+import { logoGradient } from '../styles/ui';
 
 const menuItem = "cursor-pointer select-none px-5 py-3.5 text-left text-base font-semibold text-slate-800 transition-colors hover:bg-slate-50 hover:text-blue-500";
 
@@ -59,7 +60,7 @@ export function Header() {
         <>
             <header className="flex w-full items-center justify-between gap-4 px-4 py-2.5 sm:px-8 lg:px-[60px]">
                 <Link to="/lobby">
-                    <h1 className="select-none text-5xl font-black tracking-[2px] text-blue-900 sm:text-6xl lg:text-[80px]">SKYJO</h1>
+                    <h1 className={`select-none text-5xl font-black tracking-[2px] sm:text-6xl lg:text-[80px] ${logoGradient}`}>SKYJO</h1>
                 </Link>
                 <div className="relative flex min-w-0 cursor-pointer select-none flex-col items-end" ref={menuRef}>
                     <h2 onClick={toggleMenu} className="max-w-[50vw] truncate text-xl font-bold text-slate-800 transition-colors hover:text-blue-500 sm:text-2xl lg:text-[35px]">

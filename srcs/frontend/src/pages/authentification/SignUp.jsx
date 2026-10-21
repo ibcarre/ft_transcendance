@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router';
 import axios from 'axios';
 import { PrivacyLink } from '../../components/PrivacyLink';
-import { panel, inputClass, btnPrimary, hintTooltip, tooltipOrHidden } from '../../styles/ui';
+import { panel, inputClass, btnPrimary, hintTooltip, tooltipOrHidden, logoGradient } from '../../styles/ui';
 
 const fieldLabel = "mb-1.5 text-sm font-semibold text-slate-600";
 const authInput = `${inputClass} p-3 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.2)]`;
@@ -80,7 +80,7 @@ export function SignUp() {
             <div className={`${panel} flex w-full max-w-md flex-col items-center justify-center gap-8 rounded-2xl border-0 px-5 py-10 md:w-auto md:max-w-none md:flex-row md:gap-20 md:px-[100px] md:py-20`}>
 
                 <div>
-                    <h1 className="text-[50px] font-black tracking-[2px] text-blue-900 md:text-[80px]">SKYJO</h1>
+                    <h1 className={`text-[50px] font-black tracking-[2px] md:text-[80px] ${logoGradient}`}>SKYJO</h1>
                 </div>
 
                 <form className="flex w-full flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-[0_4px_15px_rgba(0,0,0,0.05)] md:w-auto md:min-w-80 md:p-10" onSubmit={handleSubmit}>

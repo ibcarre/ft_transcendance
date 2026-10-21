@@ -28,3 +28,9 @@ const tooltip = "xl:absolute xl:top-[26px] xl:left-full xl:z-10 xl:mt-0 xl:ml-14
 export const hintTooltip = `${hint} ${tooltip}`;
 
 export const tooltipOrHidden = (visible) => (visible ? hintTooltip : "sr-only");
+
+// Texte du logo SKYJO en dégradé (pour revenir au bleu : logoGradient = logoBlue)
+export const logoBlue = "bg-linear-to-r from-blue-900 via-blue-600 to-sky-400 bg-clip-text text-transparent";
+export const logoRainbow = "bg-[linear-gradient(to_right,var(--color-red-500),var(--color-orange-400),var(--color-yellow-400),var(--color-green-500),var(--color-blue-500),var(--color-violet-600))] bg-clip-text text-transparent";
+
+export const logoGradient = logoRainbow;

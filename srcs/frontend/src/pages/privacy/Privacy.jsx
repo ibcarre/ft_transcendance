@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import { Header } from '../../components/Header';
 import { useAuth } from '../../context/AuthContext';
-import { panel } from '../../styles/ui';
+import { panel, logoGradient } from '../../styles/ui';
 
 const block = `${panel} w-full max-w-[600px] p-6 shadow-none sm:p-10 md:min-w-0 md:flex-1`;
 const blockTitle = "mb-5 border-b-2 border-white pb-3 text-2xl font-bold text-blue-900 sm:text-[28px]";
@@ -19,7 +19,7 @@ export function Privacy() {
             ) : (
                 <header className="flex w-full items-center px-4 py-2.5 sm:px-8 lg:px-[60px]">
                     <Link to="/">
-                        <h1 className="select-none text-5xl font-black tracking-[2px] text-blue-900 sm:text-6xl lg:text-[80px]">SKYJO</h1>
+                        <h1 className={`select-none text-5xl font-black tracking-[2px] sm:text-6xl lg:text-[80px] ${logoGradient}`}>SKYJO</h1>
                     </Link>
                 </header>
             )}
