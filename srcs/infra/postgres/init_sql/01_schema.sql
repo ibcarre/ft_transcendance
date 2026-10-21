@@ -56,7 +56,7 @@ CREATE TABLE conversations (
 	id			bigserial PRIMARY KEY,
 	user_id		uuid NOT NULL REFERENCES users(id),
 	friend_id	uuid NOT NULL REFERENCES users(id)
-)
+);
 
 CREATE TABLE private_msgs (
 	id				bigserial PRIMARY KEY,
