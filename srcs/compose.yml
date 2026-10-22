@@ -64,6 +64,8 @@ services:
     build: ./backend/
     container_name: back_skyjo
     restart: unless-stopped
+    environment:
+      APP_PORT: "${APP_PORT}"
     healthcheck:
       test: ["CMD-SHELL", "/app/scripts/healthcheck.sh"]
       interval: 10s
@@ -96,6 +98,9 @@ services:
       frontend:
         condition: service_started
         restart: true
+      grafana:
+        condition: service_started
+        restart: true
     ports:
       - "${APP_PORT}:443"
     networks:
@@ -103,7 +108,7 @@ services:
 
   prometheus:
     container_name: prometheus_skyjo
-    image: docker.io/prom/prometheus:v3.15.0-rc.0-distroless
+    image: docker.io/prom/prometheus:v3.15.0-distroless
     restart: unless-stopped
     volumes:
       - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
@@ -231,7 +236,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 3
-      start_period: 10s
+      start_period: 15s
     depends_on:
       alloy:
         condition: service_started

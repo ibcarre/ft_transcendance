@@ -1,4 +1,5 @@
-#/bin/bash
+#!/usr/bin/bash
+
 if ! command -v podman &>/dev/null; then
 	printf "\033[0;32mDocker will be used\033[0m\n" >&2
 	socket=/var/run/docker.sock
@@ -8,7 +9,7 @@ else
 	sock_path=$(file ${XDG_RUNTIME_DIR}/podman/podman.sock | awk '{print $2}')
 
 	if [[ ${sock_path} == "cannot" || ${sock_path} != "socket" ]]; then
-		if [ ${sock_path} -ne "socket" ] ; then
+		if [ ${sock_path} != "socket" ] ; then
 			rmdir ${XDG_RUNTIME_DIR}/podman/podman.sock
 		fi
 	fi

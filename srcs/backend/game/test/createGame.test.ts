@@ -223,3 +223,21 @@ for (const targetScore of [0, -1, 2.5, Number.NaN, Infinity,
 			{ message: "createGame() requires a positive integer targetScore"});
 	});
 }
+
+// JavaScript callers can bypass the TypeScript signature at runtime.
+test("createGame() throws useful errors for malformed runtime inputs", () => {
+	const malformed: unknown[] = [null, {},
+		{ id: "game-test", players: null },
+		{ id: 100, players: [{ id: "alice" }, { id: "bob" }] },
+		{ id: "game-test", players: [null, { id: "bob" }] },
+		{ id: "game-test", players: [{ id: 12 }, { id: "bob" }] },
+		{ id: "game-test", players: [{ id: "alice" }, { id: "bob" }],
+			targetScore: null }
+	];
+	for (const input of malformed) {
+		assert.throws(
+			() => createGame(input as Parameters<typeof createGame>[0]),
+			/^Error: createGame\(\) requires /);
+	}
+});
+

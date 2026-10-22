@@ -20,6 +20,10 @@ import type {
 	ErrorCode,
 } from "../../game/constants";
 
+import {
+	getCreateGameInputError,
+} from "../../game/createInputValidation";
+
 export type ClientGameAction =
 	| { type: "REVEAL_INITIAL_CARD"; position: number }
 	| { type: "DRAW_DECK" }
@@ -30,6 +34,7 @@ export type ClientGameAction =
 
 export type ManagerErrorCode =
 	| "GAME_ALREADY_EXISTS"
+	| "INVALID_GAME_INPUT"
 	| "GAME_UNAVAILABLE"
 	| "VERSION_CONFLICT"
 	| "INVALID_ACTION_PAYLOAD"
@@ -92,6 +97,9 @@ export class GameManager {
 	}
 	
 	create(input: CreateGameInput): ManagerResult {
+	    if (getCreateGameInputError(input) !== null) {
+	        return fail("INVALID_GAME_INPUT");
+	    }
 		if (this.games.has(input.id)) {
 			return fail("GAME_ALREADY_EXISTS");
 		}
@@ -99,7 +107,7 @@ export class GameManager {
 		this.games.set(input.id, state);
 		return success(state);
 	}
-	
+
 	getPublicState(gameId: GameId, userId: PlayerId): ManagerResult {
 		const state = this.findAuthorizedGame(gameId, userId);
 		if (state === null) {

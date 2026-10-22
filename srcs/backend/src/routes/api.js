@@ -25,9 +25,12 @@ const limiter = rateLimit({
 });
 
 // Apply rate limiting to requests to public api
+router.use('/health' , checkKey);
+router.get('/health', health);
+
+
 router.use(limiter);
 router.use(checkKey);
-router.get('/health', health);
 router.get('/users', getAllProfiles);
 
 module.exports = router;
