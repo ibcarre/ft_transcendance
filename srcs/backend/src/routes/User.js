@@ -11,11 +11,16 @@ const { userDataValidate } = require("../middleware/user_validation");
 
 router.post('/signup', userDataValidate, signup);
 router.post('/login', login);
+
 router.use('/logout', isLog);
 router.post('/logout', logout);
+
 router.use('/profile', isLog);
 router.get('/profile', profile);
+
+router.use('/image/:image', isLog);
 router.get('/image/:image', getImage);
+
 router.use('/edit_profile', isLog);
 router.use('/edit_profile', editProfile);
 

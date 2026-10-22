@@ -3,7 +3,7 @@ const path = require('path');
 var getImage = async (req, res) => {
 	try {
 		const image = req?.params?.image;
-		console.log("app=node INFO: getting image");
+		console.log("app=node INFO: getting image", image);
 		if (!image)
 			return (res.status(400).json({message: "No picture asked for"}));
 		const options = {
