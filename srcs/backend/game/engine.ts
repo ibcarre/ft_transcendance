@@ -3,8 +3,6 @@ import {
 	BOARD_SIZE,
 	CARD_SOURCE,
 	ERROR_CODE,
-	MAX_PLAYERS,
-	MIN_PLAYERS,
 	PHASE,
 	TURN_STAGE,
 } from "./constants";
@@ -42,6 +40,10 @@ import {
 	shuffleDeck,
 	takeTopCard,
 } from "./deck";
+
+import {
+	getCreateGameInputError,
+} from "./createInputValidation";
 
 import {
 	getAllowedActionTypes,
@@ -299,32 +301,12 @@ function dealNewRound(players: PlayerState[], random: () => number):
 
 export function createGame(input: CreateGameInput,
 						   random: () => number = Math.random): GameState {
-	if (input.players.length < MIN_PLAYERS
-		|| input.players.length > MAX_PLAYERS) {
-		throw new Error(`createGame() requires ${MIN_PLAYERS} to \
-${MAX_PLAYERS}`);
-	}
-
-	if (input.id.trim().length === 0) {
-		throw new Error("createGame() requires a non-empty game-ID");
-	}
-
-	for (const player of input.players) {
-		if (player.id.trim().length === 0) {
-			throw new Error("createGame() requires non-empty player IDs");
-		}
+	const inputError = getCreateGameInputError(input);
+	if (inputError !== null) {
+	    throw new Error(inputError);
 	}
 
 	const targetScore = input.targetScore ?? 100;
-	if (!Number.isSafeInteger(targetScore) || targetScore <= 0) {
-		throw new Error("createGame() requires a positive integer targetScore");
-	}
-
-	const playerIds = input.players.map((player) => player.id);
-	const uniquePlayerIds = new Set(playerIds);
-	if (uniquePlayerIds.size !== playerIds.length) {
-		throw new Error("createGame() requires unique player IDs");
-	}
 	const players: PlayerState[] = input.players.map((player) =>
 													 ({ id: player.id,
 													  board: [],

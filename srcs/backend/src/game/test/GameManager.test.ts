@@ -16,6 +16,7 @@ import type {
 } from "../GameManager";
 
 import type {
+	CreateGameInput,
 	PublicGameState,
 	PublicPlayerState,
 } from "../../../game/types";
@@ -141,6 +142,65 @@ test("create() refuses duplicate game IDs without replacing the original",
 				"GAME_ALREADY_EXISTS");
 	assert.deepEqual(expectState(manager.getPublicState(GAME_ID, ALICE)),
 					 state);
+});
+
+test("create() rejects malformed runtime inputs without throwing", () => {
+	const manager = new GameManager(() => 0.5);
+	const validPlayers = [{ id: ALICE }, { id: BOB }];
+
+	const malformed: unknown[] = [undefined, null, false, 42, "game", [], {},
+		{ id: GAME_ID },
+		{ id: GAME_ID, players: null },
+		{ id: GAME_ID, players: {} },
+		{ id: GAME_ID, players: [{ id: ALICE }] },
+		{
+			id: GAME_ID,
+			players: [...validPlayers, { id: "3" }, { id: "4" }, { id: "5" }]
+		},
+		{ id: "", players: validPlayers },
+		{ id: "   ", players: validPlayers },
+		{ id: 1, players: validPlayers },
+		{ id: GAME_ID, players: [null, { id: BOB }] },
+		{ id: GAME_ID, players: [{}, { id: BOB }] },
+		{ id: GAME_ID, players: [{ id: " " }, { id: BOB }] },
+		{ id: GAME_ID, players: [{ id: 7 }, { id: BOB }] },
+		{
+			id: GAME_ID,
+			players: [{ id: ALICE }, { id: ALICE }]
+		},
+		...([null, 0, -1, 1.5, "100", NaN, Infinity, Number.MAX_SAFE_INTEGER + 1
+			].map((targetScore) => ({ id: GAME_ID, players: validPlayers,
+								  targetScore})))
+	];
+
+	for (const input of malformed) {
+		expectCode(manager.create(input as CreateGameInput),
+				   "INVALID_GAME_INPUT");
+	}
+
+	// An invalid creation must not reserve its game ID.
+	assert.equal(expectState(manager.create({ id: GAME_ID,
+											  players: validPlayers })).version,
+					0);
+});
+
+test("create() does not alter existing games on invalid input", () => {
+	const { manager, state } = setup();
+	expectCode(manager.create({ id: GAME_ID, players: [] }),
+			   "INVALID_GAME_INPUT");
+	assert.deepEqual(expectState(manager.getPublicState(GAME_ID, ALICE)),
+					 state);
+});
+
+test("create() lets unexpected engine failures propagate", () => {
+	let randomValue = Number.NaN;
+	const manager = new GameManager(() => randomValue);
+	const input = { id: GAME_ID, players: [{ id: ALICE }, { id: BOB }] };
+
+	assert.throws(() => manager.create(input), /Invalid random source/);
+    assert.equal(manager.remove(GAME_ID), false);
+    randomValue = 0.5;
+    assert.equal(expectState(manager.create(input)).version, 0);
 });
 
 test("unknown and nonparticipant game state can't be read", () => {
