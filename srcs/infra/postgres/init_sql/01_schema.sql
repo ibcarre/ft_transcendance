@@ -45,7 +45,7 @@ CREATE TABLE friends (
 	CONSTRAINT	  chk_usrValue CHECK (user_id < friend_id),
 	CONSTRAINT	  chk_reqByOne CHECK (requested_by = user_id OR requested_by = friend_id),
 	CONSTRAINT	  uq_oneTime UNIQUE (user_id, friend_id)
-)
+);
 
 CREATE TABLE private_msgs (
 	id				bigserial PRIMARY KEY,
