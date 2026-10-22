@@ -22,7 +22,7 @@ loki.source.docker "containers" {
   host          = "unix:///var/run/docker.sock"
   targets       = discovery.docker.containers.targets
   relabel_rules = discovery.relabel.containers.rules
-  forward_to    = [loki.write.local.receiver]
+  forward_to = [loki.process.add_app_label.receiver]
 }
 
 loki.process "add_app_label" {
