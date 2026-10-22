@@ -35,7 +35,7 @@ jobs:
         run: make ci
 
       - name: Test db
-        run: make ./tools/test_init_db.sh
+        run: ./tools/test_init_db.sh
 
       - name: Frontend
         run: |
