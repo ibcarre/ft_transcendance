@@ -44,11 +44,13 @@ jobs:
           podman exec -it front_skyjo npm run build
 
       - name: Backend
-        run: |
-          podman exec -it back_skyjo npm ci
+        run: podman exec -it back_skyjo npm ci
 
       - name: Game test
         run: make game-test
+
+      - name: Game startup integration
+        run: make game-integration-test
 
 # ------------------------- JOB 2: Podman (build and dev) ------------
   test-podman:
