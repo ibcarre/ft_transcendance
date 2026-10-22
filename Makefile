@@ -49,6 +49,9 @@ dev-logs:
 db-test:
 	./tools/test_init_db.sh
 
+game-integration-test:
+	@RUN_GAME_START_INTEGRATION=1 ./srcs/backend/scripts/test_game_start_integration.sh
+
 game-test:
 	${CONTAINER} run --rm -t --name game-test_skyjo -v "./srcs/backend:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npm run game:verify"
 
@@ -156,13 +159,14 @@ help-info:
 
 help-services:
 	@printf "\n  \033[1m--- services\033[0m\n"
-	@printf "    make game-test  	tmp container run GE tests\n"
+	@printf "    make game-test  		tmp container run game-engine tests\n"
+	@printf "    make game-integration-test	HTTP/SQL game startup tests\n"
 
 .PHONY: all \
 	up down logs \
 	dev-up dev-down dev-logs \
 	clean clean-volumes clean-images dev-clean fclean re rl rd drl \
 	inspect dev-inspect ps watch-psa dev-ps \
-	game-test \
+	game-test game-integration-test \
 	help help-prod help-dev help-clean help-info help-services \
 	secrets
