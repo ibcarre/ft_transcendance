@@ -1,8 +1,7 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import axios from 'axios';
-
-const AuthContext = createContext(null);
+import { AuthContext } from './useAuth';
 
 export const AuthProvider = ({ children }) => {
   const [isAuth, setIsAuth] = useState(null);
@@ -63,12 +62,4 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth doit être utilisé à l\'intérieur d\'un AuthProvider');
-  }
-  return context;
 };

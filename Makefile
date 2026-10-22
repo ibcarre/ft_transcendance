@@ -67,6 +67,8 @@ fclean:
 	-${CONTAINER} volume prune -f
 	-${CONTAINER} image prune -af
 	@rm -rf ./.last_user_id ./changelog.txt ./changelog0.txt
+	@rm -rf ./srcs/**/node_modules/
+	@rm -rf ./srcs/backend/build/
 
 rl: clean up
 
