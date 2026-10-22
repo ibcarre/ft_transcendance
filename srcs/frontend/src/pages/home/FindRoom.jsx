@@ -64,6 +64,8 @@ export function FindRoom() {
         };
     }, []);
 
+    const selectedRoom = rooms.find((room) => room.id === selectedRoomId);
+
     return (
         <div className="flex w-full flex-col gap-6 md:h-[500px] md:w-[750px] md:flex-row">
 
@@ -84,23 +86,28 @@ export function FindRoom() {
                             onClick={() => !full && setSelectedRoomId(room.id)}
                             title={full ? "Room is full" : undefined}
                         >
-                            <p className="my-1 break-all">{!!room.ispass && <span title="Password protected">🔒 </span>}{room.name}</p>
-                            <p className="my-1">{room.nb_players} / {room.max_players}</p>
+                            <p className="my-1 break-all">{room.name}</p>
+                            <p className="my-1">{!!room.ispass && <span title="Password protected">🔒 </span>}{room.nb_players} / {room.max_players}</p>
                         </div>
                     );
                 })}
             </div>
 
-            <div className="flex flex-col gap-4 md:w-56 md:justify-between">
-                <div className="flex flex-col gap-2">
-                    <label htmlFor="room-password" className={`${labelClass} text-lg`}>MDP</label>
-                    <input
-                        id="room-password"
-                        type="password"
-                        className={inputClass}
-                    />
-                </div>
-                <button disabled={!selectedRoomId} className={`${btnPrimary} w-full p-3.5 text-base font-bold`}>JOIN</button>
+            <div className="flex flex-col gap-4 md:w-56">
+                {/* Champ mot de passe seulement pour une room protégée ; key le vide quand on change de room */}
+                {!!selectedRoom?.ispass && (
+                    <div className="flex flex-col gap-2">
+                        <label htmlFor="room-password" className={`${labelClass} text-lg`}>Room password</label>
+                        <input
+                            key={selectedRoom.id}
+                            id="room-password"
+                            type="password"
+                            className={inputClass}
+                            autoFocus
+                        />
+                    </div>
+                )}
+                <button disabled={!selectedRoomId} className={`${btnPrimary} w-full p-3.5 text-base font-bold md:mt-auto`}>JOIN</button>
             </div>
         </div>
     );
