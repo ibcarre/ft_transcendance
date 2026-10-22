@@ -3,6 +3,7 @@ const gameRoomsinit = require('./namespaces/gamerooms/index');
 const checkAuth = require('./middlewares/checkAuth');
 const {notifInit} = require('./namespaces/notifications/index');
 const {friendsInit} = require('./namespaces/friendsList/index');
+const {globalChatInit} = require('./namespaces/globalChat/index');
 
 
 let io;
@@ -20,6 +21,7 @@ const initSocket = (httpServer) => {
   gameRoomsinit(io);
   notifInit(io);
   friendsInit(io);
+  globalChatInit(io);
 };
 
 const getIo = () => {
