@@ -2,8 +2,8 @@
 $(shell ./tools/podman-sock.sh > /dev/null)
 include srcs/.env
 
-COMPOSE = ${CONTAINER}-compose -f srcs/compose.yml
-COMPOSE_DEV = ${CONTAINER}-compose -f srcs/compose.yml -f srcs/compose.dev.yml
+COMPOSE = ${CONTAINER} compose -f srcs/compose.yml
+COMPOSE_DEV = ${CONTAINER} compose -f srcs/compose.yml -f srcs/compose.dev.yml
 
 all: secrets up
 
