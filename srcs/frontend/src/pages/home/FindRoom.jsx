@@ -3,45 +3,64 @@ import { useEffect, useState } from 'react';
 import { io } from "socket.io-client";
 import { inputClass, btnPrimary, labelClass } from '../../styles/ui';
 
+const emptyText = "col-span-full py-2 text-center text-sm text-slate-400";
+
 export function FindRoom() {
     const [rooms, setRooms] = useState([]);
-    const [selectedRoomId, setSelectedRoomId] = useState(false);
+    const [selectedRoomId, setSelectedRoomId] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        const socket = io("/Rooms", {});
+        // Évite de mettre à jour l'état si la modal est fermée avant la réponse
+        let active = true;
 
-        socket.on("createRoom", (arg) => {
-            setRooms(prevRooms => [arg, ...prevRooms]);
+        const loadRooms = () => axios.get('/api/rooms/getRooms', { withCredentials: true })
+            .then((res) => {
+                if (!active) return;
+                setRooms(Array.isArray(res.data) ? res.data : []);
+                setError(null);
+            })
+            .catch((err) => {
+                if (active) setError(err.response?.data?.message || "Failed to load rooms");
+            })
+            .finally(() => {
+                if (active) setLoading(false);
+            });
+
+        loadRooms();
+
+        const socket = io("/Rooms", { withCredentials: true });
+
+        // Les événements reçus pendant une coupure sont perdus : on recharge à chaque reconnexion
+        let firstConnect = true;
+        socket.on("connect", () => {
+            if (firstConnect) firstConnect = false;
+            else loadRooms();
         });
 
-        socket.on("connect_error", (error) => {
-            console.log("Socket CONNECT ERROR:", error);
+        socket.on("connect_error", (err) => console.log("Rooms socket error:", err.message));
 
+        // Nouvelle room (ignorée si getRooms l'a déjà renvoyée)
+        socket.on("createRoom", (room) => {
+            setRooms((prev) => (prev.some((r) => r.id === room.id) ? prev : [room, ...prev]));
         });
 
-        socket.on("playerJoined", ({ roomId, nbPlayers }) => {
-            setRooms(prev =>
-                prev.map(room =>
-                    room.id === roomId ? { ...room, nb_players: nbPlayers } : room ));});
+        // Un joueur a rejoint ou quitté une room
+        socket.on("playerEvent", ({ roomId, nbPlayers }) => {
+            setRooms((prev) => prev.map((room) =>
+                room.id === roomId ? { ...room, nb_players: nbPlayers } : room));
+        });
 
-        const fetchRooms = async () => {
-            // setError(null);
-            try {
-                const response = await axios.get('/api/rooms/getRooms', {
-                    withCredentials: true
-                });
-                setRooms(response.data);
-                console.log(response.data);
-            } catch (err) {
-                console.log(err);
-            }
-        }
-
-        fetchRooms();
+        // Room supprimée (le back n'envoie que son id)
+        socket.on("RoomDeleted", (roomId) => {
+            setRooms((prev) => prev.filter((room) => room.id !== roomId));
+            setSelectedRoomId((id) => (id === roomId ? null : id));
+        });
 
         return () => {
-            socket.off("createRoom");
-            socket.off("connect_error");
+            active = false;
+            socket.disconnect();
         };
     }, []);
 
@@ -49,17 +68,27 @@ export function FindRoom() {
         <div className="flex w-full flex-col gap-6 md:h-[500px] md:w-[750px] md:flex-row">
 
             <div className="grid max-h-[45vh] flex-1 auto-rows-min grid-cols-1 gap-4 overflow-y-auto px-2.5 sm:grid-cols-2 md:max-h-none">
-                {rooms.map((room) => (
-                    <div
-                        key={room.id}
-                        className={`flex max-h-[200px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 px-3 py-4 text-center font-bold text-slate-800 transition ${selectedRoomId === room.id ? 'border-blue-500 bg-sky-100' : 'border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-slate-100'}`}
-                        onClick={() => setSelectedRoomId(room.id)}
-                    >
-                        <p className="my-1 break-all">{room.name}</p>
-                        {!!room.ispass && <p className="my-1">cadenas</p>}
-                        <p className="my-1">{room.nb_players} / {room.max_players}</p>
-                    </div>
-                ))}
+                {loading && <p className={emptyText}>Loading...</p>}
+                {error && <p className={`${emptyText} font-semibold text-red-500`}>{error}</p>}
+                {!loading && !error && rooms.length === 0 && (
+                    <p className={emptyText}>No room available, create one!</p>
+                )}
+
+                {rooms.map((room) => {
+                    const full = room.nb_players >= room.max_players;
+                    const selected = selectedRoomId === room.id;
+                    return (
+                        <div
+                            key={room.id}
+                            className={`flex max-h-[200px] flex-col items-center justify-center rounded-xl border-2 px-3 py-4 text-center font-bold text-slate-800 transition ${full ? 'cursor-not-allowed border-slate-300 bg-slate-50 opacity-50' : selected ? 'cursor-pointer border-blue-500 bg-sky-100' : 'cursor-pointer border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-slate-100'}`}
+                            onClick={() => !full && setSelectedRoomId(room.id)}
+                            title={full ? "Room is full" : undefined}
+                        >
+                            <p className="my-1 break-all">{!!room.ispass && <span title="Password protected">🔒 </span>}{room.name}</p>
+                            <p className="my-1">{room.nb_players} / {room.max_players}</p>
+                        </div>
+                    );
+                })}
             </div>
 
             <div className="flex flex-col gap-4 md:w-56 md:justify-between">
