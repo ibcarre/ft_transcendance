@@ -8,7 +8,7 @@
     "build": "node ./src/index.js",
     "dev": "node --watch ./src/index.js",
     "game:check": "tsc -p tsconfig.game.json",
-	"game:build": "tsc -p tsconfig.game.build.json",
+    "game:build": "tsc -p tsconfig.game.build.json",
     "game:test": "./scripts/game-engine-tests.sh",
     "game:test:watch": "tsx --test --watch game/test/*.test.ts src/game/test/*.test.ts",
     "game:verify": "npm run game:check && npm run game:test"
@@ -18,6 +18,7 @@
   "license": "ISC",
   "dependencies": {
     "@prometheus-io/client": "^0.16.1",
+    "bad-words": "^4.1.5",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
@@ -29,6 +30,7 @@
     "fs": "^0.0.1-security",
     "image-type": "^6.1.0",
     "jsonwebtoken": "^9.0.3",
+    "leo-profanity": "^1.9.0",
     "nanoid": "^6.0.2",
     "path": "^0.12.7",
     "pg": "^8.23.0",
