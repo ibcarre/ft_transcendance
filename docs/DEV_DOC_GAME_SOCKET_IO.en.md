@@ -38,6 +38,22 @@ Ignore state updates from older versions. Use the current `publicState.version`
 for `expectedVersion`. On `VERSION_CONFLICT`, resubscribe and retry only after
 re-evaluating the user's intended action; do not replay blindly.
 
+## Planned client connection lifecycle
+
+The multiplayer game page will own a dedicated Socket.IO connection
+(`forceNew: true`) and disconnect it when the page unmounts or the
+game changes.
+
+Socket.IO automatically removes disconnected sockets from their rooms.
+Therefore, no `game:unsubscribe` event is currently required.
+
+The backend does not enforce a single game subscription per socket.
+If a shared Socket.IO connection or simultaneous game subscriptions
+become necessary, this lifecycle must be revisited.
+
+This is the planned React integration contract; it is not implemented
+in the frontend yet.
+
 ## Scope and remaining work
 
 This transport does not yet automate room-start notifications, end-of-round

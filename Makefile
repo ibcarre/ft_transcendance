@@ -168,12 +168,13 @@ help-services:
 	@printf "\n  \033[1m--- services\033[0m\n"
 	@printf "    make game-test  		tmp container run game-engine tests\n"
 	@printf "    make game-integration-test	HTTP/SQL game startup tests\n"
+	@printf "    make game-realtime-test	HTTP/Socket.IO multiplayer tests\n"
 
 .PHONY: all \
 	up down logs \
 	dev-up dev-down dev-logs \
 	clean clean-volumes clean-images dev-clean fclean re rl rd drl \
 	inspect dev-inspect ps watch-psa dev-ps \
-	game-test game-integration-test \
+	game-test game-integration-test game-realtime-test \
 	help help-prod help-dev help-clean help-info help-services \
 	secrets
