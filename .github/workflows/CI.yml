@@ -34,6 +34,9 @@ jobs:
       - name: Make (Docker)
         run: make ci
 
+      - name: Test db
+        run: make db_test
+
       - name: Game test
         run: make game-test
 
