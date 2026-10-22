@@ -58,7 +58,7 @@ export function Friends() {
                         <div key={friend.id} className={`${friendItem} border-slate-200 bg-slate-50 hover:border-slate-300 hover:bg-slate-100`}>
                             <p className={friendName}>{friend.name}</p>
                             <div className="flex shrink-0 gap-2">
-                                <button className={`${actionButton} bg-blue-500 hover:bg-blue-600`}>Chat</button>
+                                <button className={`${actionButton} bg-linear-to-r from-red-500 via-orange-400 to-yellow-400 text-shadow-md hover:brightness-110`}>Chat</button>
                                 <button className={`${actionButton} bg-red-500 hover:bg-red-600`}>✖</button>
                             </div>
                         </div>

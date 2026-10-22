@@ -10,11 +10,14 @@ export const rainbowBorder = "before:pointer-events-none before:absolute before:
 // Bloc principal (lobby, profil, privacy, auth, game) : verre dépoli + bordure arc-en-ciel
 export const panel = `relative rounded-3xl ${glass} ${rainbowBorder}`;
 
+// Modal : même verre en plus opaque, pour ne pas lire la page au travers (pas de flou derrière)
+export const modalPanel = `relative rounded-3xl bg-linear-to-br from-white/90 via-white/80 to-sky-50/75 shadow-[inset_0_1px_1px_rgba(255,255,255,0.7),0_10px_30px_rgba(0,0,0,0.2)] ${rainbowBorder}`;
+
 // Champ de saisie
 export const inputClass = "w-full min-w-0 rounded-lg border border-slate-300 bg-white px-4 py-3 text-[15px] outline-none transition-colors focus:border-blue-500";
 
-// Bouton bleu
-export const btnPrimary = "cursor-pointer rounded-lg bg-blue-500 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-400 disabled:hover:translate-y-0";
+// Bouton principal : même dégradé que "Create a room" (le SK du logo) ; gris quand il est désactivé
+export const btnPrimary = "cursor-pointer rounded-lg bg-linear-to-r from-red-500 via-orange-400 to-yellow-400 font-semibold text-white text-shadow-md transition hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-not-allowed disabled:bg-none disabled:bg-slate-400 disabled:text-shadow-none disabled:hover:translate-y-0 disabled:hover:brightness-100";
 
 // Label de formulaire
 export const labelClass = "text-sm font-bold text-slate-800";
