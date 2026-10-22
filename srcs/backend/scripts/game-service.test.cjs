@@ -290,3 +290,62 @@ test('cancels interrupted games after restart', async () => {
         0
     );
 });
+
+
+test('submitGameAction uses authenticated actor, version and input validation', async () => {
+    const { service } = fixture();
+
+    const created = await service.startGame(GAME_ID, ALICE);
+    assert.equal(created.ok, true);
+
+    const wrongActor = service.submitGameAction(
+        GAME_ID,
+        'outsider',
+        { type: 'REVEAL_INITIAL_CARD', position: 0 },
+        0
+    );
+
+    assert.deepEqual(wrongActor, {
+        ok: false,
+        error: { code: 'GAME_UNAVAILABLE' }
+    });
+
+    const first = service.submitGameAction(
+        GAME_ID,
+        ALICE,
+        { type: 'REVEAL_INITIAL_CARD', position: 0 },
+        0
+    );
+
+    assert.equal(first.ok, true);
+    assert.equal(first.publicState.version, 1);
+
+    assert.equal(
+        service.submitGameAction(
+            GAME_ID,
+            ALICE,
+            { type: 'REVEAL_INITIAL_CARD', position: 1 },
+            0
+        ).error.code,
+        'VERSION_CONFLICT'
+    );
+
+    assert.equal(
+        service.submitGameAction(
+            GAME_ID,
+            ALICE,
+            {
+                type: 'REVEAL_INITIAL_CARD',
+                position: 1,
+                playerId: BOB
+            },
+            1
+        ).error.code,
+        'INVALID_ACTION_PAYLOAD'
+    );
+
+    assert.equal(
+        service.getGameState(GAME_ID, ALICE).publicState.version,
+        1
+    );
+});

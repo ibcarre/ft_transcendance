@@ -52,6 +52,9 @@ jobs:
       - name: Game startup integration
         run: make game-integration-test
 
+      - name: Game realtime integration
+        run: make game-realtime-test
+
 # ------------------------- JOB 2: Podman (build and dev) ------------
   test-podman:
     runs-on: ubuntu-latest

@@ -52,6 +52,13 @@ db-test:
 game-integration-test:
 	@RUN_GAME_START_INTEGRATION=1 ./srcs/backend/scripts/test_game_start_integration.sh
 
+game-realtime-test:
+	${CONTAINER} exec \
+		-e BASE_URL=https://nginx \
+		-e NODE_TLS_REJECT_UNAUTHORIZED=0 \
+		front_skyjo \
+		node /app/scripts/test_game_socket_live.mjs
+
 game-test:
 	${CONTAINER} run --rm -t --name game-test_skyjo -v "./srcs/backend:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npm run game:verify"
 
