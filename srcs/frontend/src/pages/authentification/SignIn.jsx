@@ -53,8 +53,6 @@ export function SignIn() {
             if (response.status === 200) {
                 setEmail('');
                 setPassword('');
-
-                // TODO: Ajouter ici la redirection vers le Lobby (ex: navigate('/lobby'))
                 navigate("/lobby")
             }
             else {
