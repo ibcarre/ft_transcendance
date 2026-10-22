@@ -35,13 +35,15 @@ exports.createRoom = async (req, res) => {
 			const saltRounds = 10;
 			hashedPassword = await bcrypt.hash(password, saltRounds);
 		}
-        var room = await db.oneOrNone('SELECT * FROM games WHERE name = $1', name);
+        var room = await db.oneOrNone('SELECT * FROM games WHERE name = $1 AND status = $2', [name, 'pending']);
         if (room) {
             return res.status(400).json({ message: "A room already has that name" });
         }
 		if (name.length < 1 || name.length > 24)
 			return (res.status(400).json({ message: "Room's name must be between 1 and 24 characters" }))
-		var users = await db.oneOrNone('SELECT * FROM users_in_game WHERE user_id = $1', req.user.id);
+		var users = await db.oneOrNone('SELECT * FROM users_in_game INNER JOIN games ON games.id = users_in_game.game_id WHERE games.status = $2 AND users_in_game.user_id = $1', [req.user.id, 'pending']);
+        		//const games = await db.any('SELECT name, status, winner, created_at FROM games INNER JOIN users_in_game ON users_in_game.game_id = games.id WHERE users_in_game.user_id = $1', user.id);
+
 		if (users)
 			return (res.status(409).json({message: "You can only be in one room"}))
         room = await db.one('INSERT INTO games VALUES(DEFAULT, $(password), $(ispass), $(name), DEFAULT, DEFAULT, DEFAULT, $(max_players), DEFAULT, $(user)) RETURNING *', {
@@ -80,7 +82,8 @@ exports.joinRoom = async (req, res) => {
         //const user = await db.oneOrNone('SELECT * FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, req.user.id]);
         //if (user) return (res.status(409).json({message: "Already in room"}));
         // BEGIN
-		var users = await db.oneOrNone('SELECT * FROM users_in_game WHERE user_id = $1', req.user.id);
+		var users = await db.oneOrNone('SELECT * FROM users_in_game INNER JOIN games ON games.id = users_in_game.game_id WHERE games.status = $2 AND users_in_game.user_id = $1', [req.user.id, 'pending']);
+
 		if (users)
 			return (res.status(409).json({message: "You can only be in one room"}))
         var room;
@@ -136,9 +139,9 @@ exports.joinRoom = async (req, res) => {
 
 exports.leaveRoom = async (req, res) => {
     console.log("app=node INFO: leaving room");
-    const id = req.params.roomId;
-    const user = req.user.id;
     try {
+        const id = req.params.roomId;
+        const user = req.user.id;
         const check = await db.oneOrNone('SELECT * FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, user]);
         if (!check)
             return (res.status(409).json({message: "You weren't in the room anyway"}));
