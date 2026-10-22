@@ -128,6 +128,22 @@ function createGameService(database, manager) {
         return manager.getPublicState(id, String(userId));
     }
 
+
+	function submitGameAction(gameId, userId, action, expectedVersion) {
+	    const id = normalizeGameId(gameId);
+	
+	    if (id === null || starting.has(id) || !userId) {
+	        return fail('GAME_UNAVAILABLE');
+	    }
+	    return manager.submitAction(
+	        id,
+	        String(userId),
+	        action,
+	        expectedVersion
+	    );
+	}
+
+
     async function reconcileInterruptedGames() {
         const interrupted = await database.any(`
             UPDATE games
@@ -142,6 +158,7 @@ function createGameService(database, manager) {
     return {
         startGame,
         getGameState,
+		submitGameAction,
         reconcileInterruptedGames
     };
 }
@@ -164,6 +181,9 @@ module.exports = {
 
     getGameState: (...args) =>
         getDefaultService().getGameState(...args),
+
+	submitGameAction: (...args) =>
+		getDefaultService().submitGameAction(...args),
 
     reconcileInterruptedGames: (...args) =>
         getDefaultService().reconcileInterruptedGames(...args)
