@@ -10,7 +10,7 @@ let io;
 const initSocket = (httpServer) => {
     io = new Server(httpServer, {
     cors: {
-      origin: ["https://localhost:44443"],
+      origin: ["https://localhost:" + process.env.APP_PORT],
       credentials: true
     }
   });

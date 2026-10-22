@@ -64,6 +64,8 @@ services:
     build: ./backend/
     container_name: back_skyjo
     restart: unless-stopped
+    environment:
+      APP_PORT: "${APP_PORT}"
     healthcheck:
       test: ["CMD-SHELL", "/app/scripts/healthcheck.sh"]
       interval: 10s
