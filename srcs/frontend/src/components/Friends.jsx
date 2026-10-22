@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import axios from 'axios';
+import { useFriends } from '../context/useFriends';
 import { inputClass, btnPrimary, success } from '../styles/ui';
 
 const sectionTitle = "border-b-2 border-slate-200 pb-2 text-lg font-bold text-slate-800";
@@ -14,36 +15,6 @@ const feedbackStyle = {
     error: "text-[13px] font-semibold text-red-500",
 };
 
-// Le back renvoie un corps vide (et non []) quand la liste est vide
-const toIds = (data) => (Array.isArray(data) ? data : []);
-
-// /friends/list et /friends/invites ne donnent que des ids : on récupère le profil de chacun
-const fetchProfiles = (ids) => Promise.all(ids.map(async (id) => {
-    try {
-        const { data } = await axios.get(`/api/friends/profile/${id}`, { withCredentials: true });
-        return { id, ...data };
-    } catch {
-        return { id, name: "Unknown user", status: "offline" };
-    }
-}));
-
-// Amis en ligne en premier, puis ordre alphabétique
-const sortFriends = (list) => [...list].sort((a, b) =>
-    (a.status === 'online' ? 0 : 1) - (b.status === 'online' ? 0 : 1) || a.name.localeCompare(b.name));
-
-// Charge amis + invitations reçues, avec le profil (nom, statut) de chacun
-const fetchFriendsData = async () => {
-    const [friendsRes, invitesRes] = await Promise.all([
-        axios.get('/api/friends/list', { withCredentials: true }),
-        axios.get('/api/friends/invites', { withCredentials: true }),
-    ]);
-    const [friends, invites] = await Promise.all([
-        fetchProfiles(toIds(friendsRes.data)),
-        fetchProfiles(toIds(invitesRes.data)),
-    ]);
-    return { friends: sortFriends(friends), invites };
-};
-
 function StatusDot({ status }) {
     const online = status === 'online';
     return (
@@ -56,10 +27,8 @@ function StatusDot({ status }) {
 }
 
 export function Friends() {
-    const [requests, setRequests] = useState([]);
-    const [friendsList, setFriendsList] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    // Listes partagées et mises à jour en temps réel par FriendsProvider (socket /Friends)
+    const { friends: friendsList, requests, loading, error, reload: reloadFriends } = useFriends();
 
     const [newFriend, setNewFriend] = useState('');
     const [adding, setAdding] = useState(false);
@@ -68,30 +37,6 @@ export function Friends() {
     const [busyId, setBusyId] = useState(null);
     // id de l'ami dont on demande la confirmation de suppression
     const [confirmId, setConfirmId] = useState(null);
-
-    const applyFriendsData = useCallback(({ friends, invites }) => {
-        setFriendsList(friends);
-        setRequests(invites);
-        setError(null);
-        setLoading(false);
-    }, []);
-
-    const applyLoadError = useCallback((err) => {
-        setError(err.response?.data?.message || "Failed to load your friends");
-        setLoading(false);
-    }, []);
-
-    const reloadFriends = useCallback(
-        () => fetchFriendsData().then(applyFriendsData, applyLoadError),
-        [applyFriendsData, applyLoadError]);
-
-    useEffect(() => {
-        let cancelled = false;
-        fetchFriendsData().then(
-            (data) => { if (!cancelled) applyFriendsData(data); },
-            (err) => { if (!cancelled) applyLoadError(err); });
-        return () => { cancelled = true; };
-    }, [applyFriendsData, applyLoadError]);
 
     const addFriend = async (e) => {
         e.preventDefault();
