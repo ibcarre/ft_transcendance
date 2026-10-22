@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { io } from "socket.io-client";
-import './FindRoom.css'
+import { inputClass, btnPrimary, labelClass } from '../../styles/ui';
 
 export function FindRoom() {
     const [rooms, setRooms] = useState([]);
@@ -46,31 +46,32 @@ export function FindRoom() {
     }, []);
 
     return (
-        <div className="find-content">
+        <div className="flex w-full flex-col gap-6 md:h-[500px] md:w-[750px] md:flex-row">
 
-            <div className="rooms-grid">
+            <div className="grid max-h-[45vh] flex-1 auto-rows-min grid-cols-1 gap-4 overflow-y-auto px-2.5 sm:grid-cols-2 md:max-h-none">
                 {rooms.map((room) => (
                     <div
                         key={room.id}
-                        className={`room-card ${selectedRoomId === room.id ? 'selected' : ''}`}
+                        className={`flex max-h-[200px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 px-3 py-4 text-center font-bold text-slate-800 transition ${selectedRoomId === room.id ? 'border-blue-500 bg-sky-100' : 'border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-slate-100'}`}
                         onClick={() => setSelectedRoomId(room.id)}
                     >
-                        <p>{room.name}</p>
-                        {room.ispass && <p>cadenas</p>}
-                        <p>{room.nb_players} / {room.max_players}</p>
+                        <p className="my-1 break-all">{room.name}</p>
+                        {!!room.ispass && <p className="my-1">cadenas</p>}
+                        <p className="my-1">{room.nb_players} / {room.max_players}</p>
                     </div>
                 ))}
             </div>
 
-            <div className="join-sidebar">
-                <div className="password-section">
-                    <label htmlFor="room-password">MDP</label>
+            <div className="flex flex-col gap-4 md:w-56 md:justify-between">
+                <div className="flex flex-col gap-2">
+                    <label htmlFor="room-password" className={`${labelClass} text-lg`}>MDP</label>
                     <input
                         id="room-password"
                         type="password"
+                        className={inputClass}
                     />
                 </div>
-                <button disabled={!selectedRoomId} className="join-button">JOIN</button>
+                <button disabled={!selectedRoomId} className={`${btnPrimary} w-full p-3.5 text-base font-bold`}>JOIN</button>
             </div>
         </div>
     );

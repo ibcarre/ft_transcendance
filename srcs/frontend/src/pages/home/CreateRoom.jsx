@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import axios from 'axios';
-import './CreateRoom.css'
+import { inputClass, btnPrimary, labelClass } from '../../styles/ui';
 
 /*TODO
 Nom de room obligatoire et coupé si plus de 24 caracteres
@@ -43,12 +43,13 @@ export function CreateRoom() {
     }
 
     return (
-        <form className="create-content" onSubmit={handleSubmit}>
-            <div className="input-group">
-                <label htmlFor="room-name">Room's name</label>
+        <form className="flex w-full flex-col gap-5 sm:w-[350px]" onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-2">
+                <label htmlFor="room-name" className={labelClass}>Room's name</label>
                 <input
                     id="room-name"
                     type="text"
+                    className={inputClass}
                     placeholder="My awesome room"
                     value={roomName}
                     autoComplete="off"
@@ -57,11 +58,12 @@ export function CreateRoom() {
                 />
             </div>
 
-            <div className="input-group">
-                <label htmlFor="room-players">Nb players</label>
+            <div className="flex flex-col gap-2">
+                <label htmlFor="room-players" className={labelClass}>Nb players</label>
                 <input
                     id="room-players"
                     type="number"
+                    className={inputClass}
                     min="2" max="4"
                     value={maxPlayers}
                     onChange={(e) => setMaxPlayers(e.target.value)}
@@ -69,11 +71,12 @@ export function CreateRoom() {
                 />
             </div>
 
-            <div className="input-group">
-                <label htmlFor="room-pwd">Password (optional)</label>
+            <div className="flex flex-col gap-2">
+                <label htmlFor="room-pwd" className={labelClass}>Password (optional)</label>
                 <input
                     id="room-pwd"
                     type="password"
+                    className={inputClass}
                     placeholder="Leave empty for public"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -82,7 +85,7 @@ export function CreateRoom() {
 
             <button
                 type="submit"
-                className="action-button">CREATE</button>
+                className={`${btnPrimary} mt-2.5 w-full p-3.5 text-base font-bold`}>CREATE</button>
         </form>
     );
 }
