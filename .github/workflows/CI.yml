@@ -37,6 +37,16 @@ jobs:
       - name: Test db
         run: make db_test
 
+      - name: Frontend
+        run: |
+          podman exec -it front_skyjo npm ci
+          podman exec -it front_skyjo npm run lint
+          podman exec -it front_skyjo npm run build
+
+      - name: Backend
+        run: |
+          podman exec -it back_skyjo npm ci
+
       - name: Game test
         run: make game-test
 
