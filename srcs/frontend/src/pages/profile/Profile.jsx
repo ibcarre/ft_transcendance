@@ -3,7 +3,7 @@ import { Modal } from '../../components/Modal';
 import { EditProfile } from './EditProfile';
 import defaultPic from '../../assets/cartes_home.png';
 import { Header } from '../../components/Header';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import { PrivacyLink } from '../../components/PrivacyLink';
 import { panel, btnPrimary } from '../../styles/ui';
 

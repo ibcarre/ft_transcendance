@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router';
 import { Header } from '../../components/Header';
 import { Modal } from '../../components/Modal';
 import { Chat } from '../../components/Chat';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import { panel, btnPrimary } from '../../styles/ui';
 import { Card } from './Card';
 import { PlayerBoard } from './PlayerBoard';

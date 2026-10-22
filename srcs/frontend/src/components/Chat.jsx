@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import dayjs from 'dayjs';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { inputClass, btnPrimary } from '../styles/ui';
 
 const mockMessages = [

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import { inputClass, btnPrimary, labelClass, hint, success, hintOrHidden } from '../../styles/ui';
 
 const section = "flex flex-col gap-2";

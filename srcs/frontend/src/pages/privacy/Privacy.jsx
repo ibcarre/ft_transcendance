@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import { Header } from '../../components/Header';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import { panel, logoGradient } from '../../styles/ui';
 
 const block = `${panel} w-full max-w-[600px] p-6 sm:p-10 md:min-w-0 md:flex-1`;
