@@ -19,22 +19,22 @@ exports.getRooms = async (req, res) => {
         return (res.status(200).send(games));
     }
     catch (error) {
-        console.log(error);
+        console.log("app=node ERROR: ", error);
         return (res.status(500).json({message: "Server error"}));
     }
 };
 
 exports.createRoom = async (req, res) => {
-    console.log("room creation");
+    console.log("app=node INFO: room creation");
     let ispass = 0;
-    const {password, name, max_players} = req.body;
-    let hashedPassword = '';
-    if (password) {
-        ispass = 1;
-        const saltRounds = 10;
-        hashedPassword = await bcrypt.hash(password, saltRounds);
-    }
 	try {
+		const {password, name, max_players} = req?.body;
+		let hashedPassword = '';
+		if (password) {
+			ispass = 1;
+			const saltRounds = 10;
+			hashedPassword = await bcrypt.hash(password, saltRounds);
+		}
         var room = await db.oneOrNone('SELECT * FROM games WHERE name = $1', name);
         if (room) {
             return res.status(400).json({ message: "A room already has that name" });
@@ -66,7 +66,7 @@ exports.createRoom = async (req, res) => {
     catch (error) {
 		if(error?.constraint === "max_players")
 			return (res.status(400).json({message: "Wrong input for max players"}))
-        console.log(error);
+        console.log("app=node ERROR: ", error);
         return (res.status(500).json({message: error}));
     }
 };
@@ -109,13 +109,13 @@ exports.joinRoom = async (req, res) => {
             return (res.status(409).json({message: "Game has started"}));
         else if (error.received === 0)
             return (res.status(404).json({ message: "Room not found" }));
-        console.log(error)
+        console.log("app=node ERROR: ", error)
         return (res.status(500).json({message: error}));
     }
 };
 
 exports.leaveRoom = async (req, res) => {
-    console.log("leaving room");
+    console.log("app=node INFO: leaving room");
     const id = req.params.roomId;
     const user = req.user.id;
     try {
@@ -123,10 +123,12 @@ exports.leaveRoom = async (req, res) => {
         if (!check)
             return (res.status(409).json({message: "You weren't in the room anyway"}));
         const room = await db.one('SELECT * FROM games WHERE id = $1', id);
-        await db.none('DELETE FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, user]);
+		if (room.status === 'pending')
+        	await db.none('DELETE FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, user]);
 		playerEvent(room.nb_players - 1, room.id)
         if (room.nb_players <= 1) {
-            await db.none('DELETE FROM games WHERE id = $1', id);
+			if (room.status === 'pending')
+            	await db.none('DELETE FROM games WHERE id = $1', id);
 			RoomDeleted(room.id);
             //socket deleteRoom(room id)
         }
@@ -135,7 +137,7 @@ exports.leaveRoom = async (req, res) => {
         return (res.status(200).json({message: "Left room"}));
     }
     catch (error) {
-        console.log(error);
+        console.log("app=node ERROR: ", error);
         if (error.received === 0)
             return (res.status(404).json({ message: "User not in Room or Room not found" }));
         return (res.status(500).json({message: error}));

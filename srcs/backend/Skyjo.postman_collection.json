@@ -51,7 +51,7 @@
                 },
                 {
                   "key": "max_players",
-                  "value": "5"
+                  "value": "3"
                 }
               ]
             },
@@ -151,7 +151,7 @@
                 "email"
               ]
             },
-            "description": "Signup POST request, sending data, in body.\n\nResponses:\n\n400: {message: \"Please Input Username, Password and Email Adress\"}\n\n400: {message: \"Username already exists\"}\n\n400: {message: \"Email already exists\"}\n\n201: {message: \"User successfully created\"}\n\n500: {message: \"Failed to create user\"}"
+            "description": "Signup PUT request, sending data, in body.\n\nResponses:\n\n400: {message} //erreur de validation (ne correspond pas au regex du back (si quelquun force le front))\n\n409: {message: \"Email already exists\"}\n\n200: {message: \"Email Updated\"}\n\n500: {message: \"Server Error\"}\n\n409: {message: \"Email can't be empty\"}"
           },
           "response": []
         },
@@ -165,7 +165,7 @@
               "urlencoded": [
                 {
                   "key": "username",
-                  "value": "ibtihal"
+                  "value": "ibtihal2"
                 }
               ]
             },
@@ -183,7 +183,7 @@
                 "username"
               ]
             },
-            "description": "Signup POST request, sending data, in body.\n\nResponses:\n\n400: {message: \"Please Input Username, Password and Email Adress\"}\n\n400: {message: \"Username already exists\"}\n\n400: {message: \"Email already exists\"}\n\n201: {message: \"User successfully created\"}\n\n500: {message: \"Failed to create user\"}"
+            "description": "Signup PUT request, sending data, in body.\n\nResponses:\n\n400: {message} //erreur de validation (ne correspond pas au regex du back (si quelquun force le front))\n\n409: {message: \"Username already exists\"}\n\n200: {message: \"Username Updated\"}\n\n500: {message: \"Server Error\"}\n\n409: {message: \"Username can't be empty\"}"
           },
           "response": []
         },
@@ -198,9 +198,7 @@
                 {
                   "key": "image",
                   "type": "file",
-                  "src": [
-                    "/C:/Users/ibtih/Pictures/favicon4.png"
-                  ]
+                  "src": []
                 }
               ]
             },
@@ -218,7 +216,7 @@
                 "picture"
               ]
             },
-            "description": "Signup POST request, sending data, in body.\n\nResponses:\n\n400: {message: \"Please Input Username, Password and Email Adress\"}\n\n400: {message: \"Username already exists\"}\n\n400: {message: \"Email already exists\"}\n\n201: {message: \"User successfully created\"}\n\n500: {message: \"Failed to create user\"}"
+            "description": "Signup PUT request, sending file.\n\nResponses:\n\n413 erreur nginx request entity too large (plus que 2mb)\n\n400: {message : \"This is not an image, please stick to classic images' file extensions (jpg, png, jpeg, webp...)\"}\n\n200: {message: \"Profile picture changed\"}\n\n500: {message: \"Server Error, please retry\"}\n\n400: {message: \"No picture has been sent\"}"
           },
           "response": []
         },
@@ -250,7 +248,7 @@
                 "password"
               ]
             },
-            "description": "Signup POST request, sending data, in body.\n\nResponses:\n\n400: {message: \"Please Input Username, Password and Email Adress\"}\n\n400: {message: \"Username already exists\"}\n\n400: {message: \"Email already exists\"}\n\n201: {message: \"User successfully created\"}\n\n500: {message: \"Failed to create user\"}"
+            "description": "Signup PUT request, sending data, in body.\n\nResponses:\n\n400: {message} //erreur de validation (ne correspond pas au regex du back (si quelquun force le front))\n\n200: {message: \"Password Updated\"}\n\n500: {message: \"Server Error\"}\n\n409: {message: \"Password can't be empty\"}"
           },
           "response": []
         }
@@ -263,9 +261,14 @@
           "name": "users",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "???"
+              }
+            ],
             "url": {
-              "raw": "https://localhost:44443/api/v1/users?api_key={{api_key}}",
+              "raw": "https://localhost:44443/api/v1/users",
               "protocol": "https",
               "host": [
                 "localhost"
@@ -275,12 +278,6 @@
                 "api",
                 "v1",
                 "users"
-              ],
-              "query": [
-                {
-                  "key": "api_key",
-                  "value": "{{api_key}}"
-                }
               ]
             },
             "description": "GET list of users\n\nRequire api key as parameter"
@@ -291,9 +288,14 @@
           "name": "health",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "???"
+              }
+            ],
             "url": {
-              "raw": "https://localhost:44443/api/health",
+              "raw": "https://localhost:44443/api/v1/health",
               "protocol": "https",
               "host": [
                 "localhost"
@@ -301,9 +303,198 @@
               "port": "44443",
               "path": [
                 "api",
+                "v1",
                 "health"
               ]
             }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Friends",
+      "item": [
+        {
+          "name": "AddFriends",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "friendUsername",
+                  "value": "ibaaziz"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://localhost:44443/api/friends/add",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "44443",
+              "path": [
+                "api",
+                "friends",
+                "add"
+              ]
+            },
+            "description": "Signup POST request, sending data, in body.\n\nResponses:\n\n400: {message: \"Please Input Username, Password and Email Adress\"}\n\n400: {message: \"Username already exists\"}\n\n400: {message: \"Email already exists\"}\n\n201: {message: \"User successfully created\"}\n\n500: {message: \"Failed to create user\"}"
+          },
+          "response": []
+        },
+        {
+          "name": "friendslist",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://localhost:44443/api/friends/list",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "44443",
+              "path": [
+                "api",
+                "friends",
+                "list"
+              ]
+            },
+            "description": "Signup POST request, sending data, in body.\n\nResponses:\n\n400: {message: \"Please Input Username, Password and Email Adress\"}\n\n400: {message: \"Username already exists\"}\n\n400: {message: \"Email already exists\"}\n\n201: {message: \"User successfully created\"}\n\n500: {message: \"Failed to create user\"}"
+          },
+          "response": []
+        },
+        {
+          "name": "invites",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://localhost:44443/api/friends/invites",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "44443",
+              "path": [
+                "api",
+                "friends",
+                "invites"
+              ]
+            },
+            "description": "Signup POST request, sending data, in body.\n\nResponses:\n\n400: {message: \"Please Input Username, Password and Email Adress\"}\n\n400: {message: \"Username already exists\"}\n\n400: {message: \"Email already exists\"}\n\n201: {message: \"User successfully created\"}\n\n500: {message: \"Failed to create user\"}"
+          },
+          "response": []
+        },
+        {
+          "name": "removeFriend",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "friendUsername",
+                  "value": "ibaaziz"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://localhost:44443/api/friends/remove",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "44443",
+              "path": [
+                "api",
+                "friends",
+                "remove"
+              ]
+            },
+            "description": "Signup POST request, sending data, in body.\n\nResponses:\n\n400: {message: \"Please Input Username, Password and Email Adress\"}\n\n400: {message: \"Username already exists\"}\n\n400: {message: \"Email already exists\"}\n\n201: {message: \"User successfully created\"}\n\n500: {message: \"Failed to create user\"}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "GameStats",
+      "item": [
+        {
+          "name": "wins",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://localhost:44443/api/gameStats/wins",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "44443",
+              "path": [
+                "api",
+                "gameStats",
+                "wins"
+              ]
+            },
+            "description": "200: returne le nb de wins\n\n500: Server Error"
+          },
+          "response": []
+        },
+        {
+          "name": "losses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://localhost:44443/api/gameStats/losses",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "44443",
+              "path": [
+                "api",
+                "gameStats",
+                "losses"
+              ]
+            },
+            "description": "200: returne le nb de losses\n\n500: Server Error"
+          },
+          "response": []
+        },
+        {
+          "name": "GamesList",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://localhost:44443/api/gameStats/gamesList",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "44443",
+              "path": [
+                "api",
+                "gameStats",
+                "gamesList"
+              ]
+            },
+            "description": "returne une liste de games\n\n200: \\[{name, status, winner, created_at}\\]\n\nname => nom de la game\n\nstatus => ('playing', 'finished', 'cancelled', 'pending')\n\nwinner => id du winner\n\ncreated_at => timestamp\n\n500: ServerError"
           },
           "response": []
         }
@@ -319,7 +510,7 @@
           "urlencoded": [
             {
               "key": "email",
-              "value": "ibtihalbaaziz2@hotmail.fr"
+              "value": "user@hotmail.fr"
             },
             {
               "key": "password",
@@ -327,7 +518,7 @@
             },
             {
               "key": "username",
-              "value": "username2"
+              "value": "user"
             }
           ]
         },
@@ -345,6 +536,27 @@
           ]
         },
         "description": "Signup POST request, sending data, in body.\n\nResponses:\n\n400: {message: \"Please Input Username, Password and Email Adress\"}\n\n400: {message: \"Username already exists\"}\n\n400: {message: \"Email already exists\"}\n\n201: {message: \"User successfully created\"}\n\n500: {message: \"Failed to create user\"}"
+      },
+      "response": []
+    },
+    {
+      "name": "logout",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:44443/api/user/logout",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "44443",
+          "path": [
+            "api",
+            "user",
+            "logout"
+          ]
+        }
       },
       "response": []
     },
@@ -369,7 +581,7 @@
           "urlencoded": [
             {
               "key": "email",
-              "value": "ibtihalbaaziz2@hotmail.fr"
+              "value": "user@hotmail.fr"
             },
             {
               "key": "password",
@@ -415,11 +627,38 @@
         "description": "GET Profile email, username and avatar using cookie.\n\nresponses :\n\n401: {message: \"Unauthorized no token\"}\n\n403: {message: \"invalid token\"}\n\n404: {message: \"User not found\"}\n\n500: {message: \"Server error\"}\n\n200: \\[User\\]"
       },
       "response": []
+    },
+    {
+      "name": "image",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:44443/api/user/image/{{imageName}}",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "44443",
+          "path": [
+            "api",
+            "user",
+            "image",
+            "{{imageName}}"
+          ]
+        },
+        "description": "fetch /api/image/XXX (nom de l'image récupéré dans call au profile)\n\nstatus 400 {message: \"No picture asked for\"}\n\nstatus 200 (fileSent)\n\nstatus 404 (si une erreur pendant le sending file alors on send default_pic)\n\nstatus 500 {message: \"File error}"
+      },
+      "response": []
     }
   ],
   "variable": [
     {
       "key": "RoomID",
+      "value": ""
+    },
+    {
+      "key": "imageName",
       "value": ""
     }
   ]

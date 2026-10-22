@@ -4,8 +4,8 @@ const db = require('../../db/db')
 const { validationResult } = require("express-validator");
 
 var signup = async (req, res) => {
-    const {username, email, password} = req.body;
     try {
+    	const {username, email, password} = req.body;
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return res.status(400).json({
@@ -27,7 +27,7 @@ var signup = async (req, res) => {
         email: email,
         name: username,
         password: hashedPassword,
-        pic: "/imgs/default_pic.jpg"
+        pic: "default_pic.jpg"
         });
         const token = jwt.sign(
             { userId: user.id, username: user.name },
@@ -36,7 +36,7 @@ var signup = async (req, res) => {
         res.cookie("access_token", token, { httpOnly: true, secure: true });
         return res.status(201).json({message: "User successfully created"});
     } catch (error) {
-        console.log(error);
+        console.log("app=node ERROR: ", error);
         db.none('DELETE FROM users WHERE name = $1', username);
         return (res.status(500).json({message: "Failed to create user"}));
     }
