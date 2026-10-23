@@ -1,5 +1,6 @@
 import { avatarUrl } from '../services/user';
-import defaultPic from '../assets/cartes_home.png';
+// Même image que l'avatar par défaut du back (srcs/backend/upload/default_pic.jpg)
+import defaultPic from '../assets/default_avatar.jpg';
 
 // Avatar servi par le back ; si l'image ne charge pas, on affiche l'image locale
 export function Avatar({ file, className = '', alt = 'Profile' }) {
