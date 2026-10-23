@@ -96,7 +96,7 @@ exports.joinRoom = async (req, res) => {
             if (password) {
                 const passwordMatch = await bcrypt.compare(password, room.password);
                 if (!passwordMatch)
-                return (res.status(401).json({message: "Need a password"}))
+                        throw(Error("Wrong password"));
             }
             if (room.nb_players >= room.max_players) {
                 throw(Error("Full room"));
