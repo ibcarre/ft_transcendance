@@ -92,7 +92,7 @@ exports.joinRoom = async (req, res) => {
         await db.tx({mode}, async t => {
             room = await t.one('SELECT * FROM games WHERE id = $1', id);
             if (!password && room.ispass)
-                return (res.status(401).json({message: "Need a password"}))
+                throw(Error("Wrong password"));
             if (password) {
                 const passwordMatch = await bcrypt.compare(password, room.password);
                 if (!passwordMatch)
