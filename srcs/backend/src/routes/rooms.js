@@ -6,12 +6,14 @@ const createRoom = require('../controllers/rooms').createRoom;
 const joinRoom = require('../controllers/rooms').joinRoom;
 const leaveRoom = require('../controllers/rooms').leaveRoom;
 const isLog = require('../middleware/Auth').isLog;
+const { startRoomGame } = require('../controllers/startRoomGame');
 
 router.use(isLog);
 router.get('/getRooms', getRooms);
 router.post('/createRoom', createRoom);
 router.post('/joinRoom/:roomId', joinRoom);
 router.post('/leaveRoom/:roomId', leaveRoom);
+router.post('/:roomId/start', startRoomGame);
 router.get('/:roomId', roomId);
 
 module.exports = router;
