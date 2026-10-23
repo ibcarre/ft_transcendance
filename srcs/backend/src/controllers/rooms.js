@@ -108,7 +108,7 @@ exports.joinRoom = async (req, res) => {
             let others = await t.any('SELECT seat FROM users_in_game WHERE game_id = $1', id);
             var dataArray = [];
             for(var o in others) {
-                dataArray.push(others[o]);
+                dataArray.push(others[o].seat);
             }
             dataArray = dataArray.sort();
             let seat = 0;
