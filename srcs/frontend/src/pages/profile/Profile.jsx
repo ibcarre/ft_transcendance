@@ -84,7 +84,7 @@ export function Profile() {
 
                         <div className="my-6 h-0.5 bg-slate-300 md:mx-10 md:my-0 md:h-auto md:w-0.5"></div>
 
-                        <div className="flex flex-1 flex-col justify-center">
+                        <div className="flex flex-1 flex-col justify-start">
                             <h3 className="mb-4 text-lg font-bold text-slate-800 sm:text-xl">Match history</h3>
                             {loading && <p className={emptyText}>Loading...</p>}
                             {!loading && !error && games.length === 0 && (
