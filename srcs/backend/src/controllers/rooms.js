@@ -114,8 +114,8 @@ exports.joinRoom = async (req, res) => {
             let seat = 0;
             for (let i = 0; i <= dataArray.length; i++) {
                 if (i == dataArray.length && i !== 0)
-                    seat = dataArray.at(-1).seat + 1;
-                if (i !== dataArray.length && i !== dataArray.at(i).seat) {
+                    seat = dataArray.at(-1) + 1;
+                if (i !== dataArray.length && i !== dataArray.at(i)) {
                     seat = i;
                     break;
                 }
