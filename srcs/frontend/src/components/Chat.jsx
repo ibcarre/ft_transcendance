@@ -10,7 +10,7 @@ const infoText = "m-auto text-center text-sm text-slate-400";
 export function Chat({ embedded = false }) {
     const { userInfo } = useAuth();
     // Messages partagés et reçus en temps réel par ChatProvider (socket /globalChat)
-    const { messages, connected, sendMessage, authorName } = useChat();
+    const { messages, connected, sendMessage } = useChat();
     const [input, setInput] = useState('');
     const listRef = useRef(null);
 
@@ -36,7 +36,7 @@ export function Chat({ embedded = false }) {
                     const isMine = msg.userId === userInfo.id;
                     return (
                         <div key={msg.id} className={`flex max-w-[80%] shrink-0 flex-col gap-1 ${isMine ? 'items-end self-end' : 'items-start'}`}>
-                            {!isMine && <p className="pl-1 text-[13px] font-bold text-blue-900">{authorName(msg.userId)}</p>}
+                            {!isMine && <p className="pl-1 text-[13px] font-bold text-blue-900">{msg.author ?? '...'}</p>}
                             <div className={`flex flex-col gap-1 rounded-xl border px-3.5 py-2.5 ${isMine ? 'rounded-tr-sm border-blue-500 bg-blue-500' : 'rounded-tl-sm border-slate-200 bg-white'}`}>
                                 <p className={`break-words text-[15px] ${isMine ? 'text-white' : 'text-slate-800'}`}>{msg.body}</p>
                                 <p className={`self-end text-[11px] ${isMine ? 'text-blue-100' : 'text-slate-400'}`}>{dayjs(msg.sentAt).format('HH:mm')}</p>

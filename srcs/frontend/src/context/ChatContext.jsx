@@ -12,53 +12,46 @@ const MAX_MESSAGES = 200;
 export const ChatProvider = ({ children }) => {
   const { isAuth, userInfo } = useAuth();
   const [messages, setMessages] = useState([]);
-  // Cache des noms : { [userId]: name } (le back n'envoie que l'id de l'auteur)
-  const [authors, setAuthors] = useState({});
   const [connected, setConnected] = useState(false);
 
   const socketRef = useRef(null);
-  // ids dont le nom est déjà demandé, pour ne pas charger deux fois le même profil
-  const requestedAuthors = useRef(new Set());
   const nextMessageId = useRef(0);
 
   const myId = userInfo?.id;
-  const myName = userInfo?.name;
-
-  const resolveAuthor = useCallback(async (userId) => {
-    if (userId === myId || requestedAuthors.current.has(userId)) return;
-    requestedAuthors.current.add(userId);
-    const profile = await fetchProfile(userId);
-    setAuthors((prev) => ({ ...prev, [userId]: profile.name }));
-  }, [myId]);
 
   useEffect(() => {
     if (!isAuth) return;
 
+    let active = true;
     const socket = io('/globalChat', { withCredentials: true });
     socketRef.current = socket;
-    const requested = requestedAuthors.current;
 
     socket.on('connect', () => setConnected(true));
     socket.on('disconnect', () => setConnected(false));
     socket.on('connect_error', (err) => console.log('Chat socket error:', err.message));
 
     // Message reçu (le mien aussi : le back renvoie à tout le monde, déjà filtré)
-    socket.on('messageReceived', (body, userId, date) => {
-      const message = { id: nextMessageId.current++, userId, body, sentAt: date };
-      setMessages((prev) => [...prev, message].slice(-MAX_MESSAGES));
-      resolveAuthor(userId);
+    socket.on('messageReceived', async (body, userId, date) => {
+      const id = nextMessageId.current++;
+      setMessages((prev) => [...prev, { id, userId, body, sentAt: date, author: null }].slice(-MAX_MESSAGES));
+
+      // Pas de cache : le nom est demandé à chaque message, pour suivre les changements de pseudo
+      // (mes propres messages n'affichent pas d'auteur)
+      if (userId === myId) return;
+      const profile = await fetchProfile(userId);
+      if (!active) return;
+      setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, author: profile.name } : m)));
     });
 
     return () => {
+      active = false;
       socket.disconnect();
       socketRef.current = null;
       setConnected(false);
       // Déconnexion : on vide le chat pour ne pas le montrer au prochain utilisateur
       setMessages([]);
-      setAuthors({});
-      requested.clear();
     };
-  }, [isAuth, resolveAuthor]);
+  }, [isAuth, myId]);
 
   // Envoie un message ; il n'est ajouté à la liste qu'au retour du back (évite les doublons)
   const sendMessage = useCallback((text) => {
@@ -68,12 +61,8 @@ export const ChatProvider = ({ children }) => {
     return true;
   }, [myId]);
 
-  const authorName = useCallback(
-    (userId) => (userId === myId ? myName : authors[userId] ?? '...'),
-    [authors, myId, myName]);
-
   return (
-    <ChatContext.Provider value={{ messages, connected, sendMessage, authorName }}>
+    <ChatContext.Provider value={{ messages, connected, sendMessage }}>
       {children}
     </ChatContext.Provider>
   );

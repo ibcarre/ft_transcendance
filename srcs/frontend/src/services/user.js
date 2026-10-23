@@ -22,7 +22,22 @@ export const fetchMe = () =>
 // Message d'erreur du back : { message } en JSON, ou parfois du texte brut
 export const errorMessage = (err, fallback = "Failed to reach the server") => {
     const data = err.response?.data;
-    if (data?.message) return data.message;
-    if (typeof data === 'string' && data) return data;
+    if (typeof data?.message === 'string') return data.message;
+    // Texte brut du back accepté, mais pas une page HTML (ex : page 502 de nginx pendant un redémarrage)
+    if (typeof data === 'string' && data && !data.trimStart().startsWith('<')) return data;
     return fallback;
+};
+
+// Réessaie une requête quand le back est injoignable (réseau, 5xx), par exemple pendant un redémarrage
+export const withRetry = async (request, retries = 3, delayMs = 1000) => {
+    for (let attempt = 0; ; attempt++) {
+        try {
+            return await request();
+        } catch (err) {
+            const status = err.response?.status;
+            const retryable = !err.response || status >= 500;
+            if (!retryable || attempt >= retries) throw err;
+            await new Promise((resolve) => setTimeout(resolve, delayMs));
+        }
+    }
 };
