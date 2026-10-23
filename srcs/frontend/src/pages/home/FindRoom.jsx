@@ -1,13 +1,20 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { io } from "socket.io-client";
+import { joinRoom, ALREADY_IN_ROOM } from '../../services/rooms';
+import { errorMessage } from '../../services/user';
 import { inputClass, btnPrimary, labelClass, feedback } from '../../styles/ui';
 
 const emptyText = "col-span-full py-2 text-center text-sm text-slate-400";
 
-export function FindRoom() {
+// inRoom : déjà dans une room (JOIN bloqué) ; onEnter(roomId) : room rejointe ;
+// onAlreadyInRoom() : le back dit qu'on est déjà dans une room
+export function FindRoom({ inRoom = false, onEnter, onAlreadyInRoom }) {
     const [rooms, setRooms] = useState([]);
     const [selectedRoomId, setSelectedRoomId] = useState(null);
+    const [password, setPassword] = useState('');
+    const [joining, setJoining] = useState(false);
+    const [joinError, setJoinError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -66,6 +73,30 @@ export function FindRoom() {
 
     const selectedRoom = rooms.find((room) => room.id === selectedRoomId);
 
+    const selectRoom = (room) => {
+        setSelectedRoomId(room.id);
+        setPassword('');
+        setJoinError(null);
+    };
+
+    const handleJoin = async (e) => {
+        e.preventDefault();
+        if (!selectedRoom || inRoom) return;
+
+        setJoining(true);
+        setJoinError(null);
+        try {
+            await joinRoom(selectedRoom.id, selectedRoom.ispass ? password : '');
+            onEnter?.(selectedRoom.id);
+        } catch (err) {
+            const message = errorMessage(err);
+            setJoinError(message);
+            if (message === ALREADY_IN_ROOM) onAlreadyInRoom?.();
+        } finally {
+            setJoining(false);
+        }
+    };
+
     return (
         <div className="flex w-full flex-col gap-6 md:h-[500px] md:w-[750px] md:flex-row">
 
@@ -83,7 +114,7 @@ export function FindRoom() {
                         <div
                             key={room.id}
                             className={`flex max-h-[200px] flex-col items-center justify-center rounded-xl border-2 px-3 py-4 text-center font-bold text-slate-800 transition ${full ? 'cursor-not-allowed border-slate-300 bg-slate-50 opacity-50' : selected ? 'cursor-pointer border-blue-500 bg-sky-100' : 'cursor-pointer border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-slate-100'}`}
-                            onClick={() => !full && setSelectedRoomId(room.id)}
+                            onClick={() => !full && selectRoom(room)}
                             title={full ? "Room is full" : undefined}
                         >
                             <p className="my-1 break-all">{room.name}</p>
@@ -93,22 +124,32 @@ export function FindRoom() {
                 })}
             </div>
 
-            <div className="flex flex-col gap-4 md:w-56">
-                {/* Champ mot de passe seulement pour une room protégée ; key le vide quand on change de room */}
+            <form className="flex flex-col gap-4 md:w-56" onSubmit={handleJoin}>
+                {/* Champ mot de passe seulement pour une room protégée (vidé quand on change de room) */}
                 {!!selectedRoom?.ispass && (
                     <div className="flex flex-col gap-2">
                         <label htmlFor="room-password" className={`${labelClass} text-lg`}>Room password</label>
                         <input
-                            key={selectedRoom.id}
                             id="room-password"
                             type="password"
                             className={inputClass}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             autoFocus
                         />
                     </div>
                 )}
-                <button disabled={!selectedRoomId} className={`${btnPrimary} w-full p-3.5 text-base font-bold md:mt-auto`}>JOIN</button>
-            </div>
+                <div className="flex flex-col gap-2 md:mt-auto">
+                    {inRoom && <p className={`${feedback.info} mt-0`}>You're already in a room.</p>}
+                    {joinError && <p className={`${feedback.error} mt-0`}>{joinError}</p>}
+                    <button
+                        type="submit"
+                        className={`${btnPrimary} w-full p-3.5 text-base font-bold`}
+                        disabled={!selectedRoom || inRoom || joining || (!!selectedRoom.ispass && !password)}>
+                        {joining ? 'JOINING...' : 'JOIN'}
+                    </button>
+                </div>
+            </form>
         </div>
     );
 }
