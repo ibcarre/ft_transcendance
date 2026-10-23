@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { io } from "socket.io-client";
-import { inputClass, btnPrimary, labelClass } from '../../styles/ui';
+import { inputClass, btnPrimary, labelClass, feedback } from '../../styles/ui';
 
 const emptyText = "col-span-full py-2 text-center text-sm text-slate-400";
 
@@ -71,7 +71,7 @@ export function FindRoom() {
 
             <div className="grid max-h-[45vh] flex-1 auto-rows-min grid-cols-1 gap-4 overflow-y-auto px-2.5 sm:grid-cols-2 md:max-h-none">
                 {loading && <p className={emptyText}>Loading...</p>}
-                {error && <p className={`${emptyText} font-semibold text-red-500`}>{error}</p>}
+                {error && <p className={`${feedback.error} col-span-full mt-0`}>{error}</p>}
                 {!loading && !error && rooms.length === 0 && (
                     <p className={emptyText}>No room available, create one!</p>
                 )}

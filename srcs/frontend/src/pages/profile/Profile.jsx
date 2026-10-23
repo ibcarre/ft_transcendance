@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Modal } from '../../components/Modal';
 import { EditProfile } from './EditProfile';
-import defaultPic from '../../assets/cartes_home.png';
 import { Header } from '../../components/Header';
+import { Avatar } from '../../components/Avatar';
 import { useAuth } from '../../context/useAuth';
 import { PrivacyLink } from '../../components/PrivacyLink';
 import { panel, btnPrimary } from '../../styles/ui';
@@ -26,7 +26,7 @@ export function Profile() {
 
                     <div className="flex w-full flex-col items-center justify-between gap-6 sm:flex-row">
                         <div className="flex min-w-0 flex-col items-center gap-4 sm:flex-row sm:gap-6">
-                            <img src={defaultPic} className="size-28 rounded-full border-[3px] border-blue-500 bg-white object-cover sm:size-32 lg:size-[150px]" alt="Profile" />
+                            <Avatar file={userInfo.avatar_url} className="size-28 sm:size-32 lg:size-[150px]" />
                             <h2 className="break-all text-center text-3xl font-extrabold text-slate-800 sm:text-left sm:text-4xl lg:text-5xl">{userInfo.name}</h2>
                         </div>
                         <button className={`${btnPrimary} shrink-0 rounded-xl px-8 py-4 text-lg font-bold uppercase`} onClick={() => setEditModal(true)}>EDIT</button>
@@ -64,7 +64,7 @@ export function Profile() {
 
             {editModal && (
                 <Modal title="Edit profile" onClose={closeModal}>
-                    <EditProfile defaultPic={defaultPic} />
+                    <EditProfile />
                 </Modal>
             )}
 
