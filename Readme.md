@@ -1,7 +1,8 @@
 *This project has been created as part of the 42 curriculum by ibaaziz{PO-dev} , homohame{PM-dev}, mkerrien{PM}, benjamsc{ARC-dev}*
 # Descrtiption
 The goal of our project is to create an online version of the game Skyjo [rules](./docs/rules/RULES.en.md)
-    that can accommodate 2 to 4 players in real time.
+    that can accommodate 2 to 4 players in real time, with basic user interactions.
+Dashboards build with grafana and exporter like prometheus and postgres-exporter.
 
 To do this, the four of us have divided the tasks among ourselves as follows:
 - DevOps (infrastructure/containerization)
@@ -50,10 +51,20 @@ For information on the game engine, see [GE Dev Docs](./docs/DEV_DOC_GAME.en.md)
 - [main Doc](https://grafana.com/docs/grafana/latest/)
 - [alerting](https://grafana.com/docs/grafana-cloud/observe-and-act/alert-and-measure-reliability/alerting/)
 #### Loki
-- [deployement modes] (https://grafana.com/docs/loki/latest/get-started/deployment-modes/)
+- [deployement modes](https://grafana.com/docs/loki/latest/get-started/deployment-modes/)
 #### Alloy
 - [alloy](https://grafana.com/docs/alloy/latest/)
 
 ### Node
 - [Best practices docker node](https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md)
 - [docker hub Node](https://hub.docker.com/_/node/)
+
+### React
+- [ecole-du-web](https://github.com/ecole-du-web/react-modal/tree/main)
+- [Popup Modal](https://www.youtube.com/watch?v=Gy4G68WoHq4)
+- [Websockets (socket.io)](https://www.youtube.com/watch?v=JyW9NDdXAtM)
+- [JS Form Validation](https://www.youtube.com/watch?v=brcHK3P6ChQ&list=PL0Zuz27SZ-6PRCpm9clX0WiBEMB70FWwd&index=4)
+- [Router](https://reactrouter.com/start/framework/navigating)
+- [Full course](https://www.youtube.com/watch?v=TtPXvEcE11E)
+
+

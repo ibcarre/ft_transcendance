@@ -6,7 +6,7 @@ Faire un skyjo, partie temps reel a de 2 a 8 personnes
 - basic chat in game (peut etre chat global)
 - profil simple et systeme d'amis simple
 
-## Outis
+## Outils
 - Docker/Podman (Postgres, nginx)
 - NodeJs/Typescript (back)
 - React (front)
