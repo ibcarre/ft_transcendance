@@ -4,6 +4,8 @@ const getAllProfiles = require('../controllers/public_api/getAllProfiles');
 const rateLimit = require('express-rate-limit');
 const checkKey = require('../middleware/Auth').checkKey;
 const health = require('../controllers/public_api/health');
+const {nbWins, nbLosses, getGames} = require('../controllers/public_api/getStats')
+const getImage = require('../controllers/public_api/getImage')
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes window
@@ -32,5 +34,10 @@ router.get('/health', health);
 router.use(limiter);
 router.use(checkKey);
 router.get('/users', getAllProfiles);
+router.get('/wins/:userId', nbWins);
+router.get('/losses/:userId', nbLosses);
+router.get('/games/:userId', getGames);
+router.get('/images/:userId', getImage);
+
 
 module.exports = router;
