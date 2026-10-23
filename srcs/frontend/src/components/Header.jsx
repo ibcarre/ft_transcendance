@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router';
 import axios from 'axios';
 import { useAuth } from '../context/useAuth';
+import { useFriends } from '../context/useFriends';
 import { Friends } from './Friends';
 import { Chat } from './Chat';
 import { Modal } from './Modal';
@@ -16,6 +17,7 @@ export function Header() {
     const menuRef = useRef(null);
 
     const { userInfo, setIsAuth, setUserInfo } = useAuth();
+    const { requests } = useFriends();
     const navigate = useNavigate();
 
     const closeModal = () => setModalType(null);
@@ -65,12 +67,22 @@ export function Header() {
                 </Link>
                 <div className="relative flex min-w-0 cursor-pointer select-none flex-col items-end" ref={menuRef}>
                     <h2 onClick={toggleMenu} className={`max-w-[50vw] truncate text-xl font-bold text-slate-800 sm:text-2xl lg:text-[35px] ${logoGradientHover}`}>
-                        {userInfo.name} <span className="align-middle text-sm sm:text-xl"> {menu ? '▲' : '▼'}</span>
+                        {userInfo.name}
+                        {/* Pastille : invitations d'amis en attente */}
+                        {requests.length > 0 && (
+                            <span className="ml-2 inline-block size-3 rounded-full bg-red-500 align-middle" aria-label="New friend requests" />
+                        )}
+                        <span className="align-middle text-sm sm:text-xl"> {menu ? '▲' : '▼'}</span>
                     </h2>
                     {menu && (
                         <div className={`absolute top-full right-0 z-[100] mt-3 min-w-40 animate-slide-down overflow-hidden rounded-xl bg-white shadow-[0_10px_30px_rgba(0,0,0,0.2)] ${rainbowBorder}`}>
                             <Link to="/profile"><p className={`${menuLink} ${logoSliceHover.SK}`}>Profile</p></Link>
-                            <p className={`${menuLink} ${logoSliceHover.Y}`} onClick={() => openModal('friends')}>Friends</p>
+                            <p className={`${menuLink} ${logoSliceHover.Y}`} onClick={() => openModal('friends')}>
+                                Friends
+                                {requests.length > 0 && (
+                                    <span className="ml-2 rounded-full bg-red-500 px-2 py-0.5 text-xs font-bold text-white">{requests.length}</span>
+                                )}
+                            </p>
                             <p className={`${menuLink} ${logoSliceHover.JO}`} onClick={() => openModal('chat')}>Chat</p>
                             <p className={`${menuLink} border-t border-slate-100 hover:bg-linear-to-r hover:from-red-500 hover:to-rose-600`} onClick={logout}>Logout</p>
                         </div>

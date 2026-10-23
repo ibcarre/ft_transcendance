@@ -22,20 +22,30 @@ export const btnPrimary = "cursor-pointer rounded-lg bg-linear-to-r from-red-500
 // Label de formulaire
 export const labelClass = "text-sm font-bold text-slate-800";
 
-// Bulle d'information quand le format est incorrect
-export const hint = "relative mt-2 animate-slide-down rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-[13px] leading-normal text-slate-700 shadow-[0_2px_5px_rgba(0,0,0,0.05)]";
+// Bulle de message (format d'EditProfile), déclinée en 3 couleurs
+const bubble = "relative mt-2 animate-slide-down rounded-lg border px-3.5 py-2.5 text-[13px] leading-normal shadow-[0_2px_5px_rgba(0,0,0,0.05)]";
 
-// Message de succès
-export const success = "text-[13px] font-semibold text-green-500";
+// Messages de retour : succès (vert), info (gris), erreur (rouge)
+export const feedback = {
+    success: `${bubble} border-green-200 bg-green-50 font-semibold text-green-700`,
+    info: `${bubble} border-slate-200 bg-slate-50 text-slate-700`,
+    error: `${bubble} border-red-200 bg-red-50 font-semibold text-red-600`,
+};
+
+// Bulle d'information quand le format est incorrect
+export const hint = feedback.info;
 
 // Classe d'une bulle d'information : visible ou cachée (lue seulement par les lecteurs d'écran)
 export const hintOrHidden = (visible) => (visible ? hint : "sr-only");
 
 // Sur grand écran (xl), la bulle sort à droite du formulaire au lieu d'agrandir le cadre.
 // Le parent doit être en "relative" ; ml-14 = padding du formulaire (p-10) + 16px d'écart.
-const tooltip = "xl:absolute xl:top-[26px] xl:left-full xl:z-10 xl:mt-0 xl:ml-14 xl:w-60 xl:py-2 xl:text-xs xl:leading-snug xl:before:absolute xl:before:top-4 xl:before:-left-[7px] xl:before:size-3 xl:before:rotate-45 xl:before:border-b xl:before:border-l xl:before:border-slate-200 xl:before:bg-slate-50 xl:before:content-['']";
+const tooltip = "xl:absolute xl:top-[26px] xl:left-full xl:z-10 xl:mt-0 xl:ml-14 xl:w-60 xl:py-2 xl:text-xs xl:leading-snug xl:before:absolute xl:before:top-4 xl:before:-left-[7px] xl:before:size-3 xl:before:rotate-45 xl:before:border-b xl:before:border-l xl:before:[border-color:inherit] xl:before:[background:inherit] xl:before:content-['']";
 
 export const hintTooltip = `${hint} ${tooltip}`;
+
+// Erreur serveur en infobulle (pages Auth) : même placement, en rouge
+export const errorTooltip = `${feedback.error} ${tooltip}`;
 
 export const tooltipOrHidden = (visible) => (visible ? hintTooltip : "sr-only");
 
