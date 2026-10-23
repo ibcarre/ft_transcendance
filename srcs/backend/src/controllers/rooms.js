@@ -41,27 +41,31 @@ exports.createRoom = async (req, res) => {
         }
 		if (name.length < 1 || name.length > 24)
 			return (res.status(400).json({ message: "Room's name must be between 1 and 24 characters" }))
-		var users = await db.oneOrNone('SELECT * FROM users_in_game INNER JOIN games ON games.id = users_in_game.game_id WHERE games.status = $2 AND users_in_game.user_id = $1', [req.user.id, 'pending']);
+		var users = await db.oneOrNone('SELECT * FROM users_in_game INNER JOIN games ON games.id = users_in_game.game_id WHERE (games.status = $2 OR games.status = $3) AND users_in_game.user_id = $1', [req.user.id, 'pending', 'playing']);
         		//const games = await db.any('SELECT name, status, winner, created_at FROM games INNER JOIN users_in_game ON users_in_game.game_id = games.id WHERE users_in_game.user_id = $1', user.id);
 
 		if (users)
 			return (res.status(409).json({message: "You can only be in one room"}))
-        room = await db.one('INSERT INTO games VALUES(DEFAULT, $(password), $(ispass), $(name), DEFAULT, DEFAULT, DEFAULT, $(max_players), DEFAULT, $(user)) RETURNING *', {
-			name: name,
-			password: hashedPassword,
-            ispass: ispass,
-			max_players: max_players,
-			user: req.user.name
-		});
-        await db.none('INSERT INTO users_in_game VALUES(DEFAULT, $(user), $(roomId), $(seat), DEFAULT)', {
-            user: req.user.id,
-            roomId: room.id,
-            seat: 0
-        })
-        delete room.password;
-        delete room.status;
-        delete room.goal;
-        delete room.created_at;
+        await db.tx({mode}, async t => {
+            room = await t.one('INSERT INTO games VALUES(DEFAULT, $(password), $(ispass), $(name), DEFAULT, DEFAULT, DEFAULT, $(max_players), DEFAULT, $(user)) RETURNING *', {
+                name: name,
+                password: hashedPassword,
+                ispass: ispass,
+                max_players: max_players,
+                user: req.user.name
+            });
+            await t.none('INSERT INTO users_in_game VALUES(DEFAULT, $(user), $(roomId), $(seat), DEFAULT)', {
+                user: req.user.id,
+                roomId: room.id,
+                seat: 0
+            })
+            delete room.password;
+            delete room.status;
+            delete room.goal;
+            delete room.created_at;
+        }).catch(error => {
+            throw(error);
+        });
         Roomcreated(room)
         return (res.status(201).send(room.id));
     }
@@ -69,7 +73,7 @@ exports.createRoom = async (req, res) => {
 		if(error?.constraint === "max_players")
 			return (res.status(400).json({message: "Wrong input for max players"}))
         console.log("app=node ERROR: ", error);
-        return (res.status(500).json({message: error}));
+        return (res.status(500).json({message: "Server error, try again"}));
     }
 };
 
@@ -77,22 +81,22 @@ exports.joinRoom = async (req, res) => {
     try {
         const id = req.params.roomId;
         const password = req?.body?.password;
-        if (!password)
-            return (res.status(401).json({message: "Need a password"}))
         //const user = await db.oneOrNone('SELECT * FROM users_in_game WHERE game_id = $1 AND user_id = $2', [id, req.user.id]);
         //if (user) return (res.status(409).json({message: "Already in room"}));
         // BEGIN
-		var users = await db.oneOrNone('SELECT * FROM users_in_game INNER JOIN games ON games.id = users_in_game.game_id WHERE games.status = $2 AND users_in_game.user_id = $1', [req.user.id, 'pending']);
+		var users = await db.oneOrNone('SELECT * FROM users_in_game INNER JOIN games ON games.id = users_in_game.game_id WHERE (games.status = $2 OR games.status = $3) AND users_in_game.user_id = $1', [req.user.id, 'pending', 'playing']);
 
 		if (users)
 			return (res.status(409).json({message: "You can only be in one room"}))
         var room;
         await db.tx({mode}, async t => {
             room = await t.one('SELECT * FROM games WHERE id = $1', id);
+            if (!password && room.ispass)
+                return (res.status(401).json({message: "Need a password"}))
             if (password) {
                 const passwordMatch = await bcrypt.compare(password, room.password);
                 if (!passwordMatch)
-                        return (res.status(401).json({message: "Wrong password"}));
+                        throw(Error("Wrong Password"));
             }
             if (room.nb_players >= room.max_players) {
                 throw(Error("Full room"));
@@ -102,13 +106,16 @@ exports.joinRoom = async (req, res) => {
             }
             await t.none('UPDATE games SET nb_players = $1 WHERE id = $2', [room.nb_players + 1, room.id]);
             let others = await t.any('SELECT seat FROM users_in_game WHERE game_id = $1', id);
-            console.log(others);
-            others = others.sort();
+            var dataArray = [];
+            for(var o in others) {
+                dataArray.push(others[o]);
+            }
+            dataArray = dataArray.sort();
             let seat = 0;
-            for (let i = 0; i <= others.length; i++) {
-                if (i == others.length && i !== 0)
-                    seat = others.at(-1).seat + 1;
-                if (i !== others.length && i !== others.at(i).seat) {
+            for (let i = 0; i <= dataArray.length; i++) {
+                if (i == dataArray.length && i !== 0)
+                    seat = dataArray.at(-1).seat + 1;
+                if (i !== dataArray.length && i !== dataArray.at(i).seat) {
                     seat = i;
                     break;
                 }
@@ -116,13 +123,13 @@ exports.joinRoom = async (req, res) => {
             await t.none('INSERT INTO users_in_game VALUES(DEFAULT, $(user), $(roomId), $(seat), DEFAULT)', {
             user: req.user.id,
             roomId: room.id,
-            seat: seat //seat indexe a 0 alors que nb_players indexe a 1
+            seat: seat
             })
-            playerEvent(room.nb_players + 1, room.id)
         })
         .catch(error => {
             throw(error);
         });
+        playerEvent(room.nb_players + 1, room.id)
         return (res.status(201).json({message: "Room Joined"}))
     }
     catch (error) {
@@ -132,8 +139,10 @@ exports.joinRoom = async (req, res) => {
             return (res.status(409).json({message: "Game has started"}));
         else if (error.received === 0)
             return (res.status(404).json({ message: "Room not found" }));
+        else if (error.message === "Wrong Password")
+            return (res.status(401).json({message: "Wrong password"}));
         console.log("app=node ERROR: ", error)
-        return (res.status(500).json({message: error}));
+        return (res.status(500).json({message: "Server error: try again later"}));
     }
 };
 
