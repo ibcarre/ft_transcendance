@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import axios from 'axios';
-import { inputClass, btnPrimary, success } from '../styles/ui';
+import { useFriends } from '../context/useFriends';
+import { errorMessage } from '../services/user';
+import { inputClass, btnPrimary, feedback } from '../styles/ui';
 
 const sectionTitle = "border-b-2 border-slate-200 pb-2 text-lg font-bold text-slate-800";
 const listContainer = "flex flex-col gap-2.5 overflow-y-auto pr-2";
@@ -8,41 +10,6 @@ const friendItem = "flex shrink-0 items-center justify-between gap-3 rounded-xl 
 const friendName = "truncate text-base font-bold text-slate-800";
 const actionButton = "cursor-pointer rounded-lg px-3 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0";
 const emptyText = "py-2 text-center text-sm text-slate-400";
-const feedbackStyle = {
-    success,
-    info: "text-[13px] font-semibold text-slate-500",
-    error: "text-[13px] font-semibold text-red-500",
-};
-
-// Le back renvoie un corps vide (et non []) quand la liste est vide
-const toIds = (data) => (Array.isArray(data) ? data : []);
-
-// /friends/list et /friends/invites ne donnent que des ids : on récupère le profil de chacun
-const fetchProfiles = (ids) => Promise.all(ids.map(async (id) => {
-    try {
-        const { data } = await axios.get(`/api/friends/profile/${id}`, { withCredentials: true });
-        return { id, ...data };
-    } catch {
-        return { id, name: "Unknown user", status: "offline" };
-    }
-}));
-
-// Amis en ligne en premier, puis ordre alphabétique
-const sortFriends = (list) => [...list].sort((a, b) =>
-    (a.status === 'online' ? 0 : 1) - (b.status === 'online' ? 0 : 1) || a.name.localeCompare(b.name));
-
-// Charge amis + invitations reçues, avec le profil (nom, statut) de chacun
-const fetchFriendsData = async () => {
-    const [friendsRes, invitesRes] = await Promise.all([
-        axios.get('/api/friends/list', { withCredentials: true }),
-        axios.get('/api/friends/invites', { withCredentials: true }),
-    ]);
-    const [friends, invites] = await Promise.all([
-        fetchProfiles(toIds(friendsRes.data)),
-        fetchProfiles(toIds(invitesRes.data)),
-    ]);
-    return { friends: sortFriends(friends), invites };
-};
 
 function StatusDot({ status }) {
     const online = status === 'online';
@@ -56,42 +23,16 @@ function StatusDot({ status }) {
 }
 
 export function Friends() {
-    const [requests, setRequests] = useState([]);
-    const [friendsList, setFriendsList] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    // Listes partagées et mises à jour en temps réel par FriendsProvider (socket /Friends)
+    const { friends: friendsList, requests, loading, error, reload: reloadFriends } = useFriends();
 
     const [newFriend, setNewFriend] = useState('');
     const [adding, setAdding] = useState(false);
-    const [feedback, setFeedback] = useState(null);
+    const [notice, setNotice] = useState(null);
     // id de la ligne en cours de traitement (désactive ses boutons)
     const [busyId, setBusyId] = useState(null);
     // id de l'ami dont on demande la confirmation de suppression
     const [confirmId, setConfirmId] = useState(null);
-
-    const applyFriendsData = useCallback(({ friends, invites }) => {
-        setFriendsList(friends);
-        setRequests(invites);
-        setError(null);
-        setLoading(false);
-    }, []);
-
-    const applyLoadError = useCallback((err) => {
-        setError(err.response?.data?.message || "Failed to load your friends");
-        setLoading(false);
-    }, []);
-
-    const reloadFriends = useCallback(
-        () => fetchFriendsData().then(applyFriendsData, applyLoadError),
-        [applyFriendsData, applyLoadError]);
-
-    useEffect(() => {
-        let cancelled = false;
-        fetchFriendsData().then(
-            (data) => { if (!cancelled) applyFriendsData(data); },
-            (err) => { if (!cancelled) applyLoadError(err); });
-        return () => { cancelled = true; };
-    }, [applyFriendsData, applyLoadError]);
 
     const addFriend = async (e) => {
         e.preventDefault();
@@ -99,17 +40,17 @@ export function Friends() {
         if (!friendUsername) return;
 
         setAdding(true);
-        setFeedback(null);
+        setNotice(null);
         try {
             const response = await axios.post('/api/friends/add', { friendUsername }, { withCredentials: true });
             const message = response.data?.message;
             // 201 : invitation envoyée ; 200 "Friendship accepted" : il nous avait déjà invité
             const done = response.status === 201 || message === "Friendship accepted";
-            setFeedback({ type: done ? 'success' : 'info', message });
+            setNotice({ type: done ? 'success' : 'info', message });
             if (done) setNewFriend('');
             if (message === "Friendship accepted") reloadFriends();
         } catch (err) {
-            setFeedback({ type: 'error', message: err.response?.data?.message || "Failed to reach the server" });
+            setNotice({ type: 'error', message: errorMessage(err) });
         } finally {
             setAdding(false);
         }
@@ -120,14 +61,14 @@ export function Friends() {
     const friendAction = async (user, route) => {
         setBusyId(user.id);
         setConfirmId(null);
-        setFeedback(null);
+        setNotice(null);
         try {
             const response = await axios.post(`/api/friends/${route}`,
                 { friendUsername: user.name }, { withCredentials: true });
-            setFeedback({ type: 'success', message: response.data?.message });
+            setNotice({ type: 'success', message: response.data?.message });
             await reloadFriends();
         } catch (err) {
-            setFeedback({ type: 'error', message: err.response?.data?.message || "Failed to reach the server" });
+            setNotice({ type: 'error', message: errorMessage(err) });
         } finally {
             setBusyId(null);
         }
@@ -152,10 +93,10 @@ export function Friends() {
                         ADD
                     </button>
                 </div>
-                {feedback && <p className={feedbackStyle[feedback.type]}>{feedback.message}</p>}
+                {notice && <p className={feedback[notice.type]}>{notice.message}</p>}
             </form>
 
-            {error && <p className="text-center text-sm font-semibold text-red-500">{error}</p>}
+            {error && <p className={feedback.error}>{error}</p>}
 
             {requests.length > 0 && (
                 <div className="flex flex-col gap-3">

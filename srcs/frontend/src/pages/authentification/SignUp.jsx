@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router';
 import axios from 'axios';
 import { PrivacyLink } from '../../components/PrivacyLink';
-import { panel, inputClass, btnPrimary, hintTooltip, tooltipOrHidden, logoGradient } from '../../styles/ui';
+import { panel, inputClass, btnPrimary, errorTooltip, tooltipOrHidden, logoGradient } from '../../styles/ui';
 
 const fieldLabel = "mb-1.5 text-sm font-semibold text-slate-600";
 const authInput = `${inputClass} p-3 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.2)]`;
@@ -171,7 +171,7 @@ export function SignUp() {
                     </div>
 
                     <div className="relative">
-                        {error && <div className={`${hintTooltip} xl:top-[-8px]`}>{error}</div>}
+                        {error && <div className={`${errorTooltip} xl:top-[-8px]`}>{error}</div>}
                     </div>
 
                         <button

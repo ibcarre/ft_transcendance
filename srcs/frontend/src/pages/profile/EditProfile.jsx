@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/useAuth';
-import { inputClass, btnPrimary, labelClass, hint, success, hintOrHidden } from '../../styles/ui';
+import { Avatar } from '../../components/Avatar';
+import { uploadAvatar, fetchMe, errorMessage, MAX_AVATAR_SIZE } from '../../services/user';
+import { inputClass, btnPrimary, labelClass, feedback, hintOrHidden } from '../../styles/ui';
 
 const section = "flex flex-col gap-2";
 const inputRow = "mb-0.5 flex gap-3";
@@ -12,7 +14,7 @@ const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9\-_]{3,23}$/;
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,64}$/;
 
-export function EditProfile({ defaultPic }) {
+export function EditProfile() {
     const { userInfo, setUserInfo } = useAuth();
 
     // 1. Les états des champs
@@ -31,6 +33,7 @@ export function EditProfile({ defaultPic }) {
     // 2. Les états de l'API (un message par section)
     const [status, setStatus] = useState({});
     const [loading, setLoading] = useState(null);
+    const fileInput = useRef(null);
 
     // 3. ÉTATS DÉRIVÉS : Validation calculée automatiquement
     const validName = USER_REGEX.test(username);
@@ -52,8 +55,7 @@ export function EditProfile({ defaultPic }) {
                 setStatus((prev) => ({ ...prev, [field]: { ok: true, message: response.data.message } }));
             }
         } catch (err) {
-            const message = err.response?.data?.message || "Failed to reach the server";
-            setStatus((prev) => ({ ...prev, [field]: { ok: false, message } }));
+            setStatus((prev) => ({ ...prev, [field]: { ok: false, message: errorMessage(err) } }));
         } finally {
             setLoading(null);
         }
@@ -86,16 +88,51 @@ export function EditProfile({ defaultPic }) {
         });
     };
 
+    // Clic sur l'avatar -> sélecteur de fichier -> upload -> on recharge le profil (nouveau avatar_url)
+    const handleAvatar = async (e) => {
+        const file = e.target.files?.[0];
+        e.target.value = '';   // permet de re-sélectionner le même fichier
+        if (!file) return;
+
+        const setPicture = (ok, message) => setStatus((prev) => ({ ...prev, picture: { ok, message } }));
+        if (!file.type.startsWith('image/')) return setPicture(false, "Please choose an image (jpg, png, webp...)");
+        if (file.size > MAX_AVATAR_SIZE) return setPicture(false, "Image shouldn't be bigger than 2MB");
+
+        setStatus((prev) => ({ ...prev, picture: null }));
+        setLoading('picture');
+        try {
+            const response = await uploadAvatar(file);
+            setUserInfo(await fetchMe());
+            setPicture(true, response.data?.message || "Profile picture changed");
+        } catch (err) {
+            setPicture(false, errorMessage(err));
+        } finally {
+            setLoading(null);
+        }
+    };
+
     const renderStatus = (field) => {
         const s = status[field];
         if (!s) return null;
-        return <div className={s.ok ? success : hint}>{s.message}</div>;
+        return <div className={s.ok ? feedback.success : feedback.error}>{s.message}</div>;
     };
 
     return (
         <div className="flex w-full flex-col gap-6 sm:w-[400px]">
             <div className="flex flex-col items-center gap-3 border-b border-slate-200 pb-5">
-                <img src={defaultPic} alt="Profile" className="size-[100px] rounded-full border-[3px] border-blue-500 object-cover" />
+                <button
+                    type="button"
+                    className="group relative cursor-pointer rounded-full disabled:cursor-wait"
+                    title="Change your profile picture"
+                    disabled={loading === 'picture'}
+                    onClick={() => fileInput.current?.click()}>
+                    <Avatar file={userInfo.avatar_url} className="size-[100px]" />
+                    <span className={`absolute inset-0 flex items-center justify-center rounded-full bg-slate-900/50 text-xs font-bold text-white transition-opacity ${loading === 'picture' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                        {loading === 'picture' ? 'Uploading...' : 'Change'}
+                    </span>
+                </button>
+                <input ref={fileInput} type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
+                {renderStatus('picture')}
             </div>
 
             <form className={section} onSubmit={handleUsername}>
