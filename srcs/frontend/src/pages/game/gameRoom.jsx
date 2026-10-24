@@ -297,6 +297,24 @@ function OnlineGameRoom() {
 // INTERFACE COMMUNE — Play Online + Play Offline
 // ============================================================
 
+function RoundCountdown() {
+    const [seconds, setSeconds] = useState(ROUND_PAUSE_SECONDS);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setSeconds((current) => Math.max(1, current - 1));
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <p className="text-center font-semibold text-blue-700">
+            Next round starts automatically in {seconds} second{seconds !== 1 ? 's' : ''}.
+        </p>
+    );
+}
+
 function GameScreen({
 	game,
 	meId,
@@ -310,27 +328,6 @@ function GameScreen({
 }) {
 	const navigate = useNavigate();
 	const [modalType, setModalType] = useState(null);
-
-	const [roundCountdown, setRoundCountdown] = useState(null);
-
-	useEffect(() => {
-	    if (offline || game.phase !== 'ROUND_FINISHED') {
-	        setRoundCountdown(null);
-	        return;
-	    }
-	    setRoundCountdown(ROUND_PAUSE_SECONDS);
-	    const interval = setInterval(() => {
-	        setRoundCountdown((current) => {
-	            if (current === null) return null;
-	            if (current <= 1) {
-	                clearInterval(interval);
-	                return 1;
-	            }
-	            return current - 1;
-	        });
-	    }, 1000);
-	    return () => clearInterval(interval);
-	}, [offline, game.phase, game.lastRound?.roundNumber]);
 
 	const me = game.players.find((p) => p.id === meId);
 	const opponents = game.players.filter((p) => p.id !== meId);
@@ -621,9 +618,7 @@ function GameScreen({
 				Next round
 				</button>
 			) : (
-				<p className="text-center font-semibold text-blue-700">
-					Next round starts automatically in {roundCountdown ?? ROUND_PAUSE_SECONDS} second{(roundCountdown ?? ROUND_PAUSE_SECONDS) > 1 ? 's' : ''}.
-				</p>
+			    <RoundCountdown key={game.roundNumber} />
 			)}
 			</div>
 			</Modal>
