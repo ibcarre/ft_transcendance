@@ -36,7 +36,7 @@ export function Lobby() {
 	const enterRoom = (roomId) => {
 	    setMyRoomId(roomId);
 	    setModalType(null);
-	    navigate(`/game?roomId=${encodeURIComponent(roomId)}`);
+	    navigate(`/game?room=${encodeURIComponent(roomId)}`);
 	};
 
     // Quitte la room
