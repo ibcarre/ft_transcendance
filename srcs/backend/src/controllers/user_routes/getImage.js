@@ -15,7 +15,8 @@ var getImage = async (req, res) => {
 			if (err) {
 				console.error('Error sending file:', err);
 				res.status(404).sendFile("default_pic.jpg", options, function (err) {
-					res.status(500).json({message: "File error"});
+					if (err)
+						res.status(500).json({message: "File error"});
 				});
 			} else {
 				console.log('app=node INFO: Sent:', fileName);
