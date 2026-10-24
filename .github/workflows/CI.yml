@@ -39,9 +39,9 @@ jobs:
 
       - name: Frontend
         run: |
-          podman exec -it front_skyjo npm ci
-          podman exec -it front_skyjo npm run lint
-          podman exec -it front_skyjo npm run build
+          docker exec -it front_skyjo npm ci
+          docker exec -it front_skyjo npm run lint
+          docker exec -it front_skyjo npm run build
 
       - name: Backend
         run: docker exec -it back_skyjo npm ci
