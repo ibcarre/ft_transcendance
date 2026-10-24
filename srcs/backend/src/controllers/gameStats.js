@@ -17,7 +17,9 @@ exports.nbLosses = async (req, res) => {
 		const user = req.user;
 		const games = await db.any('SELECT COUNT(*) FROM users_in_game INNER JOIN games ON users_in_game.game_id = games.id WHERE users_in_game.user_id = $1 AND games.status = $2', [user.id, 'finished']);
 		const wins = await db.any('SELECT COUNT(*) FROM winner WHERE user_id = $1', user.id);
-		const losses = {count: games - wins};
+		console.log(games)
+		console.log(wins);
+		const losses = {count: games[0].count - wins[0].count};
 		if (!losses.count)
 			losses.count = 0;
 		return (res.status(200).send(losses));

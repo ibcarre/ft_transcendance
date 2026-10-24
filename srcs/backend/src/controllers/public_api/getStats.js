@@ -3,7 +3,7 @@ const db = require('../../db/db')
 exports.nbWins = async (req, res) => {
     try {
         const id = req.params.userId;
-		const wins = await db.any('SELECT nb_wins FROM users WHERE id = $1', id);
+		const wins = await db.any('SELECT COUNT(*) FROM winner WHERE user_id = $1', id);
 		return (res.status(200).send(wins));
     }
     catch (error) {
