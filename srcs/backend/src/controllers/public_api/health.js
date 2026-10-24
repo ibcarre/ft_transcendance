@@ -3,7 +3,7 @@ const db = require('../../db/db');
 var health = async (req, res) => {
 	try {
 		await db.one('SELECT 1');
-		return (res.status(200).send());
+		return (res.sendStatus(200));
 	}
 	catch (error) {
 		console.log("app=node INFO: ", error);
