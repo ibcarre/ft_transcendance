@@ -92,7 +92,7 @@ exports.joinRoom = async (req, res) => {
         await db.tx({mode}, async t => {
             room = await t.one('SELECT * FROM games WHERE id = $1', id);
             if (!password && room.ispass)
-                return (res.status(401).json({message: "Need a password"}))
+                throw(Error("Wrong Password"));
             if (password) {
                 const passwordMatch = await bcrypt.compare(password, room.password);
                 if (!passwordMatch)
@@ -108,14 +108,14 @@ exports.joinRoom = async (req, res) => {
             let others = await t.any('SELECT seat FROM users_in_game WHERE game_id = $1', id);
             var dataArray = [];
             for(var o in others) {
-                dataArray.push(others[o]);
+                dataArray.push(others[o].seat);
             }
             dataArray = dataArray.sort();
             let seat = 0;
             for (let i = 0; i <= dataArray.length; i++) {
                 if (i == dataArray.length && i !== 0)
-                    seat = dataArray.at(-1).seat + 1;
-                if (i !== dataArray.length && i !== dataArray.at(i).seat) {
+                    seat = dataArray.at(-1) + 1;
+                if (i !== dataArray.length && i !== dataArray.at(i)) {
                     seat = i;
                     break;
                 }
