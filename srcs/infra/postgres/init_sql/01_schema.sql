@@ -37,7 +37,8 @@ CREATE TABLE users_in_game (
 	seat		int NOT NULL DEFAULT 0,
 	CONSTRAINT	uq_game_seats UNIQUE (game_id, seat),
 	CONSTRAINT	chk_maxSeat CHECK (seat >= 0 AND seat <= 3),
-	score		int NOT NULL DEFAULT 0
+	score		int NOT NULL DEFAULT 0,
+	ready		boolean NOT NULL DEFAULT false
 );
 
 CREATE TABLE friends (
