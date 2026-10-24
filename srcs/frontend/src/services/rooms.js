@@ -18,3 +18,22 @@ export const joinRoom = (roomId, password) =>
 // Quitte la room
 export const leaveRoom = (roomId) =>
     axios.post(`/api/rooms/leaveRoom/${roomId}`, {}, { withCredentials: true });
+
+// Détails et participants du salon.
+export const getRoom = (roomId) =>
+    axios.get(`/api/rooms/${roomId}`, {
+        withCredentials: true
+    }).then((res) => res.data);
+
+// Démarrer une partie depuis le salon.
+export const startRoom = (roomId) =>
+    axios.post(`/api/rooms/${roomId}/start`, {}, {
+		withCredentials: true
+	}).then((res) => res.data);
+
+export const setRoomReady = (roomId, ready) =>
+    axios.post(
+        `/api/rooms/${roomId}/ready`,
+        { ready },
+        { withCredentials: true }
+    ).then((res) => res.data);

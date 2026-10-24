@@ -1,123 +1,156 @@
-//
-// module.exports = (io) => {
-//     io.of('/Rooms').on('connection', function () {
-//         console.log("app=node INFO: user connected");
-//     })
-// }
-
-
 const gameManager = require('../../../game/gameService');
 
 const roomName = (gameId) => `game:${gameId}`;
+const ROUND_PAUSE_MS = 5000;
 
 module.exports = (io) => {
-	const namespace = io.of('/Rooms');
+    const namespace = io.of('/Rooms');
 
-	namespace.on('connection', (socket) => {
-		const userId = socket.user.id;
+    // One timer maximum per game.
+    const roundTimers = new Map();
 
-		const errorReply = (ack, code) => {
-			const error = { code };
-			if (typeof ack === 'function')
-				ack({ ok: false, error });
-			else
-				socket.emit('game:error', error);
-		};
+    const scheduleNextRound = (gameId, state) => {
+        if (
+            state.phase !== 'ROUND_FINISHED' ||
+            roundTimers.has(gameId)
+        ) {
+            return;
+        }
 
-		const successReply = (ack) => {
-			if (typeof ack === 'function')
-				ack({ ok: true });
-		};
+        const expectedVersion = state.version;
 
-		const validGameId = (payload) =>
-			typeof payload?.gameId === 'string'
-				&& payload.gameId.length > 0;
+        const timer = setTimeout(() => {
+            roundTimers.delete(gameId);
 
-		const handle = (event, callback) => {
-			socket.on(event, async (payload, ack) => {
-				try {
-					await callback(payload, ack);
-				} catch (error) {
-					console.error(`app=node ERROR: ${event}`, error);
-					errorReply(ack, 'SERVER_ERROR');
-				}
-			});
-		};
+            const result = gameManager.advanceRound(
+                gameId,
+                expectedVersion
+            );
 
-		handle('game:subscribe', async (payload, ack) => {
-			if (!validGameId(payload))
-				return errorReply(ack, 'INVALID_ACTION_PAYLOAD');
+            if (result.ok) {
+                namespace.to(roomName(gameId)).emit(
+                    'game:state',
+                    result.publicState
+                );
+            }
+        }, ROUND_PAUSE_MS);
 
-			const result = gameManager.getPublicState(
-				payload.gameId, userId
-			);
+        roundTimers.set(gameId, timer);
+    };
 
-			if (!result.ok)
-				return errorReply(ack, result.error.code);
+    namespace.on('connection', (socket) => {
+        const userId = socket.user.id;
 
-			await socket.join(roomName(payload.gameId));
-			socket.emit('game:state', result.publicState);
-			successReply(ack);
-		});
+        const errorReply = (ack, code) => {
+            const error = { code };
 
-		handle('game:action', (payload, ack) => {
-			if (!validGameId(payload))
-				return errorReply(ack, 'INVALID_ACTION_PAYLOAD');
+            if (typeof ack === 'function') {
+                ack({ ok: false, error });
+            } else {
+                socket.emit('game:error', error);
+            }
+        };
 
-			if (!socket.rooms.has(roomName(payload.gameId)))
-				return errorReply(ack, 'GAME_UNAVAILABLE');
+        const successReply = (ack) => {
+            if (typeof ack === 'function') {
+                ack({ ok: true });
+            }
+        };
 
-			const result = gameManager.submitAction(
-				payload.gameId,
-				userId,
-				payload.action,
-				payload.expectedVersion
-			);
+        const validGameId = (payload) =>
+            typeof payload?.gameId === 'string' &&
+            payload.gameId.length > 0;
 
-			if (!result.ok) {
-				if (result.error.code === 'VERSION_CONFLICT') {
-					const latest = gameManager.getPublicState(
-						payload.gameId, userId
-					);
-					if (latest.ok)
-						socket.emit('game:state', latest.publicState);
-				}
-				return errorReply(ack, result.error.code);
-			}
+        const handle = (event, callback) => {
+            socket.on(event, async (payload, ack) => {
+                try {
+                    await callback(payload, ack);
+                } catch (error) {
+                    console.error(
+                        `app=node ERROR: ${event}`,
+                        error
+                    );
 
-			namespace.to(roomName(payload.gameId)).emit(
-				'game:state', result.publicState
-			);
-			successReply(ack);
-		});
+                    errorReply(ack, 'SERVER_ERROR');
+                }
+            });
+        };
 
-		handle('game:nextRound', (payload, ack) => {
-			if (!validGameId(payload))
-				return errorReply(ack, 'INVALID_ACTION_PAYLOAD');
+        handle('game:subscribe', async (payload, ack) => {
+            if (!validGameId(payload)) {
+                return errorReply(
+                    ack,
+                    'INVALID_ACTION_PAYLOAD'
+                );
+            }
 
-			if (!socket.rooms.has(roomName(payload.gameId)))
-				return errorReply(ack, 'GAME_UNAVAILABLE');
+            const result = gameManager.getPublicState(
+                payload.gameId,
+                userId
+            );
 
-			const authorized = gameManager.getPublicState(
-				payload.gameId, userId
-			);
+            if (!result.ok) {
+                return errorReply(ack, result.error.code);
+            }
 
-			if (!authorized.ok)
-				return errorReply(ack, authorized.error.code);
+            await socket.join(roomName(payload.gameId));
 
-			const result = gameManager.advanceRound(
-				payload.gameId,
-				payload.expectedVersion
-			);
+            socket.emit('game:state', result.publicState);
 
-			if (!result.ok)
-				return errorReply(ack, result.error.code);
+            successReply(ack);
+        });
 
-			namespace.to(roomName(payload.gameId)).emit(
-				'game:state', result.publicState
-			);
-			successReply(ack);
-		});
-	});
+        handle('game:action', (payload, ack) => {
+            if (!validGameId(payload)) {
+                return errorReply(
+                    ack,
+                    'INVALID_ACTION_PAYLOAD'
+                );
+            }
+
+            if (!socket.rooms.has(roomName(payload.gameId))) {
+                return errorReply(ack, 'GAME_UNAVAILABLE');
+            }
+
+            const result = gameManager.submitAction(
+                payload.gameId,
+                userId,
+                payload.action,
+                payload.expectedVersion
+            );
+
+            if (!result.ok) {
+                if (result.error.code === 'VERSION_CONFLICT') {
+                    const latest = gameManager.getPublicState(
+                        payload.gameId,
+                        userId
+                    );
+
+                    if (latest.ok) {
+                        socket.emit(
+                            'game:state',
+                            latest.publicState
+                        );
+                    }
+                }
+
+                return errorReply(ack, result.error.code);
+            }
+
+            namespace.to(roomName(payload.gameId)).emit(
+                'game:state',
+                result.publicState
+            );
+
+            scheduleNextRound(
+                payload.gameId,
+                result.publicState
+            );
+
+            successReply(ack);
+        });
+
+        // No game:nextRound handler:
+        // round transitions are controlled by the server.
+    });
 };
-

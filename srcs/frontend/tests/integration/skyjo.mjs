@@ -340,7 +340,7 @@ try {
             fields: {
                 name: roomName,
                 password: roomPassword,
-                max_players: '2'
+                max_players: '3'
             }
         },
         201
@@ -373,6 +373,29 @@ try {
         },
         201
     );
+
+	// ------------------------------------------------------------
+	// 3b. Both players must be ready
+	// ------------------------------------------------------------
+
+	console.log('3b) Both players become ready');
+
+	for (const user of users) {
+	    const response = await expectHttp(
+	        'POST',
+	        `/rooms/${gameId}/ready`,
+	        {
+	            cookie: `access_token=${user.token}`,
+	            fields: {
+	                ready: 'true'
+	            }
+	        },
+	        200
+	    );
+
+	    assert.equal(response.data.ready, true);
+	    assert.equal(response.data.started, false);
+	}
 
     // --------------------------------------------------------
     // 4. Start game from HTTP controller
@@ -524,14 +547,44 @@ try {
         'revealed'
     );
 
+	// ------------------------------------------------------------
+	// 7. Leaving an active match releases all players
+	// ------------------------------------------------------------
+
+	console.log('7) Player A leaves: the match is cancelled');
+
+	const left = await expectHttp(
+	    'POST',
+	    `/rooms/leaveRoom/${gameId}`,
+	    {
+	        cookie: `access_token=${users[0].token}`
+	    },
+	    200
+	);
+
+	assert.equal(left.data.cancelled, true);
+
+	for (const user of users) {
+	    const result = await expectHttp(
+	        'GET',
+	        '/user/gameRoom',
+	        {
+	            cookie: `access_token=${user.token}`
+	        },
+	        200
+	    );
+
+	    assert.equal(result.data, null);
+	}
+
     // --------------------------------------------------------
     // Success
     // --------------------------------------------------------
 
     console.log(
-        '\nPASS: signup, login, create, join, start, ' +
-        'subscribe x2, action + broadcast x2'
-    );
+	    '\nPASS: signup, login, room management, ready, start, ' +
+	    'Socket.IO synchronization and match cancellation'
+	);
 
     console.log(`Room/game ID: ${gameId}`);
 
