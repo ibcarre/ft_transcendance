@@ -4,7 +4,8 @@ exports.nbWins = async (req, res) => {
     try {
 		const user = req.user;
 		const wins = await db.any('SELECT COUNT(*) FROM winner WHERE user_id = $1', user.id);
-		return (res.status(200).send(wins));
+		const count = wins[0];
+		return (res.status(200).send(count));
     }
     catch (error) {
 		console.log("app=node level=ERROR ", error);
