@@ -39,12 +39,12 @@ jobs:
 
       - name: Frontend
         run: |
-          docker exec -it front_skyjo npm ci
-          docker exec -it front_skyjo npm run lint
-          docker exec -it front_skyjo npm run build
+          podman exec -it front_skyjo npm ci
+          podman exec -it front_skyjo npm run lint
+          podman exec -it front_skyjo npm run build
 
       - name: Backend
-        run: docker exec -it back_skyjo npm ci
+        run: podman exec -it back_skyjo npm ci
 
       - name: Game test
         run: make game-test
