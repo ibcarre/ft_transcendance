@@ -1,7 +1,23 @@
 const gameManager = require('../../../game/gameService');
+const db = require('../../../db/db');
 
 const roomName = (gameId) => `game:${gameId}`;
 const ROUND_PAUSE_MS = 5000;
+
+const persistGameOver = async (gameId, state) => {
+    if (state.phase !== 'GAME_OVER') {
+        return;
+    }
+
+    try {
+        await db.none(
+            "UPDATE games SET status = 'finished' WHERE id = $1",
+            [gameId]
+        );
+    } catch (error) {
+        console.error('app=node ERROR: persist game over', error);
+    }
+};
 
 module.exports = (io) => {
     const namespace = io.of('/Rooms');
@@ -32,6 +48,7 @@ module.exports = (io) => {
                     'game:state',
                     result.publicState
                 );
+				persistGameOver(gameId, result.publicState);
             }
         }, ROUND_PAUSE_MS);
 
@@ -100,7 +117,7 @@ module.exports = (io) => {
             successReply(ack);
         });
 
-        handle('game:action', (payload, ack) => {
+        handle('game:action', async (payload, ack) => {
             if (!validGameId(payload)) {
                 return errorReply(
                     ack,
@@ -138,19 +155,21 @@ module.exports = (io) => {
             }
 
             namespace.to(roomName(payload.gameId)).emit(
-                'game:state',
-                result.publicState
-            );
+			    'game:state',
+			    result.publicState
+			);
 
-            scheduleNextRound(
-                payload.gameId,
-                result.publicState
-            );
+			await persistGameOver(
+			    payload.gameId,
+			    result.publicState
+			);
 
-            successReply(ack);
+			scheduleNextRound(
+			    payload.gameId,
+			    result.publicState
+			);
+
+			successReply(ack);
         });
-
-        // No game:nextRound handler:
-        // round transitions are controlled by the server.
     });
 };

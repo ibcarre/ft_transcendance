@@ -13,6 +13,7 @@ import { Scoreboard } from './Scoreboard';
 import { createMockGame, gameReducer, ME_ID } from './mockGame';
 
 const BOT_DELAY_MS = 900;
+const ROUND_PAUSE_SECONDS = 5;
 
 const btnSecondary = "cursor-pointer rounded-lg border-2 border-blue-500 bg-white px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-semibold text-blue-600 transition hover:-translate-y-0.5 hover:bg-sky-50";
 const btnDanger = "cursor-pointer rounded-lg border-2 border-red-500 bg-red-500 px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-red-600";
@@ -310,6 +311,27 @@ function GameScreen({
 	const navigate = useNavigate();
 	const [modalType, setModalType] = useState(null);
 
+	const [roundCountdown, setRoundCountdown] = useState(null);
+
+	useEffect(() => {
+	    if (offline || game.phase !== 'ROUND_FINISHED') {
+	        setRoundCountdown(null);
+	        return;
+	    }
+	    setRoundCountdown(ROUND_PAUSE_SECONDS);
+	    const interval = setInterval(() => {
+	        setRoundCountdown((current) => {
+	            if (current === null) return null;
+	            if (current <= 1) {
+	                clearInterval(interval);
+	                return 1;
+	            }
+	            return current - 1;
+	        });
+	    }, 1000);
+	    return () => clearInterval(interval);
+	}, [offline, game.phase, game.lastRound?.roundNumber]);
+
 	const me = game.players.find((p) => p.id === meId);
 	const opponents = game.players.filter((p) => p.id !== meId);
 
@@ -600,7 +622,7 @@ function GameScreen({
 				</button>
 			) : (
 				<p className="text-center font-semibold text-blue-700">
-				Next round starts automatically in 5 seconds.
+					Next round starts automatically in {roundCountdown ?? ROUND_PAUSE_SECONDS} second{(roundCountdown ?? ROUND_PAUSE_SECONDS) > 1 ? 's' : ''}.
 				</p>
 			)}
 			</div>

@@ -1,6 +1,7 @@
 const db = require('../db/db');
 const gameManager = require('../game/gameService');
 const { startLockedRoom } = require('./startRoomGame');
+const { RoomDeleted } = require('../socket/namespaces/gamerooms/events/Roomdeleted');
 
 exports.setRoomReady = async (req, res) => {
     const { roomId } = req.params;
