@@ -22,7 +22,10 @@ export function App() {
         <Route path="lobby" element={isAuth ? <Lobby /> : <Navigate replace to="/" />} />
         <Route path="profile" element={isAuth ? <Profile /> : <Navigate replace to="/" />} />
         <Route path="game" element={isAuth ? <GameRoom /> : <Navigate replace to="/" />} />
+        {/* Partie en ligne : /game/room=<id de la room> */}
+        <Route path="game/:roomParam" element={isAuth ? <GameRoom /> : <Navigate replace to="/" />} />
         <Route path="privacy" element={<Privacy />} />
+        <Route path="*" element={<Navigate replace to={isAuth ? "/lobby" : "/"} />} />
       </Routes>
     </div>
   );

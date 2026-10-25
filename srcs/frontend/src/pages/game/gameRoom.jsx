@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { Header } from '../../components/Header';
 import { Modal } from '../../components/Modal';
 import { Chat } from '../../components/Chat';
@@ -106,9 +106,12 @@ function OfflineGameRoom() {
 function OnlineGameRoom() {
 	const { userInfo } = useAuth();
 	const navigate = useNavigate();
-	const [params] = useSearchParams();
+	const { roomParam } = useParams();
 
-	const roomId = params.get('roomId');
+	// URL /game/room=<id> ; /game seul (ou autre chose) : on retrouve la room du joueur
+	const roomId = roomParam?.startsWith('room=')
+		? decodeURIComponent(roomParam.slice('room='.length)) || null
+		: null;
 	const online = useOnlineGame(roomId);
 	const handleLeave = async () => {
 		const success = await online.leave();
@@ -129,7 +132,7 @@ function OnlineGameRoom() {
 
 				navigate(
 					id
-						? `/game?roomId=${encodeURIComponent(id)}`
+						? `/game/room=${encodeURIComponent(id)}`
 						: '/lobby',
 					{ replace: true }
 				);

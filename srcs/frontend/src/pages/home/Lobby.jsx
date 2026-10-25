@@ -36,7 +36,7 @@ export function Lobby() {
 	const enterRoom = (roomId) => {
 	    setMyRoomId(roomId);
 	    setModalType(null);
-	    navigate(`/game?room=${encodeURIComponent(roomId)}`);
+	    navigate(`/game/room=${encodeURIComponent(roomId)}`);
 	};
 
     // Quitte la room
@@ -84,7 +84,7 @@ export function Lobby() {
                         <div className={`${panel} -order-1 flex w-full max-w-xl flex-col items-center gap-4 p-6 text-center lg:order-none lg:w-80`}>
                             <p className="text-xl font-bold text-slate-800">You're already in a room</p>
                             <p className="text-sm text-slate-600">Leave it before creating or joining another one.</p>
-                            <button className={`${btnPrimary} w-full py-3 text-base font-bold`} onClick={() => navigate(`/game?roomId=${encodeURIComponent(myRoomId)}`)}>
+                            <button className={`${btnPrimary} w-full py-3 text-base font-bold`} onClick={() => navigate(`/game/room=${encodeURIComponent(myRoomId)}`)}>
                                 Back to the room
                             </button>
                             <button
