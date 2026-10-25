@@ -9,14 +9,41 @@ const persistGameOver = async (gameId, state) => {
         return;
     }
 
-    try {
-        await db.none(
+    await db.tx(async (t) => {
+        const room = await t.oneOrNone(
+            'SELECT status FROM games WHERE id = $1 FOR UPDATE', [gameId]
+        );
+
+        if (!room) {
+            throw new Error(`Game ${gameId} not found`);
+        }
+
+        // Already recorded: do not insert winners again.
+        if (room.status === 'finished') {
+            return;
+        }
+
+        if (room.status !== 'playing') {
+            throw new Error(`Cannot finish a game with status ${room.status}`);
+        }
+
+        if (!state.winnerIds?.length) {
+            throw new Error('Finished game has no winners');
+        }
+
+        for (const winnerId of state.winnerIds) {
+            await t.none(
+                `INSERT INTO winner (game_id, user_id)
+                 VALUES ($1, $2)`,
+                [gameId, winnerId]
+            );
+        }
+
+        await t.none(
             "UPDATE games SET status = 'finished' WHERE id = $1",
             [gameId]
         );
-    } catch (error) {
-        console.error('app=node ERROR: persist game over', error);
-    }
+    });
 };
 
 module.exports = (io) => {
@@ -154,14 +181,14 @@ module.exports = (io) => {
                 return errorReply(ack, result.error.code);
             }
 
-            namespace.to(roomName(payload.gameId)).emit(
-			    'game:state',
-			    result.publicState
+			await persistGameOver(
+				payload.gameId,
+				result.publicState
 			);
 
-			await persistGameOver(
-			    payload.gameId,
-			    result.publicState
+			namespace.to(roomName(payload.gameId)).emit(
+				'game:state',
+				result.publicState
 			);
 
 			scheduleNextRound(

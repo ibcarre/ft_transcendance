@@ -57,13 +57,10 @@ game-test:
 #
 
 clean:
-	${COMPOSE_DEV} down --remove-orphans
+	${COMPOSE_DEV} down --remove-orphans --rmi local
 
 clean-volumes:
 	$(COMPOSE_DEV) down --remove-orphans -v
-
-clean-images:
-	$(COMPOSE_DEV) down --remove-orphans --rmi local
 
 fclean: 
 	${COMPOSE_DEV} down --rmi all --volumes --remove-orphans
