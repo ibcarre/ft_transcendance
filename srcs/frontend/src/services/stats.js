@@ -12,17 +12,19 @@ export const fetchStats = async () => {
         get('/api/gameStats/losses'),
         get('/api/gameStats/gamesList'),
     ]);
-    return {
-        wins: wins?.[0]?.nb_wins ?? 0,
-        losses: losses?.[0]?.nb_losses ?? 0,
-        games: Array.isArray(games) ? games : [],
-    };
+	return {
+		wins: Number(wins?.count ?? 0),
+		losses: Number(losses?.count ?? 0),
+		games: Array.isArray(games) ? games : [],
+	};
 };
 
-// Résultat d'une partie pour l'utilisateur
-export const gameResult = (game, myId) => {
-    if (game.winner === myId) return 'win';
-    if (game.status === 'finished') return 'loss';
-    if (game.status === 'cancelled') return 'cancelled';
-    return 'ongoing';   // pending ou playing
+export const gameResult = (game) => {
+    if (game.status === 'finished') {
+        return game.winner ? 'win' : 'loss';
+    }
+    if (game.status === 'cancelled') {
+        return 'cancelled';
+    }
+    return 'ongoing';
 };
