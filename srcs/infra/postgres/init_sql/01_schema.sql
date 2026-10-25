@@ -15,7 +15,7 @@ CREATE TABLE games (
 	id			uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	password	text,
 	ispass		int,
-	name		text NOT NULL UNIQUE,
+	name		text NOT NULL,
 	status		text NOT NULL DEFAULT 'pending',
 	CONSTRAINT	chk_status CHECK (status IN ('playing', 'finished', 'cancelled', 'pending')),
 	goal		int NOT NULL DEFAULT 100,
