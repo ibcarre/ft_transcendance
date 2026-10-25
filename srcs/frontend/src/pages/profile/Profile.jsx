@@ -5,6 +5,8 @@ import { EditProfile } from './EditProfile';
 import { Header } from '../../components/Header';
 import { Avatar } from '../../components/Avatar';
 import { useAuth } from '../../context/useAuth';
+import { useFriends } from '../../context/useFriends';
+import { sendFriendRequest } from '../../services/friends';
 import { PrivacyLink } from '../../components/PrivacyLink';
 import { fetchMyStats, fetchUserProfile, gameResult } from '../../services/stats';
 import { errorMessage } from '../../services/user';
@@ -27,11 +29,16 @@ const RESULTS = {
 export function Profile({ id }) {
     const { userInfo } = useAuth();
     const isMe = id === userInfo.id;
+    // Amis et invitations reçues, à jour en temps réel (socket /Friends)
+    const { friends, requests, reload: reloadFriends } = useFriends();
 
     const [editModal, setEditModal] = useState(false);
     const [data, setData] = useState({ wins: 0, losses: 0, games: [] });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [adding, setAdding] = useState(false);
+    const [requestSent, setRequestSent] = useState(false);
+    const [addError, setAddError] = useState(null);
 
     useEffect(() => {
         let active = true;
@@ -45,6 +52,36 @@ export function Profile({ id }) {
     }, [id, isMe]);
 
     const closeModal = () => setEditModal(false);
+
+    // data.friend du back vaut aussi true pour une invitation en attente : on se fie au contexte
+    const isFriend = friends.some((f) => f.id === id);
+    const invitedMe = requests.some((r) => r.id === id);
+
+    // Ami retiré (par moi ou par lui) : data.friend, chargé avec le profil, n'est plus à jour
+    const [wasFriend, setWasFriend] = useState(isFriend);
+    const [friendRemoved, setFriendRemoved] = useState(false);
+    if (isFriend !== wasFriend) {
+        setWasFriend(isFriend);
+        if (!isFriend) {
+            setFriendRemoved(true);
+            setRequestSent(false);
+        }
+    }
+    const iInvited = !isFriend && !invitedMe && (requestSent || (data.friend && !friendRemoved));
+
+    const addFriend = async () => {
+        setAdding(true);
+        setAddError(null);
+        try {
+            const message = await sendFriendRequest(data.name);
+            if (message === "Friendship accepted") await reloadFriends();
+            else setRequestSent(true);
+        } catch (err) {
+            setAddError(errorMessage(err));
+        } finally {
+            setAdding(false);
+        }
+    };
 
     // Mon nom / avatar viennent du contexte (à jour après EDIT), ceux des autres de l'API
     const name = isMe ? userInfo.name : data.name;
@@ -77,13 +114,25 @@ export function Profile({ id }) {
                                             <span className={`size-2.5 rounded-full ${online ? 'bg-green-500' : 'bg-slate-400'}`} />
                                             {online ? 'Online' : 'Offline'}
                                         </span>
-                                        {data.friend && <span className={`${badge} bg-green-100 text-green-700`}>Friend</span>}
+                                        {isFriend && <span className={`${badge} bg-green-100 text-green-700`}>Friend</span>}
                                     </div>
                                 )}
                             </div>
                         </div>
                         {isMe && (
                             <button className={`${btnPrimary} shrink-0 rounded-xl px-8 py-4 text-lg font-bold uppercase`} onClick={() => setEditModal(true)}>EDIT</button>
+                        )}
+                        {/* Profil d'un autre joueur qui n'est pas encore mon ami */}
+                        {!isMe && !loading && !error && !isFriend && (
+                            <div className="flex shrink-0 flex-col items-center gap-2 sm:items-end">
+                                <button
+                                    className={`${btnPrimary} rounded-xl px-8 py-4 text-lg font-bold uppercase`}
+                                    disabled={adding || iInvited}
+                                    onClick={addFriend}>
+                                    {adding ? '...' : iInvited ? 'Request sent' : invitedMe ? 'Accept request' : 'Add friend'}
+                                </button>
+                                {addError && <p className={`${feedback.error} mt-0`}>{addError}</p>}
+                            </div>
                         )}
                     </div>
 
