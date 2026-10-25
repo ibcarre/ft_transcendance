@@ -102,7 +102,7 @@ export function Header() {
 
             {modalType === 'chat' && (
                 <Modal title="Global chat" onClose={closeModal}>
-                    <Chat />
+                    <Chat onNavigate={closeModal} />
                 </Modal>
             )}
         </>
