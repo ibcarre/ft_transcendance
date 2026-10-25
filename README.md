@@ -32,6 +32,7 @@ The changes are:
 - All services are exposed locally to facilitate testing
 
 For information on the game engine, see [GE Dev Docs](./docs/DEV_DOC_GAME.en.md);
+For more informations on the global architecture, see [Architectural diagram](./docs/Skyjo_architecture_2026-10-25.pbg.svg)
 
 ## Ressources
 
