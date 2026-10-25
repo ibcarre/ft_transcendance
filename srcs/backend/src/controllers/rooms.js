@@ -240,24 +240,28 @@ exports.leaveRoom = async (req, res) => {
                     [roomId]
                 );
 
-                await t.none(
-                    'DELETE FROM users_in_game WHERE game_id = $1',
-                    [roomId]
-                );
+                // await t.none(
+                //     'DELETE FROM users_in_game WHERE game_id = $1',
+                //     [roomId]
+                // );
 
                 return { status: 200, kind: 'cancelled' };
             }
 
-            // Already finished or cancelled.
-            await t.none(
-                `DELETE FROM users_in_game
-                 WHERE game_id = $1 AND user_id = $2`,
-                [roomId, req.user.id]
-            );
+			// Finished game: keep participation for statistics and history.
+			if (room.status === 'finished') {
+				return { status: 200, kind: 'left' };
+			}
 
-            return { status: 200, kind: 'left' };
-        });
+			// Cancelled game: no historical result to preserve.
+			// await t.none(
+			// 	`DELETE FROM users_in_game
+			// 	WHERE game_id = $1 AND user_id = $2`,
+			// 	[roomId, req.user.id]
+			// );
+		});
 
+		return { status: 200, kind: 'left' };
         if (outcome.status !== 200) {
             return res.status(outcome.status).json({
                 message: outcome.message

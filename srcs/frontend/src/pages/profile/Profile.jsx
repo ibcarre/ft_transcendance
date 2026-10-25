@@ -92,7 +92,7 @@ export function Profile() {
                             )}
                             <ul className="flex max-h-[360px] flex-col gap-4 overflow-y-auto pr-2">
                                 {games.map((game, i) => {
-                                    const result = RESULTS[gameResult(game, userInfo.id)];
+                                    const result = RESULTS[gameResult(game)];
                                     return (
                                         <li key={`${game.created_at}-${i}`} className={`${matchItem} ${result.border}`} title={game.name}>
                                             <span className="truncate">{result.label}</span>
