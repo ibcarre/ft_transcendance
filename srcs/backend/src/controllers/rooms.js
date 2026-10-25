@@ -92,12 +92,14 @@ exports.joinRoom = async (req, res) => {
 			return (res.status(409).json({message: "You can only be in one room"}))
         var room;
         await db.tx({mode}, async t => {
-            room = await t.one('SELECT * FROM games WHERE id = $1 FOR UPDATE', [id]);
-			if (room.ispass) {
-			    if (!password || !(await bcrypt.compare(password, room.password))) {
-			        throw new Error('Wrong password');
-			    }
-			}
+            room = await t.one('SELECT * FROM games WHERE id = $1', id);
+            if (!password && room.ispass)
+                throw(Error("Wrong Password"));
+            if (password) {
+                const passwordMatch = await bcrypt.compare(password, room.password);
+                if (!passwordMatch)
+                        throw(Error("Wrong Password"));
+            }
             if (room.nb_players >= room.max_players) {
                 throw(Error("Full room"));
             }
@@ -108,14 +110,14 @@ exports.joinRoom = async (req, res) => {
             let others = await t.any('SELECT seat FROM users_in_game WHERE game_id = $1', id);
             var dataArray = [];
             for(var o in others) {
-                dataArray.push(others[o]);
+                dataArray.push(others[o].seat);
             }
             dataArray.sort((a, b) => a.seat - b.seat);
             let seat = 0;
             for (let i = 0; i <= dataArray.length; i++) {
                 if (i == dataArray.length && i !== 0)
-                    seat = dataArray.at(-1).seat + 1;
-                if (i !== dataArray.length && i !== dataArray.at(i).seat) {
+                    seat = dataArray.at(-1) + 1;
+                if (i !== dataArray.length && i !== dataArray.at(i)) {
                     seat = i;
                     break;
                 }
