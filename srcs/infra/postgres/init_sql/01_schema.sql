@@ -6,9 +6,7 @@ CREATE TABLE users (
 	password	text NOT NULL,
 	avatar_url	text,
 	status		text NOT NULL DEFAULT 'online',
-	CONSTRAINT	chk_status CHECK (status IN ('online', 'offline')),
-	nb_wins		int DEFAULT 0,
-	nb_losses	int DEFAULT 0
+	CONSTRAINT	chk_status CHECK (status IN ('online', 'offline'))
 );
 
 CREATE TABLE games (
@@ -25,8 +23,12 @@ CREATE TABLE games (
 	max_players	int NOT NULL DEFAULT 4,
 	CONSTRAINT	max_players CHECK (max_players >= 2 AND max_players <= 4),
 	created_at	timestamptz NOT NULL DEFAULT now(),
-	created_by	text NOT NULL REFERENCES users(name) ON UPDATE CASCADE,
-	winner		uuid REFERENCES users(id)
+	created_by	text NOT NULL REFERENCES users(name) ON UPDATE CASCADE
+);
+
+CREATE TABLE winner (
+	game_id		uuid NOT NULL REFERENCES games(id),
+	user_id		uuid NOT NULL REFERENCES users(id)
 );
 
 CREATE TABLE users_in_game (
@@ -37,7 +39,8 @@ CREATE TABLE users_in_game (
 	seat		int NOT NULL DEFAULT 0,
 	CONSTRAINT	uq_game_seats UNIQUE (game_id, seat),
 	CONSTRAINT	chk_maxSeat CHECK (seat >= 0 AND seat <= 3),
-	score		int NOT NULL DEFAULT 0
+	score		int NOT NULL DEFAULT 0,
+	ready		boolean NOT NULL DEFAULT false
 );
 
 CREATE TABLE friends (

@@ -6,6 +6,7 @@ const removeFriend = require('../controllers/friends/removeFriend');
 const FriendsList = require('../controllers/friends/friendsList');
 const getInvites = require('../controllers/friends/getInvites');
 const getProfile = require('../controllers/friends/getProfile');
+const getId = require('../controllers/friends/getIdfromname');
 
 router.use(isLog);
 router.post('/add', addFriend);
@@ -13,5 +14,6 @@ router.post('/remove', removeFriend);
 router.get('/list', FriendsList);
 router.get('/invites', getInvites);
 router.get('/profile/:profileId', getProfile);
+router.get('/getId/:name', getId);
 
 module.exports = router;

@@ -6,7 +6,7 @@ var FriendsList = async (req, res) => {
 
 		const friends = await db.any('SELECT * FROM friends WHERE accepted is TRUE AND (user_id = $1 OR friend_id = $1)', user.id);
 		if (Object.keys(friends).length === 0)
-			return (res.status(200).send());
+			return (res.sendStatus(200));
 		console.log("app=node level=INFO, friendsList: ", friends);
 		const friendsId = [];
 		friends.forEach((e)=> {
