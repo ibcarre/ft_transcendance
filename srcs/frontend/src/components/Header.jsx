@@ -68,8 +68,8 @@ export function Header() {
                 </Link>
                 <div className="relative flex min-w-0 cursor-pointer select-none flex-col items-end" ref={menuRef}>
                     <div onClick={toggleMenu} className="flex min-w-0 items-center gap-2 sm:gap-3">
-                        <Avatar file={userInfo.avatar_url} className="size-9 shrink-0 sm:size-11 lg:size-14" />
-                        <h2 className={`max-w-[40vw] truncate text-xl font-bold text-slate-800 sm:text-2xl lg:text-[35px] ${logoGradientHover}`}>
+                        <Avatar file={userInfo.avatar_url} className="hidden size-11 shrink-0 sm:block lg:size-14" />
+                        <h2 className={`max-w-[50vw] truncate sm:max-w-[40vw] text-xl font-bold text-slate-800 sm:text-2xl lg:text-[35px] ${logoGradientHover}`}>
                             {userInfo.name}
                             {/* Pastille : invitations d'amis en attente */}
                             {requests.length > 0 && (
@@ -96,7 +96,7 @@ export function Header() {
 
             {modalType === 'friends' && (
                 <Modal title="Friends" onClose={closeModal}>
-                    <Friends />
+                    <Friends onNavigate={closeModal} />
                 </Modal>
             )}
 
