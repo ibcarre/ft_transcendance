@@ -8,7 +8,7 @@ if [ ! -f /etc/nginx/ssl/skyjo.crt ]; then
         -keyout /etc/nginx/ssl/skyjo.key \
         -out /etc/nginx/ssl/skyjo.crt \
         -subj "/C=FR/ST=IDF/L=Paris/O=42/OU=Skyjo/CN=skyjo" \
-		-addext "subjectAltName=DNS:f1br1s6.paris.42.school,IP:127.0.0.1"
+		-addext "subjectAltName=DNS:127.0.0.1,IP:127.0.0.1"
 
 fi
 
