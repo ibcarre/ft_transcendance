@@ -76,3 +76,4 @@ For more informations on the global architecture, see ![Architectural diagram](.
 - Assistance in creating scripts that run curl requests to create users and retrieve their “access_token” and UUID, so that tests and verifications can then be performed manually
 - Assistance in setting up connections between the game engine and the rest of the backend
 - Assistance with translating certain commit/PR messages
+- Assistance in diagram creation/doc redaction or translation
