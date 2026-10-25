@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import dayjs from 'dayjs';
 import { useAuth } from '../context/useAuth';
 import { useChat } from '../context/useChat';
+import { Avatar } from './Avatar';
 import { inputClass, btnPrimary } from '../styles/ui';
 
 const infoText = "m-auto text-center text-sm text-slate-400";
@@ -35,11 +36,15 @@ export function Chat({ embedded = false }) {
                 {messages.map((msg) => {
                     const isMine = msg.userId === userInfo.id;
                     return (
-                        <div key={msg.id} className={`flex max-w-[80%] shrink-0 flex-col gap-1 ${isMine ? 'items-end self-end' : 'items-start'}`}>
-                            {!isMine && <p className="pl-1 text-[13px] font-bold text-blue-900">{msg.author ?? '...'}</p>}
-                            <div className={`flex flex-col gap-1 rounded-xl border px-3.5 py-2.5 ${isMine ? 'rounded-tr-sm border-blue-500 bg-blue-500' : 'rounded-tl-sm border-slate-200 bg-white'}`}>
-                                <p className={`break-words text-[15px] ${isMine ? 'text-white' : 'text-slate-800'}`}>{msg.body}</p>
-                                <p className={`self-end text-[11px] ${isMine ? 'text-blue-100' : 'text-slate-400'}`}>{dayjs(msg.sentAt).format('HH:mm')}</p>
+                        <div key={msg.id} className={`flex max-w-[85%] shrink-0 flex-col gap-1 ${isMine ? 'items-end self-end' : 'items-start'}`}>
+                            {/* Nom aligné sur la bulle (décalé de la largeur de l'avatar) */}
+                            {!isMine && <p className="pl-11 text-[13px] font-bold text-blue-900">{msg.author?.name ?? '...'}</p>}
+                            <div className="flex min-w-0 items-start gap-2">
+                                {!isMine && <Avatar file={msg.author?.avatar} alt={msg.author?.name ?? 'Avatar'} className="size-9 shrink-0" />}
+                                <div className={`flex min-w-0 flex-col gap-1 rounded-xl border px-3.5 py-2.5 ${isMine ? 'rounded-tr-sm border-blue-500 bg-blue-500' : 'rounded-tl-sm border-slate-200 bg-white'}`}>
+                                    <p className={`break-words text-[15px] ${isMine ? 'text-white' : 'text-slate-800'}`}>{msg.body}</p>
+                                    <p className={`self-end text-[11px] ${isMine ? 'text-blue-100' : 'text-slate-400'}`}>{dayjs(msg.sentAt).format('HH:mm')}</p>
+                                </div>
                             </div>
                         </div>
                     );

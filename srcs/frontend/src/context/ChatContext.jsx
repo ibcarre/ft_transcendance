@@ -40,7 +40,9 @@ export const ChatProvider = ({ children }) => {
       if (userId === myId) return;
       const profile = await fetchProfile(userId);
       if (!active) return;
-      setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, author: profile.name } : m)));
+      setMessages((prev) => prev.map((m) => (m.id === id
+        ? { ...m, author: { name: profile.name, avatar: profile.avatar_url } }
+        : m)));
     });
 
     return () => {
