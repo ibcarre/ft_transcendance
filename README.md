@@ -67,4 +67,10 @@ For information on the game engine, see [GE Dev Docs](./docs/DEV_DOC_GAME.en.md)
 - [Router](https://reactrouter.com/start/framework/navigating)
 - [Full course](https://www.youtube.com/watch?v=TtPXvEcE11E)
 
+### Typescript
+- [TypeScript documentation](https://www.typescriptlang.org/docs/)
 
+### AI usage
+- Assistance in creating scripts that run curl requests to create users and retrieve their “access_token” and UUID, so that tests and verifications can then be performed manually
+- Assistance in setting up connections between the game engine and the rest of the backend
+- Assistance with translating certain commit/PR messages
