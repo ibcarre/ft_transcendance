@@ -259,9 +259,9 @@ exports.leaveRoom = async (req, res) => {
 			// 	WHERE game_id = $1 AND user_id = $2`,
 			// 	[roomId, req.user.id]
 			// );
+			return { status: 200, kind: 'left' };
 		});
 
-		return { status: 200, kind: 'left' };
         if (outcome.status !== 200) {
             return res.status(outcome.status).json({
                 message: outcome.message
