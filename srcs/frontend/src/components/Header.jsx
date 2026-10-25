@@ -76,7 +76,7 @@ export function Header() {
                     </h2>
                     {menu && (
                         <div className={`absolute top-full right-0 z-[100] mt-3 min-w-40 animate-slide-down overflow-hidden rounded-xl bg-white shadow-[0_10px_30px_rgba(0,0,0,0.2)] ${rainbowBorder}`}>
-                            <Link to="/profile"><p className={`${menuLink} ${logoSliceHover.SK}`}>Profile</p></Link>
+                            <Link to={`/profile/${encodeURIComponent(userInfo.name)}`}><p className={`${menuLink} ${logoSliceHover.SK}`}>Profile</p></Link>
                             <p className={`${menuLink} ${logoSliceHover.Y}`} onClick={() => openModal('friends')}>
                                 Friends
                                 {requests.length > 0 && (
