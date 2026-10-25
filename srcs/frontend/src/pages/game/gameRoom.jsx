@@ -19,9 +19,14 @@ const btnSecondary = "cursor-pointer rounded-lg border-2 border-blue-500 bg-whit
 const btnDanger = "cursor-pointer rounded-lg border-2 border-red-500 bg-red-500 px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-red-600";
 const pileLabel = "text-xs font-bold uppercase tracking-wide text-slate-500 sm:text-sm";
 
+// Nombre de cartes que je dois retourner au début de la manche
+const INITIAL_REVEALS = 2;
+const revealedCount = (player) => player.board.filter((slot) => slot.status === 'revealed').length;
+
 const instruction = (game, isMyTurn, me) => {
 	if (game.phase === 'INITIAL_REVEAL') {
-		const revealed = me.board.filter((slot) => slot.status === 'revealed').length;
+		const revealed = revealedCount(me);
+		if (revealed >= INITIAL_REVEALS) return "Wait for everyone to reveal their 2 cards...";
 		return `Reveal 2 cards to start (${revealed}/2)`;
 	}
 	if (game.phase !== 'PLAYING') return "Round over";
@@ -353,7 +358,8 @@ function GameScreen({
 	// Quelle carte de mon plateau peut être cliquée selon l'étape du tour
 	const canClickMyCard = (slot) => {
 		if (disabled) return false;
-		if (game.phase === 'INITIAL_REVEAL') return slot.status === 'hidden';
+		// Mes 2 cartes retournées : on attend les autres, plus rien à cliquer
+		if (game.phase === 'INITIAL_REVEAL') return slot.status === 'hidden' && revealedCount(me) < INITIAL_REVEALS;
 		if (!isMyTurn) return false;
 		if (stage === 'DRAWN_FROM_DECK' || stage === 'MUST_SWAP_DISCARD') return slot.status !== 'removed';
 		if (stage === 'MUST_REVEAL_CARD') return slot.status === 'hidden';
@@ -466,7 +472,7 @@ function GameScreen({
 								</div>
 							</div>
 
-							<p className={`min-h-6 text-center text-sm font-semibold sm:text-base ${isMyTurn || game.phase === 'INITIAL_REVEAL' ? 'text-blue-600' : 'text-slate-500'}`}>
+							<p className={`min-h-6 text-center text-sm font-semibold sm:text-base ${isMyTurn || (game.phase === 'INITIAL_REVEAL' && revealedCount(me) < INITIAL_REVEALS) ? 'text-blue-600' : 'text-slate-500'}`}>
 								{instruction(game, isMyTurn, me)}
 							</p>
 
