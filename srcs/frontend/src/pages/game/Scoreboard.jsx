@@ -1,6 +1,6 @@
 import { visibleScore, ME_ID } from './mockGame';
 
-export function Scoreboard({ game }) {
+export function Scoreboard({ game, meId = ME_ID }) {
     const players = [...game.players].sort((a, b) => a.totalScore - b.totalScore);
 
     return (
@@ -23,7 +23,7 @@ export function Scoreboard({ game }) {
                             <span className="truncate">
                                 {isCurrent && '▶ '}
                                 {player.name}
-                                {player.id === ME_ID && <span className="font-semibold text-slate-400"> (you)</span>}
+                                {player.id === meId && <span className="font-semibold text-slate-400"> (you)</span>}
                             </span>
                             <span className="text-right">{visibleScore(player.board)}</span>
                             <span className="text-right">{player.totalScore}</span>

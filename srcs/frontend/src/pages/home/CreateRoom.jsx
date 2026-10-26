@@ -1,46 +1,34 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import axios from 'axios';
-import { inputClass, btnPrimary, labelClass } from '../../styles/ui';
+import { createRoom, ALREADY_IN_ROOM } from '../../services/rooms';
+import { errorMessage } from '../../services/user';
+import { inputClass, btnPrimary, labelClass, feedback } from '../../styles/ui';
 
-/*TODO
-Nom de room obligatoire et coupé si plus de 24 caracteres
-Redirection vers la page game
-*/
-
-export function CreateRoom() {
-    let navigate = useNavigate();
-
+// onEnter(roomId) : room créée ; onAlreadyInRoom() : le back dit qu'on est déjà dans une room
+export function CreateRoom({ inRoom = false, onEnter, onAlreadyInRoom }) {
     const [roomName, setRoomName] = useState('');
     const [maxPlayers, setMaxPlayers] = useState('2');
     const [password, setPassword] = useState('');
+    const [sending, setSending] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const name = roomName.trim();
+        if (!name || inRoom) return;
 
+        setSending(true);
+        setError(null);
         try {
-            const response = await axios.post('/api/rooms/createRoom', {
-                password: password,
-                name: roomName,
-                max_players: parseInt(maxPlayers, 10)
-            }, {
-                withCredentials: true
-            });
-
-            if (response.status === 201) {
-                setPassword('');
-                setRoomName('');
-                setMaxPlayers('2');
-
-                console.log("Room creer");
-                navigate("/game");
-            }
-
+            const response = await createRoom({ name, password, maxPlayers: parseInt(maxPlayers, 10) });
+            onEnter?.(response.data);
         } catch (err) {
-            if (err.response && err.response.data)
-                console.log("error");
+            const message = errorMessage(err);
+            setError(message);
+            if (message === ALREADY_IN_ROOM) onAlreadyInRoom?.();
+        } finally {
+            setSending(false);
         }
-    }
+    };
 
     return (
         <form className="flex w-full flex-col gap-5 sm:w-[350px]" onSubmit={handleSubmit}>
@@ -53,6 +41,7 @@ export function CreateRoom() {
                     placeholder="My awesome room"
                     value={roomName}
                     autoComplete="off"
+                    maxLength={24}
                     onChange={(e) => setRoomName(e.target.value)}
                     required
                 />
@@ -60,15 +49,17 @@ export function CreateRoom() {
 
             <div className="flex flex-col gap-2">
                 <label htmlFor="room-players" className={labelClass}>Nb players</label>
-                <input
+                {/* 2 à 4 joueurs : seules valeurs acceptées par le back */}
+                <select
                     id="room-players"
-                    type="number"
-                    className={inputClass}
-                    min="2" max="4"
+                    className={`${inputClass} cursor-pointer`}
                     value={maxPlayers}
                     onChange={(e) => setMaxPlayers(e.target.value)}
-                    required
-                />
+                >
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
             </div>
 
             <div className="flex flex-col gap-2">
@@ -83,9 +74,15 @@ export function CreateRoom() {
                 />
             </div>
 
+            {inRoom && <p className={`${feedback.info} mt-0`}>You're already in a room.</p>}
+            {error && <p className={`${feedback.error} mt-0`}>{error}</p>}
+
             <button
                 type="submit"
-                className={`${btnPrimary} mt-2.5 w-full p-3.5 text-base font-bold`}>CREATE</button>
+                className={`${btnPrimary} mt-2.5 w-full p-3.5 text-base font-bold`}
+                disabled={sending || inRoom || !roomName.trim()}>
+                {sending ? 'CREATING...' : 'CREATE'}
+            </button>
         </form>
     );
 }

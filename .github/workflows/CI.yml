@@ -39,16 +39,20 @@ jobs:
 
       - name: Frontend
         run: |
-          podman exec -it front_skyjo npm ci
-          podman exec -it front_skyjo npm run lint
-          podman exec -it front_skyjo npm run build
+          podman exec -t front_skyjo npm run lint
+          podman exec -t front_skyjo npm run build
 
       - name: Backend
-        run: |
-          podman exec -it back_skyjo npm ci
+        run: podman exec -t back_skyjo npm ci
 
       - name: Game test
         run: make game-test
+
+      - name: Game integration test
+        working-directory: srcs/frontend
+        run: |
+          npm ci
+          node tests/integration/skyjo.mjs
 
 # ------------------------- JOB 2: Podman (build and dev) ------------
   test-podman:

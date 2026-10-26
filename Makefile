@@ -60,7 +60,7 @@ clean:
 	${COMPOSE_DEV} down --remove-orphans --rmi local
 
 clean-volumes:
-	$(COMPOSE_DEV) down --remove-orphans --rmi local -v
+	$(COMPOSE_DEV) down --remove-orphans -v
 
 fclean: 
 	${COMPOSE_DEV} down --rmi all --volumes --remove-orphans

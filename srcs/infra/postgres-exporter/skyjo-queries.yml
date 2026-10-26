@@ -28,13 +28,9 @@ skyjo_games:
 
 
 skyjo_active_users:
-  query: "SELECT COUNT(*) AS in_game FROM users_in_game"
+  query: "SELECT COUNT(*) FILTER (WHERE status = 'online') AS online FROM users"
   master: true
   metric:
-    - in_game:
+    - online:
       usage: "GAUGE"
       description: "number of active user playing Skyjo"
-    # - online:
-    #   usage: "GAUGE"
-    #   description: "number of online users"
-
