@@ -33,7 +33,7 @@ The changes are:
 
 For information on the game engine, see [GE Dev Docs](./docs/DEV_DOC_GAME.en.md);
 
-![Architectural diagram](./docs/Skyjo_architecture_EN_2026-10-25.pbg.svg)
+[Architectural diagram](./docs/Skyjo_architecture_EN_2026-10-25.pbg.svg)
 
 ## Ressources
 
