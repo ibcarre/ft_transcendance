@@ -53,7 +53,7 @@ We met once a week, and when needed organized work hangouts, so that we could st
 - Global chat with content moderation
 - Friends system (add and remove friends, list...)
 - Profiles (editing, avatar, online status, profile page with game stats)
-- Public Api
+- Public Api ([documentation here](https://1tsay81bor.apidog.io/))
 - Logs Visualizer (loki, Grafana)
 - Dashboards with data visualization (Grafana)
 
@@ -116,7 +116,7 @@ There are a few additional `make` utility commands listed in `make help`.
 <details>
 <summary> Dev</summary>
 
-The basic `make` commands all have a dev version (listed in `make help`) (ex: `make dev`, `make dev-rl`, ...)
+The basic `make` commands all have a dev version (listed in `make help`) (ex: `make dev`, `make dev-rl`,...)
 
 The changes are:
 - The module nodes in the frontend and backend are mounted as volumes to avoid having to rebuild everything every time
