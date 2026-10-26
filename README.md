@@ -1,5 +1,5 @@
 *This project has been created as part of the 42 curriculum by ibaaziz{PO-dev} , homohame{PM-dev}, mkerrien{PM-dev}, benjamsc{ARC-dev}*
-# Descrtiption
+# Description
 The goal of our project is to create an online version of the game Skyjo [rules](./docs/rules/RULES.en.md)
     that can accommodate 2 to 4 players in real time, with basic user interactions.
 Dashboards build with grafana and exporter like prometheus and postgres-exporter.
@@ -51,6 +51,32 @@ To organize ourselves and prepare our work, we used tools like Discord (linking 
 
 </details>
 
+<details>
+<summary> Modules table</summary>
+
+
+| Module | Type | Pts|
+|---------------------------------------|:------:|:---:|
+| Use frontend framework| minor| 1 |
+| Use backend framework| minor| 1 |
+| Support for additional browsers| minor| 1 |
+| Game statistics and match history| minor| 1 |
+| Content moderation AI (auto mods, auto deletion) | minor| 1 |
+| Public Api| major| 2 |
+| Andvanced analytics dashboard with data visualization| major| 2 |
+| Monitoring system with Prometheus and Grafana| major| 2 |
+| Implemented a complete web-based game where user can play each other| major| 2 |
+| Remote Players | major | 2 | 
+| Multiplayer Game (more than 2)| major| 2 |
+| Introduce an Ai Opponent for games| major| 2 |
+| Standard user management and authentication| major| 2 |
+| Implement real-time features useing Websocket| major| 2 |
+| Allow users to interact with other users (basic, chat, friends)| major| 2 |
+|TOTAL| | 25 |
+
+</details>
+
+
 # Instructions
 <details>
 <summary> Prerequisites</summary>
@@ -89,33 +115,6 @@ The changes are:
 - Logs can be viewed directly at htts://localhost:yourAppPort/logs
 
 For information on the game engine, see [GE Dev Docs](./docs/DEV_DOC_GAME.en.md);
-
-</details>
-
-
-## Modules
-<details>
-<summary> table</summary>
-
-
-| Module | Type | Pts|
-|---------------------------------------|:------:|:---:|
-| Use frontend framework| minor| 1 |
-| Use backend framework| minor| 1 |
-| Support for additional browsers| minor| 1 |
-| Game statistics and match history| minor| 1 |
-| Content moderation AI (auto mods, auto deletion) | minor| 1 |
-| Public Api| major| 2 |
-| Andvanced analytics dashboard with data visualization| major| 2 |
-| Monitoring system with Prometheus and Grafana| major| 2 |
-| Implemented a complete web-based game where user can play each other| major| 2 |
-| Remote Players | major | 2 | 
-| Multiplayer Game (more than 2)| major| 2 |
-| Introduce an Ai Opponent for games| major| 2 |
-| Standard user management and authentication| major| 2 |
-| Implement real-time features useing Websocket| major| 2 |
-| Allow users to interact with other users (basic, chat, friends)| major| 2 |
-|TOTAL| | 25 |
 
 </details>
 
