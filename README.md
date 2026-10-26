@@ -5,7 +5,7 @@ The goal of our project is to create an online version of the game Skyjo [rules]
 Dashboards build with grafana and exporter like prometheus and postgres-exporter.
 
 So we divided the work into four parts: 
-- Benjamsc handled the DevOps/infrastructure side—everything related to containerization and configuring the various services.
+- Benjamsc handled the DevOps/infrastructure side, everything related to containerization and configuring the various services.
 - Ibaaziz handled the backend, using Express.js to create all the routes and the underlying logic.
 - Mkerrien built a state machine for the `game engine` in `TypeScript`, which was integrated into the backend.
 - Homohame handled the entire frontend part and the offline play using `React` .
@@ -15,6 +15,20 @@ To organize ourselves and prepare our work, we used tools like Discord (linking 
 [Container Architectural diagram](./docs/ft_skyjo_architecutreContainers.svg)
 
 [Backend Architectural diagram](./docs/Skyjo_architecture_EN_2026-10-25.pbg.svg)
+
+<details>
+<summary> Technical stack</summary>
+
+### Frontend:
+- Framework React
+- lib: dayJs reactRoute, 
+
+### Backend:
+- Framework expresJs
+- lib:
+
+### Database
+- postgresSql
 
 <details>
 <summary> Sql scheme</summary>
