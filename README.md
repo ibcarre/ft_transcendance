@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by ibaaziz{PO-dev} , homohame{PM-dev}, mkerrien{PM-dev}, benjamsc{ARC-dev}*
+*This project has been created as part of the 42 curriculum by ibaaziz, homohame, mkerrien, benjamsc*
 # Description
 The goal of our project was to create an online version of the game Skyjo [rules](./docs/rules/RULES.en.md)
     that can accommodate 2 to 4 players in real time, with basic user interactions.
@@ -79,7 +79,7 @@ We met once a week, and when needed organized work hangouts, so that we could st
 | Introduce an Ai Opponent for games| major| 2 | Easy | Houssen |
 | Standard user management and authentication| major| 2 | Basic | Ibtihal, Houssen |
 | Implement real-time features using Websocket| major| 2 | To allow real time gaming, and smooth browsing | Ibtihal, Houssen, Matisse |
-| Allow users to interact with other users (basic, chat, friends)| major| 2 | Fun to do | Houssen, Ibtihal |
+| Allow users to interact with other users (basic chat, friends)| major| 2 | Fun to do | Houssen, Ibtihal |
 |TOTAL| | 25 | | |
 
 </details>
