@@ -90,7 +90,9 @@ We met once a week, and when needed organized work hangouts, so that we could st
 <summary> Prerequisites</summary>
 
 - Git, GNU Make, Bash, Docker + Docker Compose (or Podman + a Compose provider), curl, 7z, and standard Unix utilities (sed, awk, grep, file, coreutils).
-- Configuration: srcs/.env (from .env.example) and the required secret files (`API_KEY.txt`, `GF_SMTP_PASSWORD.txt`, `GRAFANA_ADMIN_PASSWORD.txt`, `JWT_SECRETKEY.txt`, `POSTGRES_PASSWORD.txt`, `SMTP_ADDRESS.txt`).
+- Configuration: 
+    - the required environment variables in `./srcs/.env` (from `./srcs/.env.example`): `APP_PORT`, `POSTGRES_USER`, `POSTGRES_DB`, `GF_SMTP_USER`, `CONTAINER`, `SOCKET`, `RENDER_TOKEN`, `BACKEND_PORT`
+    - the required secret files (`API_KEY.txt`, `GF_SMTP_PASSWORD.txt`, `GRAFANA_ADMIN_PASSWORD.txt`, `JWT_SECRETKEY.txt`, `POSTGRES_PASSWORD.txt`, `SMTP_ADDRESS.txt`).
 - `Node.js`, `npm`, `PostgreSQL` and other application dependencies are installed automatically inside the containers.
 
 </details>
