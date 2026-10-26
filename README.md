@@ -1,14 +1,10 @@
 *This project has been created as part of the 42 curriculum by ibaaziz{PO-dev} , homohame{PM-dev}, mkerrien{PM-dev}, benjamsc{ARC-dev}*
 # Descrtiption
-The goal of our project is to create an online version of the game Skyjo [rules](./docs/rules/RULES.en.md)
-    that can accommodate 2 to 4 players in real time, with basic user interactions.
-Dashboards build with grafana and exporter like prometheus and postgres-exporter.
-
-To do this, the four of us have divided the tasks among ourselves as follows:
-- DevOps (infrastructure/containerization)
-- Front-end (React)
-- Back-end (Express)
-- Game engine (server-side state machine)
+So we divided the work into four parts: Benjamsc handled the DevOps/infrastructure side—everything related to containerization and configuring the various services.
+Ibaaziz handled the backend, using Express.js to create all the routes and the underlying logic.
+Mkerrien built a state machine for the game engine, which was integrated into the backend.
+Homohame handled the entire frontend.
+To organize ourselves and prepare our work, we used tools like Discord (linking a channel via a webhook to GitHub), Google Sheets, and online tools such as Excalidraw and DrawSQL.
 
 [Container Architectural diagram](./docs/ft_skyjo_architecutreContainers.svg)
 
