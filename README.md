@@ -1,16 +1,19 @@
 *This project has been created as part of the 42 curriculum by ibaaziz{PO-dev} , homohame{PM-dev}, mkerrien{PM-dev}, benjamsc{ARC-dev}*
 # Description
-The goal of our project is to create an online version of the game Skyjo [rules](./docs/rules/RULES.en.md)
+The goal of our project was to create an online version of the game Skyjo [rules](./docs/rules/RULES.en.md)
     that can accommodate 2 to 4 players in real time, with basic user interactions.
-Dashboards build with grafana and exporter like prometheus and postgres-exporter.
+Dashboards are built with grafana and exporters like prometheus and postgres-exporter.
 
-So we divided the work into four parts: 
-- Benjamsc handled the DevOps/infrastructure side, everything related to containerization and configuring the various services.
-- Ibaaziz handled the backend, using Express.js to create all the routes and the underlying logic.
-- Mkerrien built a state machine for the `game engine` in `TypeScript`, which was integrated into the backend.
-- Homohame handled the entire frontend part and the offline play using `React` .
+### Team information
+The work was divided into four parts: 
+- Benjamsc, developer, handled the DevOps/infrastructure side, everything related to containerization and configuring the various services.
+- Ibaaziz, product owner, handled the backend, using Express.js to create all the routes and the underlying logic. Updated the API docs with Apidog to allow everyone to check the routes.
+- Mkerrien, product manager, built a state machine for the `game engine` in `TypeScript`, which was integrated into the backend.
+- Homohame, product manager, handled the entire frontend part and the offline play using `React` .
 
+### Project Management
 To organize ourselves and prepare our work, we used tools like Discord (linking a channel via a webhook to GitHub), Google Sheets, and online tools such as Excalidraw and DrawSQL.
+We met once a week, and when needed organized work hangouts, so that we could stay up to date with each other's work.
 
 [Container Architectural diagram](./docs/ft_skyjo_architecutreContainers.svg)
 
@@ -21,11 +24,11 @@ To organize ourselves and prepare our work, we used tools like Discord (linking 
 
 ### Frontend:
 - Framework React, Tailwind
-- lib: dayJs reactRoute, 
+- lib: dayJs, react-router, axios, socket.io-client
 
 ### Backend:
-- Framework expresJs
-- lib:
+- Framework expressJs
+- lib: Socket.io, JWT, pg-promise, bcrypt, Postman
 
 ### Database
 - Postgres
@@ -46,12 +49,14 @@ open-source,lot of docs and tools made by community, and a significant market sh
 <details>
 <summary> Features</summary>
 
-- Online gameplay (real-time multiplayer, calls to internal game engine functions, communication via socket.io)
+- Online gameplay (3 or more real-time multiplayer, calls to internal game engine functions, communication via socket.io)
 - Offline gameplay (entire game simulated offline, statistics not saved)
-- Global chat
-- Friends list
+- Global chat with content moderation
+- Friends system (add and remove friends, list...)
+- Profiles (editing, avatar, online status, profile page with game stats)
+- Public Api
 - Logs Visualizer (loki, Grafana)
-- Dashboards (Grafana)
+- Dashboards with data visualization (Grafana)
 
 </details>
 
@@ -59,24 +64,24 @@ open-source,lot of docs and tools made by community, and a significant market sh
 <summary> Modules table</summary>
 
 
-| Module | Type | Pts|
-|---------------------------------------|:------:|:---:|
-| Use frontend framework| minor| 1 |
-| Use backend framework| minor| 1 |
-| Support for additional browsers| minor| 1 |
-| Game statistics and match history| minor| 1 |
-| Content moderation AI (auto mods, auto deletion) | minor| 1 |
-| Public Api| major| 2 |
-| Andvanced analytics dashboard with data visualization| major| 2 |
-| Monitoring system with Prometheus and Grafana| major| 2 |
-| Implemented a complete web-based game where user can play each other| major| 2 |
-| Remote Players | major | 2 | 
-| Multiplayer Game (more than 2)| major| 2 |
-| Introduce an Ai Opponent for games| major| 2 |
-| Standard user management and authentication| major| 2 |
-| Implement real-time features useing Websocket| major| 2 |
-| Allow users to interact with other users (basic, chat, friends)| major| 2 |
-|TOTAL| | 25 |
+| Module | Type | Pts | Justification | WHO |
+|---------------------------------------|:------:|:---:|------------------------------------|:---------------:|
+| Use frontend framework| minor| 1 | React was chosen, it's a modern framework widely used and a SPA which allow for fast browsing | Houssen |
+| Use backend framework| minor| 1 | Express was chosen, modern framework, with a lot of documentations and many compatible libraries | Ibtihal |
+| Support for additional browsers| minor| 1 | We mostly use different browsers so this one was a given | Everyone |
+| Game statistics and match history| minor| 1 | We made a game and statistics are fun | Houssen, Ibtihal, Matisse |
+| Content moderation AI (auto mods, auto deletion) | minor| 1 | Easy module | Ibtihal |
+| Public Api| major| 2 | Wanted to use Postman | Ibtihal |
+| Andvanced analytics dashboard with data visualization| major| 2 | Cool to see Data and numbers | Benjamin |
+| Monitoring system with Prometheus and Grafana| major| 2 | Practical and fun with a good doc | Benjamin |
+| Implemented a complete web-based game where user can play each other| major| 2 | Started from here | Matisse |
+| Remote Players | major | 2 | Easy module | Matisse, Benjamin |
+| Multiplayer Game (more than 2)| major| 2 | Skyjo is multiplayer | Matisse, Houssen |
+| Introduce an Ai Opponent for games| major| 2 | Easy | Houssen |
+| Standard user management and authentication| major| 2 | Basic | Ibtihal, Houssen |
+| Implement real-time features using Websocket| major| 2 | To allow real time gaming, and smooth browsing | Ibtihal, Houssen, Matisse |
+| Allow users to interact with other users (basic, chat, friends)| major| 2 | Fun to do | Houssen, Ibtihal |
+|TOTAL| | 25 | | |
 
 </details>
 
