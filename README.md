@@ -33,7 +33,7 @@ We met once a week, and when needed organized work hangouts, so that we could st
 ### Database
 - Postgres
 - Why postgres:
-open-source,lot of docs and tools made by community, and a significant market share.
+ open-source,lot of docs and tools made by community, and a significant market share.
 ![scree](./docs/makertShare.png)
 [source](https://welovedevs.com/articles/les-chiffres-qui-montrent-ladoption-de-postgresql/)
 
@@ -115,7 +115,7 @@ There are a few additional `make` utility commands listed in `make help`.
 <details>
 <summary> Dev</summary>
 
-The basic `make` commands all have a dev version (listed in `make help`) (ex: make dev, make dev-rl, ...)
+The basic `make` commands all have a dev version (listed in `make help`) (ex: `make dev`, `make dev-rl`, ...)
 
 The changes are:
 - The module nodes in the frontend and backend are mounted as volumes to avoid having to rebuild everything every time
