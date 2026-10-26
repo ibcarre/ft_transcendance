@@ -38,6 +38,10 @@ For information on the game engine, see [GE Dev Docs](./docs/DEV_DOC_GAME.en.md)
 [Sql Scheme](https://drawsql.app/teams/caramel-lemon/diagrams/ft-skyjo#)
 
 ## Modules
+<details>
+<summary> table</summary>
+
+
 | Module | Type | Pts|
 |---------------------------------------|:------:|:---:|
 | Use frontend framework| minor| 1 |
@@ -57,6 +61,7 @@ For information on the game engine, see [GE Dev Docs](./docs/DEV_DOC_GAME.en.md)
 | Allow users to interact with other users (basic, chat, friends)| major| 2 |
 |TOTAL| | 25 |
 
+</details>
 
 
 ## Ressources
