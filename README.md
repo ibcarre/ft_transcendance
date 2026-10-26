@@ -18,6 +18,15 @@ To do this, the four of us have divided the tasks among ourselves as follows:
 
 # Instructions
 <details>
+<summary> Prerequisites</summary>
+
+- Git, GNU Make, Bash, Docker + Docker Compose (or Podman + a Compose provider), curl, 7z, and standard Unix utilities (sed, awk, grep, file, coreutils).
+- Configuration: srcs/.env (from .env.example) and the required `./secrets.7z`.
+- `Node.js`, `npm`, `PostgreSQL` and other application dependencies are installed automatically inside the containers.
+
+<details>
+
+<details>
 <summary> Users</summary>
 
 To use the project as a product:
