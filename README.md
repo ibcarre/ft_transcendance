@@ -60,8 +60,10 @@ For information on the game engine, see [GE Dev Docs](./docs/DEV_DOC_GAME.en.md)
 
 
 ## Ressources
+
 <details>
 <summary> Ressources(link)</summary>
+
 ### Containerization
 - [Healthcheck](https://docs.docker.com/reference/compose-file/services/#healthcheck)
 - [compose build](https://docs.docker.com/reference/compose-file/build/)
