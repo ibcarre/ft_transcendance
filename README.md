@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by ibaaziz{PO-dev} , homohame{PM-dev}, mkerrien{PM}, benjamsc{ARC-dev}*
+*This project has been created as part of the 42 curriculum by ibaaziz{PO-dev} , homohame{PM-dev}, mkerrien{PM-dev}, benjamsc{ARC-dev}*
 # Descrtiption
 The goal of our project is to create an online version of the game Skyjo [rules](./docs/rules/RULES.en.md)
     that can accommodate 2 to 4 players in real time, with basic user interactions.
@@ -10,11 +10,13 @@ To do this, the four of us have divided the tasks among ourselves as follows:
 - Back-end (Express)
 - Game engine (server-side state machine)
 
-[Architectural diagram](./docs/Skyjo_architecture_EN_2026-10-25.pbg.svg)
+[Container Architectural diagram](./docs/ft_skyjo_architecutreContainers.svg)
+
+[Backend Architectural diagram](./docs/Skyjo_architecture_EN_2026-10-25.pbg.svg)
 
 [Sql Scheme](https://drawsql.app/teams/caramel-lemon/diagrams/ft-skyjo#)
 
-# Instruction
+# Instructions
 <details>
 <summary> Users</summary>
 
@@ -40,6 +42,7 @@ The changes are:
 - The module nodes in the frontend and backend are mounted as volumes to avoid having to rebuild everything every time
 - The frontend and backend sources are also mounted as volumes to allow for more responsive changes
 - All services are exposed locally to facilitate testing
+- Logs can be viewed directly at htts://localhost:yourAppPort/logs
 
 For information on the game engine, see [GE Dev Docs](./docs/DEV_DOC_GAME.en.md);
 
