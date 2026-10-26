@@ -24,7 +24,7 @@ To do this, the four of us have divided the tasks among ourselves as follows:
 - Configuration: srcs/.env (from .env.example) and the required `./secrets.7z`.
 - `Node.js`, `npm`, `PostgreSQL` and other application dependencies are installed automatically inside the containers.
 
-<details>
+</details>
 
 <details>
 <summary> Users</summary>
