@@ -37,8 +37,31 @@ For information on the game engine, see [GE Dev Docs](./docs/DEV_DOC_GAME.en.md)
 
 [Sql Scheme](https://drawsql.app/teams/caramel-lemon/diagrams/ft-skyjo#)
 
-## Ressources
+## Modules
+| Module | Type | Pts|
+|---------------------------------------|:------:|:---:|
+| Use frontend framework| minor| 1 |
+| Use backend framework| minor| 1 |
+| Support for additional browsers| minor| 1 |
+| Game statistics and match history| minor| 1 |
+| Content moderation AI (auto mods, auto deletion) | minor| 1 |
+| Public Api| major| 2 |
+| Andvanced analytics dashboard with data visualization| major| 2 |
+| Monitoring system with Prometheus and Grafana| major| 2 |
+| Implemented a complete web-based game where user can play each other| major| 2 |
+| Remote Players | major | 2 | 
+| Multiplayer Game (more than 2)| major| 2 |
+| Introduce an Ai Opponent for games| major| 2 |
+| Standard user management and authentication| major| 2 |
+| Implement real-time features useing Websocket| major| 2 |
+| Allow users to interact with other users (basic, chat, friends)| major| 2 |
+|TOTAL| | 25 |
 
+
+
+## Ressources
+<details>
+<summary> Ressources(link)</summary>
 ### Containerization
 - [Healthcheck](https://docs.docker.com/reference/compose-file/services/#healthcheck)
 - [compose build](https://docs.docker.com/reference/compose-file/build/)
@@ -75,6 +98,7 @@ For information on the game engine, see [GE Dev Docs](./docs/DEV_DOC_GAME.en.md)
 - [Router](https://reactrouter.com/start/framework/navigating)
 - [Full course](https://www.youtube.com/watch?v=TtPXvEcE11E)
 
+</details>
 
 
 ### AI usage
@@ -82,25 +106,4 @@ For information on the game engine, see [GE Dev Docs](./docs/DEV_DOC_GAME.en.md)
 - Assistance in setting up connections between the game engine and the rest of the backend
 - Assistance with translating certain commit/PR messages
 - Assistance in diagram creation/doc redaction or translation
-
-
-| Module | Type | Pts|
-|---------------------------------------|:------:|:---:|
-| Use frontend framework| minor| 1 |
-| Use backend framework| minor| 1 |
-| Support for additional browsers| minor| 1 |
-| Game statistics and match history| minor| 1 |
-| Content moderation AI (auto mods, auto deletion) | minor| 1 |
-| Public Api| major| 2 |
-| Andvanced analytics dashboard with data visualization| major| 2 |
-| Monitoring system with Prometheus and Grafana| major| 2 |
-| Implemented a complete web-based game where user can play each other| major| 2 |
-| Remote Players | major | 2 | 
-| Multiplayer Game (more than 2)| major| 2 |
-| Introduce an Ai Opponent for games| major| 2 |
-| Standard user management and authentication| major| 2 |
-| Implement real-time features useing Websocket| major| 2 |
-| Allow users to interact with other users (basic, chat, friends)| major| 2 |
-|TOTAL| | 25 |
-
 
