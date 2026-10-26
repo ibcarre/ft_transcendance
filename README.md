@@ -9,6 +9,7 @@ So we divided the work into four parts:
 - Ibaaziz handled the backend, using Express.js to create all the routes and the underlying logic.
 - Mkerrien built a state machine for the `game engine` in `TypeScript`, which was integrated into the backend.
 - Homohame handled the entire frontend part and the offline play using `React` .
+
 To organize ourselves and prepare our work, we used tools like Discord (linking a channel via a webhook to GitHub), Google Sheets, and online tools such as Excalidraw and DrawSQL.
 
 Traduit avec DeepL.com (version gratuite)
