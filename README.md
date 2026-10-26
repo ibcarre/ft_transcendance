@@ -20,7 +20,7 @@ To organize ourselves and prepare our work, we used tools like Discord (linking 
 <summary> Technical stack</summary>
 
 ### Frontend:
-- Framework React
+- Framework React, Tailwind
 - lib: dayJs reactRoute, 
 
 ### Backend:
@@ -29,6 +29,8 @@ To organize ourselves and prepare our work, we used tools like Discord (linking 
 
 ### Database
 - postgresSql
+
+</details>
 
 <details>
 <summary> Sql scheme</summary>
