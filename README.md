@@ -12,13 +12,23 @@ So we divided the work into four parts:
 
 To organize ourselves and prepare our work, we used tools like Discord (linking a channel via a webhook to GitHub), Google Sheets, and online tools such as Excalidraw and DrawSQL.
 
-Traduit avec DeepL.com (version gratuite)
-
 [Container Architectural diagram](./docs/ft_skyjo_architecutreContainers.svg)
 
 [Backend Architectural diagram](./docs/Skyjo_architecture_EN_2026-10-25.pbg.svg)
 
 [Sql Scheme](https://drawsql.app/teams/caramel-lemon/diagrams/ft-skyjo#)
+
+<details>
+<summary> Features</summary>
+
+- Online gameplay (real-time multiplayer, calls to internal game engine functions, communication via socket.io)
+- Offline gameplay (entire game simulated offline, statistics not saved)
+- Global chat
+- Friends list
+- Logs Visualizer
+- Dashboards
+
+</details>
 
 # Instructions
 <details>
@@ -139,4 +149,5 @@ For information on the game engine, see [GE Dev Docs](./docs/DEV_DOC_GAME.en.md)
 - Assistance in setting up connections between the game engine and the rest of the backend
 - Assistance with translating certain commit/PR messages
 - Assistance in diagram creation/doc redaction or translation
+- Help to navigate in the documentations.
 
