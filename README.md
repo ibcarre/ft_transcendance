@@ -10,8 +10,14 @@ To do this, the four of us have divided the tasks among ourselves as follows:
 - Back-end (Express)
 - Game engine (server-side state machine)
 
+[Architectural diagram](./docs/Skyjo_architecture_EN_2026-10-25.pbg.svg)
+
+[Sql Scheme](https://drawsql.app/teams/caramel-lemon/diagrams/ft-skyjo#)
+
 # Instruction
-## Users
+<details>
+<summary> Users</summary>
+
 To use the project as a product:
 A simple `make` command is all that’s needed to initialize it, then use `make down` to stop the services and `make up` to restart them (without losing data).
 
@@ -23,7 +29,11 @@ The `make fclean` command deletes everything: the volumes, the local images, the
 
 There are a few additional `make` utility commands listed in `make help`.
 
-## Dev
+</details>
+
+<details>
+<summary> Dev</summary>
+
 The basic `make` commands all have a dev version (listed in `make help`) (ex: make dev, make dev-rl, ...)
 
 The changes are:
@@ -33,9 +43,8 @@ The changes are:
 
 For information on the game engine, see [GE Dev Docs](./docs/DEV_DOC_GAME.en.md);
 
-[Architectural diagram](./docs/Skyjo_architecture_EN_2026-10-25.pbg.svg)
+</details>
 
-[Sql Scheme](https://drawsql.app/teams/caramel-lemon/diagrams/ft-skyjo#)
 
 ## Modules
 <details>
