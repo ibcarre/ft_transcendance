@@ -32,8 +32,7 @@ We met once a week, and when needed organized work hangouts, so that we could st
 
 ### Database
 - Postgres
-- Why postgres:
- open-source,lot of docs and tools made by community, and a significant market share.
+- Why postgres: open-source, lot of docs and tools made by community, and a significant market share.
 ![scree](./docs/makertShare.png)
 [source](https://welovedevs.com/articles/les-chiffres-qui-montrent-ladoption-de-postgresql/)
 
