@@ -29,9 +29,8 @@ To organize ourselves and prepare our work, we used tools like Discord (linking 
 
 ### Database
 - Postgres
-- Why postgres
-In addition to being an open-source tool,with an engaged community and plenty of documentation,
-support, and plugins/tools, it has a significant market share.
+- Why postgres:
+open-source,lot of docs and tools made by community, and a significant market share.
 ![scree](./docs/makertShare.png)
 [source](https://welovedevs.com/articles/les-chiffres-qui-montrent-ladoption-de-postgresql/)
 
