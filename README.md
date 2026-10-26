@@ -48,7 +48,7 @@ We met once a week, and when needed organized work hangouts, so that we could st
 <details>
 <summary> Features</summary>
 
-- Online gameplay (3 or more real-time multiplayer, calls to internal game engine functions, communication via socket.io)
+- Online gameplay (2 or more real-time multiplayer, calls to internal game engine functions, communication via socket.io)
 - Offline gameplay (entire game simulated offline, statistics not saved)
 - Global chat with content moderation
 - Friends system (add and remove friends, list...)
