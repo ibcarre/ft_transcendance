@@ -1,13 +1,14 @@
 import { useState } from "react";
+import { Link } from 'react-router';
 import axios from 'axios';
 import { useFriends } from '../context/useFriends';
 import { errorMessage } from '../services/user';
-import { inputClass, btnPrimary, feedback } from '../styles/ui';
+import { inputClass, btnPrimary, feedback, logoGradientHover } from '../styles/ui';
 
 const sectionTitle = "border-b-2 border-slate-200 pb-2 text-lg font-bold text-slate-800";
 const listContainer = "flex flex-col gap-2.5 overflow-y-auto pr-2";
 const friendItem = "flex shrink-0 items-center justify-between gap-3 rounded-xl border px-4 py-3 transition-colors";
-const friendName = "truncate text-base font-bold text-slate-800";
+const friendName = `truncate text-base font-bold text-slate-800 ${logoGradientHover}`;
 const actionButton = "cursor-pointer rounded-lg px-3 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0";
 const emptyText = "py-2 text-center text-sm text-slate-400";
 
@@ -22,7 +23,8 @@ function StatusDot({ status }) {
     );
 }
 
-export function Friends() {
+// onNavigate : appelé quand on ouvre un profil (ferme la modal)
+export function Friends({ onNavigate }) {
     // Listes partagées et mises à jour en temps réel par FriendsProvider (socket /Friends)
     const { friends: friendsList, requests, loading, error, reload: reloadFriends } = useFriends();
 
@@ -105,7 +107,7 @@ export function Friends() {
                     <div className={`${listContainer} max-h-[150px]`}>
                         {requests.map((req) => (
                             <div key={req.id} className={`${friendItem} border-yellow-200 bg-yellow-50`}>
-                                <p className={friendName}>{req.name}</p>
+                                <Link to={`/profile/${encodeURIComponent(req.name)}`} className={friendName} title="See profile" onClick={onNavigate}>{req.name}</Link>
                                 <div className="flex shrink-0 gap-2">
                                     <button
                                         className={`${actionButton} bg-green-500 hover:bg-green-600`}
@@ -139,7 +141,7 @@ export function Friends() {
                         <div key={friend.id} className={`${friendItem} border-slate-200 bg-slate-50 hover:border-slate-300 hover:bg-slate-100`}>
                             <div className="flex min-w-0 items-center gap-3">
                                 <StatusDot status={friend.status} />
-                                <p className={friendName}>{friend.name}</p>
+                                <Link to={`/profile/${encodeURIComponent(friend.name)}`} className={friendName} title="See profile" onClick={onNavigate}>{friend.name}</Link>
                             </div>
                             {confirmId === friend.id ? (
                                 <div className="flex shrink-0 gap-2">
