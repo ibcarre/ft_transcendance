@@ -28,7 +28,12 @@ To organize ourselves and prepare our work, we used tools like Discord (linking 
 - lib:
 
 ### Database
-- postgresSql
+- Postgres
+- Why postgres
+In addition to being an open-source tool,with an engaged community and plenty of documentation,
+support, and plugins/tools, it has a significant market share.
+![scree](./docs/makertShare.png)
+[source](https://welovedevs.com/articles/les-chiffres-qui-montrent-ladoption-de-postgresql/)
 
 </details>
 
@@ -46,8 +51,8 @@ To organize ourselves and prepare our work, we used tools like Discord (linking 
 - Offline gameplay (entire game simulated offline, statistics not saved)
 - Global chat
 - Friends list
-- Logs Visualizer
-- Dashboards
+- Logs Visualizer (loki, Grafana)
+- Dashboards (Grafana)
 
 </details>
 
