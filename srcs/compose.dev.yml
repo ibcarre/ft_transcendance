@@ -1,0 +1,40 @@
+services:
+
+  backend:
+    build:
+      context: ./backend/
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      - ./backend/:/app
+      - back-node_modules:/app/node_modules
+  
+  frontend:
+    build:
+      context: ./frontend/
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      - ./frontend/:/app
+      - front-node_modules:/app/node_modules
+
+  prometheus:
+    ports: 
+      - "9090:9090"
+
+  grafana:
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards
+
+  alloy:
+    ports:
+      - "12345:12345"
+
+  postgres-exporter:
+    ports:
+      - "9187:9187"
+
+volumes:
+  front-node_modules:
+  back-node_modules:

@@ -1,0 +1,73 @@
+
+CREATE TABLE users (
+	id			uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	email		text NOT NULL UNIQUE,
+	name		text NOT NULL UNIQUE,
+	password	text NOT NULL,
+	avatar_url	text,
+	status		text NOT NULL DEFAULT 'online',
+	CONSTRAINT	chk_status CHECK (status IN ('online', 'offline'))
+);
+
+CREATE TABLE games (
+	id			uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	password	text,
+	ispass		int,
+	name		text NOT NULL,
+	status		text NOT NULL DEFAULT 'pending',
+	CONSTRAINT	chk_status CHECK (status IN ('playing', 'finished', 'cancelled', 'pending')),
+	goal		int NOT NULL DEFAULT 100,
+	CONSTRAINT	chk_goalLimit CHECK (goal >= 50 AND goal <= 1000),
+	nb_players	int NOT NULL DEFAULT 1,
+	CONSTRAINT	nb_players CHECK (nb_players >= 1 AND nb_players <= 4),
+	max_players	int NOT NULL DEFAULT 4,
+	CONSTRAINT	max_players CHECK (max_players >= 2 AND max_players <= 4),
+	created_at	timestamptz NOT NULL DEFAULT now(),
+	created_by	text NOT NULL REFERENCES users(name) ON UPDATE CASCADE
+);
+
+CREATE TABLE winner (
+	game_id		uuid NOT NULL REFERENCES games(id),
+	user_id		uuid NOT NULL REFERENCES users(id)
+);
+
+CREATE TABLE users_in_game (
+	id			bigserial PRIMARY KEY,
+	user_id		uuid NOT NULL REFERENCES users(id),
+	game_id		uuid NOT NULL REFERENCES games(id),
+	CONSTRAINT	uq_game_user UNIQUE (game_id, user_id),
+	seat		int NOT NULL DEFAULT 0,
+	CONSTRAINT	uq_game_seats UNIQUE (game_id, seat),
+	CONSTRAINT	chk_maxSeat CHECK (seat >= 0 AND seat <= 3),
+	score		int NOT NULL DEFAULT 0,
+	ready		boolean NOT NULL DEFAULT false
+);
+
+CREATE TABLE friends (
+	id			  bigserial PRIMARY KEY,
+	user_id		  uuid NOT NULL REFERENCES users(id),
+	friend_id	  uuid NOT NULL REFERENCES users(id),
+	requested_by  uuid NOT NULL REFERENCES users(id),
+	accepted	  boolean NOT NULL DEFAULT false,
+
+	CONSTRAINT	  chk_usrValue CHECK (user_id < friend_id),
+	CONSTRAINT	  chk_reqByOne CHECK (requested_by = user_id OR requested_by = friend_id),
+	CONSTRAINT	  uq_oneTime UNIQUE (user_id, friend_id)
+);
+
+CREATE TABLE conversations (
+	id			bigserial PRIMARY KEY,
+	user_id		uuid NOT NULL REFERENCES users(id),
+	friend_id	uuid NOT NULL REFERENCES users(id)
+);
+
+CREATE TABLE private_msgs (
+	id				bigserial PRIMARY KEY,
+	conv_id			bigserial NOT NULL REFERENCES conversations(id),
+	sender_id		uuid NOT NULL REFERENCES users(id),
+	receiver_id	uuid NOT NULL REFERENCES users(id),
+	CONSTRAINT		chk_notAlone CHECK (sender_id <> receiver_id),
+	body			text NOT NULL,
+	CONSTRAINT		chq_emptyMsg CHECK (body <> ''),
+	send_at			timestamptz NOT NULL DEFAULT now()
+);

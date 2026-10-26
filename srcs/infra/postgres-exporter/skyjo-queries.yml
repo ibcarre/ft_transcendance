@@ -1,0 +1,36 @@
+
+skyjo_users:
+  query: "SELECT COUNT(*) AS total FROM users"
+  master: true
+  metric:
+    - total:
+      usage: "GAUGE"
+      description: "Total number of registered users"
+
+skyjo_games:
+  query: |
+    SELECT
+      COUNT(*) AS total,
+      COUNT(*) FILTER (WHERE status = 'pending') AS pending ,
+      COUNT(*) FILTER (WHERE status = 'playing') AS playing
+    FROM games
+  master: true
+  metric:
+    - total:
+      usage: "GAUGE"
+      description: "Total number of played games"
+    - pending:
+      usage: "GAUGE"
+      description: "Total number of pending games"
+    - playing:
+      usage: "GAUGE"
+      description: "Total number of playing games"
+
+
+skyjo_active_users:
+  query: "SELECT COUNT(*) FILTER (WHERE status = 'online') AS online FROM users"
+  master: true
+  metric:
+    - online:
+      usage: "GAUGE"
+      description: "number of active user playing Skyjo"

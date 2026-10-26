@@ -1,0 +1,8 @@
+Dockerfile
+secrets/game-engine-tests.sh
+node_modules
+npm-debug.log
+build
+.git
+*.md
+.gitignore

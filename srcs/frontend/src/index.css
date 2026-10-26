@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: Roboto, Arial, sans-serif;
+
+  --animate-slide-down: slide-down 0.2s ease-out;
+
+  @keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-5px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Image de cartes du fond (page et voile des modals) */
+@utility bg-cards {
+  background-image: url("./assets/image_cartes.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+@layer base {
+  /* Fond sur un calque fixe plutôt que background-attachment: fixed,
+     qui forçait à repeindre tout l'écran à chaque image de défilement */
+  body::before {
+    content: "";
+    @apply fixed inset-0 -z-10 bg-cards;
+  }
+}

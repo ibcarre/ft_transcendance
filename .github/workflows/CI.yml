@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+  pull_request:
+    branches: 
+      - master
+      - dev
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+# ------------------------- JOB 1: Ubuntu + docker (build and dev) ------------
+  test-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Create secrets
+        run: | 
+          mkdir secrets
+          echo "${{ secrets.API_KEY }}" > secrets/API_KEY.txt
+          echo "${{ secrets.DATABASE_URL }}" > secrets/DATABASE_URL.txt
+          echo "${{ secrets.GF_SMTP_PASSWORD }}" > secrets/GF_SMTP_PASSWORD.txt
+          echo "${{ secrets.GRAFANA_ADMIN_PASSWORD }}" > secrets/GRAFANA_ADMIN_PASSWORD.txt
+          echo "${{ secrets.JWT_SECRETKEY }}" > secrets/JWT_SECRETKEY.txt
+          echo "${{ secrets.POSTGRES_PASSWORD }}" > secrets/POSTGRES_PASSWORD.txt
+          cp ./srcs/.env.example ./srcs/.env
+
+      - name: Make (Docker)
+        run: make ci
+
+      - name: Test db
+        run: ./tools/test_init_db.sh
+
+      - name: Frontend
+        run: |
+          podman exec -t front_skyjo npm run lint
+          podman exec -t front_skyjo npm run build
+
+      - name: Backend
+        run: podman exec -t back_skyjo npm ci
+
+      - name: Game test
+        run: make game-test
+
+      - name: Game integration test
+        working-directory: srcs/frontend
+        run: |
+          npm ci
+          node tests/integration/skyjo.mjs
+
+# ------------------------- JOB 2: Podman (build and dev) ------------
+  test-podman:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Podman + dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y podman
+
+      - name: Create secrets
+        run: | 
+          mkdir secrets
+          echo "${{ secrets.API_KEY }}" > secrets/API_KEY.txt
+          echo "${{ secrets.DATABASE_URL }}" > secrets/DATABASE_URL.txt
+          echo "${{ secrets.GF_SMTP_PASSWORD }}" > secrets/GF_SMTP_PASSWORD.txt
+          echo "${{ secrets.GRAFANA_ADMIN_PASSWORD }}" > secrets/GRAFANA_ADMIN_PASSWORD.txt
+          echo "${{ secrets.JWT_SECRETKEY }}" > secrets/JWT_SECRETKEY.txt
+          echo "${{ secrets.POSTGRES_PASSWORD }}" > secrets/POSTGRES_PASSWORD.txt
+          cp ./srcs/.env.example ./srcs/.env
+
+      - name: Make (Podman)
+        run: make ci
