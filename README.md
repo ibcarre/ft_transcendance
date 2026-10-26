@@ -48,6 +48,7 @@ For information on the game engine, see [GE Dev Docs](./docs/DEV_DOC_GAME.en.md)
 - [docker hub ](https://hub.docker.com/_/postgres/)
 - [docker env var](https://github.com/docker-library/docs/blob/master/postgres/README.md#environment-variables)
 - [sql cheatsheet](https://www.geeksforgeeks.org/sql/sql-cheat-sheet/)
+- [sql course](https://www.w3schools.com/sql/)
 
 ### Grafana
 - [main Doc](https://grafana.com/docs/grafana/latest/)
@@ -60,8 +61,11 @@ For information on the game engine, see [GE Dev Docs](./docs/DEV_DOC_GAME.en.md)
 ### Node
 - [Best practices docker node](https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md)
 - [docker hub Node](https://hub.docker.com/_/node/)
-
-### React
+- [socket io](https://socket.io/docs/v4)
+- [expresJs](https://expressjs.com/)
+- [TypeScript documentation](https://www.typescriptlang.org/docs/)
+- [pg_promise](https://vitaly-t.github.io/pg-promise/)
+#### React
 - [ecole-du-web](https://github.com/ecole-du-web/react-modal/tree/main)
 - [Popup Modal](https://www.youtube.com/watch?v=Gy4G68WoHq4)
 - [Websockets (socket.io)](https://www.youtube.com/watch?v=JyW9NDdXAtM)
@@ -69,11 +73,32 @@ For information on the game engine, see [GE Dev Docs](./docs/DEV_DOC_GAME.en.md)
 - [Router](https://reactrouter.com/start/framework/navigating)
 - [Full course](https://www.youtube.com/watch?v=TtPXvEcE11E)
 
-### Typescript
-- [TypeScript documentation](https://www.typescriptlang.org/docs/)
+
 
 ### AI usage
 - Assistance in creating scripts that run curl requests to create users and retrieve their “access_token” and UUID, so that tests and verifications can then be performed manually
 - Assistance in setting up connections between the game engine and the rest of the backend
 - Assistance with translating certain commit/PR messages
 - Assistance in diagram creation/doc redaction or translation
+
+
+| Module | Type | Pts|
+|---------------------------------------|:------:|:---:|
+| Use frontend framework| minor| 1 |
+| Use backend framework| minor| 1 |
+| Support for additional browsers| minor| 1 |
+| Game statistics and match history| minor| 1 |
+| Content moderation AI (auto mods, auto deletion) | minor| 1 |
+| Public Api| major| 2 |
+| Andvanced analytics dashboard with data visualization| major| 2 |
+| Monitoring system with Prometheus and Grafana| major| 2 |
+| Implemented a complete web-based game where user can play each other| major| 2 |
+| Remote Players | major | 2 | 
+| Multiplayer Game (more than 2)| major| 2 |
+| Introduce an Ai Opponent for games| major| 2 |
+| Standard user management and authentication| major| 2 |
+| Implement real-time features useing Websocket| major| 2 |
+| Allow users to interact with other users (basic, chat, friends)| major| 2 |
+|TOTAL| | 25 |
+
+
