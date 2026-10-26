@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 import axios from 'axios';
 import { useAuth } from '../../context/useAuth';
 import { Avatar } from '../../components/Avatar';
@@ -16,6 +17,7 @@ const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,64}$/;
 
 export function EditProfile() {
     const { userInfo, setUserInfo } = useAuth();
+    const navigate = useNavigate();
 
     // 1. Les états des champs
     const [username, setUsername] = useState('');
@@ -67,6 +69,7 @@ export function EditProfile() {
         updateField('username', { username }, () => {
             setUserInfo((prev) => ({ ...prev, name: username }));
             setUsername('');
+            navigate(`/profile/${encodeURIComponent(username)}`, { replace: true });
         });
     };
 

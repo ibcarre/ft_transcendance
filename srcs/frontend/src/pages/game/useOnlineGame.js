@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
-import {
-    getRoom,
-    startRoom,
-    setRoomReady,
-    leaveRoom
-} from '../../services/rooms';
+import { getRoom, startRoom, setRoomReady, leaveRoom } from '../../services/rooms';
 import { errorMessage } from '../../services/user';
 
 export function useOnlineGame(roomId) {

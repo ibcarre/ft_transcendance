@@ -92,14 +92,12 @@ exports.joinRoom = async (req, res) => {
 			return (res.status(409).json({message: "You can only be in one room"}))
         var room;
         await db.tx({mode}, async t => {
-            room = await t.one('SELECT * FROM games WHERE id = $1', id);
-            if (!password && room.ispass)
-                throw(Error("Wrong Password"));
-            if (password) {
-                const passwordMatch = await bcrypt.compare(password, room.password);
-                if (!passwordMatch)
-                        throw(Error("Wrong Password"));
-            }
+            room = await t.one('SELECT * FROM games WHERE id = $1 FOR UPDATE', [id]);
+			if (room.ispass) {
+			    if (!password || !(await bcrypt.compare(password, room.password))) {
+			        throw new Error('Wrong password');
+			    }
+			}
             if (room.nb_players >= room.max_players) {
                 throw(Error("Full room"));
             }
@@ -112,7 +110,7 @@ exports.joinRoom = async (req, res) => {
             for(var o in others) {
                 dataArray.push(others[o].seat);
             }
-            dataArray.sort((a, b) => a.seat - b.seat);
+            dataArray.sort((a, b) => a - b);
             let seat = 0;
             for (let i = 0; i <= dataArray.length; i++) {
                 if (i == dataArray.length && i !== 0)

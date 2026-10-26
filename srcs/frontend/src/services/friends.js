@@ -31,3 +31,7 @@ export const fetchFriendsData = async () => {
     ]);
     return { friends: sortFriends(friends), invites };
 };
+
+// Invitation (201 "Invite sent") ; si la personne nous avait déjà invité : 200 "Friendship accepted"
+export const sendFriendRequest = (friendUsername) =>
+    axios.post('/api/friends/add', { friendUsername }, { withCredentials: true }).then((res) => res.data?.message);
