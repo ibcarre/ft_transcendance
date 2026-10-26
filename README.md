@@ -16,7 +16,12 @@ To organize ourselves and prepare our work, we used tools like Discord (linking 
 
 [Backend Architectural diagram](./docs/Skyjo_architecture_EN_2026-10-25.pbg.svg)
 
-[Sql Scheme](https://drawsql.app/teams/caramel-lemon/diagrams/ft-skyjo#)
+<details>
+<summary> Sql scheme</summary>
+
+![Sql Scheme](./docs/Postgres_scheme.jpg)
+
+</details>
 
 <details>
 <summary> Features</summary>
