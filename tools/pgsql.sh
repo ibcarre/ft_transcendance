@@ -2,7 +2,7 @@
 
 STATE=.last_user_id
 PASS=1Qwertyuiop.
-URL=https://localhost:44443
+URL=https://localhost:8443
 
 if [[ -f "$STATE" ]]; then
 	start=$(( $(cat "$STATE") + 1 ))
