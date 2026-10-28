@@ -6,7 +6,7 @@ contactPoints:
         - uid: fg15tp4jiyv40b
           type: email
           settings:
-            addresses: benjamsc@student.42.fr
+            addresses: paris@student.42.fr
             message: |-
                 {{ range .Alerts }}
                 *{{ .Annotations.summary }}*
