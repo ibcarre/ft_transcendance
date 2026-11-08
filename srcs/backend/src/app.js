@@ -5,9 +5,9 @@ const Userroutes = require('./routes/User');
 const friends = require('./routes/friends');
 const rooms = require('./routes/rooms');
 const gameStats = require('./routes/gameStats');
-const api = require('./routes/api');
 const fileUpload = require('express-fileupload');
 const cors = require("cors");
+require('./db/db');
 
 const app = express();
 app.set('trust proxy', 1)
@@ -50,7 +50,6 @@ app.use((req, res, next) => {
 
 //Routes
 app.use('/user', Userroutes);
-app.use('/v1', api);
 app.use('/rooms', rooms);
 app.use('/friends', friends);
 app.use('/gameStats', gameStats);
