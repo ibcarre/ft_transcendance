@@ -6,6 +6,10 @@ const {friendsInit} = require('./namespaces/friendsList/index');
 const StatusInit = require('./namespaces/status/index')
 const {globalChatInit} = require('./namespaces/globalChat/index');
 
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:5173'
+].filter(Boolean);
 
 let io;
 const initSocket = (httpServer) => {
