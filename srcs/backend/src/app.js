@@ -10,8 +10,20 @@ const cors = require("cors");
 require('./db/db');
 
 const app = express();
-app.set('trust proxy', 1)
-app.use(cors());
+
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:5173'
+].filter(Boolean);
+
+const corsOptions = {
+  origin: allowedOrigins,
+  credentials: true
+};
+
+app.set('trust proxy', 1);
+
+app.use(cors(corsOptions));
 
 // metric need to be declared before limite to avoid 429
 

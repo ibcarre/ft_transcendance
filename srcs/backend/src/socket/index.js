@@ -9,12 +9,13 @@ const {globalChatInit} = require('./namespaces/globalChat/index');
 
 let io;
 const initSocket = (httpServer) => {
-    io = new Server(httpServer, {
-    cors: {
-      origin: ["https://localhost:" + process.env.APP_PORT],
-      credentials: true
-    }
-  });
+	const io = new Server(server, {
+	cors: {
+		origin: allowedOrigins,
+		methods: ['GET', 'POST'],
+		credentials: true
+	}
+	});
   io.use(checkAuth);
   io.on("new_namespace", (namespace) => {
     namespace.use(checkAuth);
