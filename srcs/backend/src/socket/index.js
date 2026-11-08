@@ -9,7 +9,7 @@ const {globalChatInit} = require('./namespaces/globalChat/index');
 
 let io;
 const initSocket = (httpServer) => {
-	const io = new Server(server, {
+	const io = new Server(httpServer, {
 	cors: {
 		origin: allowedOrigins,
 		methods: ['GET', 'POST'],
